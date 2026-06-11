@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import './globals.css'
 import Link from 'next/link'
+import SearchBar from '@/components/SearchBar'
 
 const geist = Geist({ subsets: ['latin'] })
 
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <SearchBar />
               <Link href="/admin/add-phone" className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">
                 + Add phone
               </Link>
