@@ -1,36 +1,43 @@
-import Link from 'next/link'
-
-export const revalidate = 3600
+export const revalidate = 0
 
 async function getBlogPosts() {
   try {
     const res = await fetch(
       'https://blog.avsurge.com/feeds/posts/default?alt=rss&max-results=20',
-      { next: { revalidate: 3600 } }
+      { cache: 'no-store' }
     )
     const xml = await res.text()
 
-    // Parse items from RSS
     const items = xml.match(/<item>([\s\S]*?)<\/item>/g) || []
 
     return items.map(item => {
-      const title = item.match(/<title>([\s\S]*?)<\/title>/)?.[1]?.replace(/<!\[CDATA\[|\]\]>/g, '').trim() || ''
-      const link = item.match(/<link>([\s\S]*?)<\/link>/)?.[1]?.trim() || ''
-      const pubDate = item.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1]?.trim() || ''
-      const description = item.match(/<description>([\s\S]*?)<\/description>/)?.[1]?.replace(/<!\[CDATA\[|\]\]>/g, '').replace(/<[^>]+>/g, '').trim().slice(0, 160) || ''
-      const category = item.match(/<category>([\s\S]*?)<\/category>/)?.[1]?.replace(/<!\[CDATA\[|\]\]>/g, '').trim() || ''
+      const title = item.match(/<title>([\s\S]*?)<\/title>/)?.[1]
+        ?.replace(/<!\[CDATA\[|\]\]>/g, '')
+        ?.replace(/&#39;/g, "'")
+        ?.replace(/&amp;/g, '&')
+        ?.trim() || ''
 
-      // Try to extract first image from content
-      const mediaUrl = item.match(/<media:thumbnail[^>]+url="([^"]+)"/)?.[1] ||
-        item.match(/<enclosure[^>]+url="([^"]+)"/)?.[1] || null
+      const link = item.match(/<link>([^<]+)<\/link>/)?.[1]?.trim() || ''
+
+      const pubDate = item.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1]?.trim() || ''
+
+      const description = item.match(/<description>([\s\S]*?)<\/description>/)?.[1]
+        ?.replace(/<!\[CDATA\[|\]\]>/g, '')
+        ?.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+        ?.replace(/<[^>]+>/g, '')
+        ?.replace(/&nbsp;/g, ' ')
+        ?.trim().slice(0, 160) || ''
+
+      const category = item.match(/<category[^>]*>([^<]+)<\/category>/)?.[1]?.trim() || ''
 
       const date = pubDate ? new Date(pubDate).toLocaleDateString('en-IN', {
         day: 'numeric', month: 'short', year: 'numeric'
       }) : ''
 
-      return { title, link, date, description, category, mediaUrl }
+      return { title, link, date, description, category, mediaUrl: null }
     }).filter(p => p.title && p.link)
-  } catch {
+  } catch (e) {
+    console.error('RSS error:', e)
     return []
   }
 }
@@ -51,22 +58,20 @@ export default async function NewsPage() {
         </a>
       </div>
 
+      {/* Debug line - remove after fix */}
+      <p className="text-xs text-gray-400 mb-4">Found {posts.length} posts</p>
+
       {posts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {posts.map((post, i) => (
             <a key={i} href={post.link} target="_blank" rel="noopener noreferrer"
               className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-blue-300 hover:shadow-sm transition group">
 
-              {/* Image */}
-              <div className="w-full h-44 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center overflow-hidden">
-                {post.mediaUrl
-                  ? <img src={post.mediaUrl} alt={post.title} className="w-full h-full object-cover" />
-                  : <span className="text-5xl">📱</span>
-                }
+              <div className="w-full h-44 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                <span className="text-5xl">📱</span>
               </div>
 
               <div className="p-4">
-                {/* Tag + date */}
                 <div className="flex items-center gap-2 mb-2">
                   {post.category && (
                     <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">{post.category}</span>
@@ -75,12 +80,10 @@ export default async function NewsPage() {
                   {post.date && <span className="text-xs text-gray-400">{post.date}</span>}
                 </div>
 
-                {/* Title */}
                 <h2 className="text-sm font-bold text-gray-900 leading-tight mb-2 group-hover:text-blue-600 transition line-clamp-2">
                   {post.title}
                 </h2>
 
-                {/* Snippet */}
                 {post.description && (
                   <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-3">{post.description}</p>
                 )}
