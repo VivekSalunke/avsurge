@@ -3,14 +3,11 @@ import { Geist } from 'next/font/google'
 import './globals.css'
 import Link from 'next/link'
 import SearchBar from '@/components/SearchBar'
-
 const geist = Geist({ subsets: ['latin'] })
-
 export const metadata: Metadata = {
   title: 'AVSurge — Phone Specs & Reviews',
   description: 'Phone specifications, reviews, comparisons and prices for India',
 }
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -31,9 +28,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <div className="flex items-center gap-3">
               <SearchBar />
-              <Link href="/admin/add-phone" className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">
-                + Add phone
-              </Link>
             </div>
           </div>
         </nav>
@@ -49,7 +43,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/phones" className="hover:text-blue-600">Phones</Link>
               <Link href="/compare" className="hover:text-blue-600">Compare</Link>
               <Link href="/finder" className="hover:text-blue-600">Finder</Link>
-              <Link href="/admin/add-phone" className="hover:text-blue-600">Admin</Link>
             </div>
           </div>
         </footer>
