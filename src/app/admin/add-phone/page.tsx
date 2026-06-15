@@ -2,6 +2,8 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
+const ADMIN_PASSWORD = 'avsurge@admin2026'
+
 const CATEGORIES = ['General','Display','Performance','Camera','Battery','Connectivity','Storage','Build']
 const DEFAULT_SPECS = [
   { category: 'Display', label: 'Screen size', value: '' },
@@ -20,6 +22,10 @@ const DEFAULT_SPECS = [
 ]
 
 export default function AddPhonePage() {
+  const [authed, setAuthed] = useState(false)
+  const [pwInput, setPwInput] = useState('')
+  const [pwError, setPwError] = useState(false)
+
   const [name, setName] = useState('')
   const [brand, setBrand] = useState('')
   const [price, setPrice] = useState('')
@@ -33,6 +39,11 @@ export default function AddPhonePage() {
 
   const updateSpec = (i: number, field: string, val: string) =>
     setSpecs(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: val } : s))
+
+  const handleLogin = () => {
+    if (pwInput === ADMIN_PASSWORD) { setAuthed(true); setPwError(false) }
+    else { setPwError(true) }
+  }
 
   const handleSubmit = async () => {
     if (!name.trim() || !brand.trim()) { setError('Name and brand are required'); setStatus('error'); return }
@@ -56,9 +67,43 @@ export default function AddPhonePage() {
     setSpecs(DEFAULT_SPECS.map(s => ({ ...s })))
   }
 
+  if (!authed) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="bg-white border border-gray-200 rounded-2xl p-8 w-full max-w-sm shadow-sm">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-sm">AV</div>
+            <div>
+              <p className="font-bold text-gray-900 text-sm">AVSurge Admin</p>
+              <p className="text-xs text-gray-400">Restricted access</p>
+            </div>
+          </div>
+          <label className="block text-xs font-medium text-gray-500 mb-1">Password</label>
+          <input
+            type="password"
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400 mb-3"
+            placeholder="Enter admin password"
+            value={pwInput}
+            onChange={e => setPwInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleLogin()}
+          />
+          {pwError && <p className="text-xs text-red-500 mb-3">Incorrect password</p>}
+          <button
+            onClick={handleLogin}
+            className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 transition">
+            Login
+          </button>
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main className="max-w-2xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">Add a phone</h1>
+      <div className="flex items-center justify-between mb-1">
+        <h1 className="text-2xl font-bold text-gray-900">Add a phone</h1>
+        <button onClick={() => setAuthed(false)} className="text-xs text-gray-400 hover:text-red-500">Logout</button>
+      </div>
       <p className="text-sm text-gray-400 mb-8">Manually enter phone details into the AVSurge database.</p>
 
       {status === 'success' && (
