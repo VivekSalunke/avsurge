@@ -2,11 +2,13 @@
 import { useAuth } from '@/context/AuthContext'
 import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function NavAuth() {
   const { user, isAdmin, loading, signOut } = useAuth()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -47,12 +49,14 @@ export default function NavAuth() {
             {isAdmin && <p className="text-xs text-blue-600 font-semibold px-2 py-1">Admin</p>}
             <hr className="my-1 border-gray-100" />
             {isAdmin && (
-              <Link href="/admin" onClick={() => setOpen(false)}
-                className="block text-xs text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded-lg transition">
+              <button
+                onMouseDown={() => { setOpen(false); router.push('/admin') }}
+                className="w-full text-left text-xs text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded-lg transition">
                 Admin Panel
-              </Link>
+              </button>
             )}
-            <button onClick={() => { signOut(); setOpen(false) }}
+            <button
+              onMouseDown={() => { setOpen(false); signOut() }}
               className="w-full text-left text-xs text-red-500 hover:bg-red-50 px-2 py-1.5 rounded-lg transition">
               Sign out
             </button>
