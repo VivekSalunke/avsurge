@@ -28,8 +28,8 @@ export default function ManagePhonesPage() {
     setFetching(false)
   }
 
-  const deletePhone = async (id: string, slug: string) => {
-    if (!confirm(`Delete ${slug}? This cannot be undone.`)) return
+  const deletePhone = async (id: string, name: string) => {
+    if (!confirm(`Delete ${name}? This cannot be undone.`)) return
     setDeleting(id)
     await supabase.from('phone_specs').delete().eq('phone_id', id)
     await supabase.from('phones').delete().eq('id', id)
@@ -77,13 +77,22 @@ export default function ManagePhonesPage() {
           {filtered.map((phone, i) => (
             <div key={phone.id} className={`flex items-center justify-between px-5 py-4 ${i !== filtered.length - 1 ? 'border-b border-gray-100' : ''}`}>
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-lg">📱</div>
+                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
+                  {phone.image_url
+                    ? <img src={phone.image_url} alt={phone.name} className="w-full h-full object-contain" />
+                    : <span className="text-lg">📱</span>
+                  }
+                </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-900">{phone.name}</p>
-                  <p className="text-xs text-gray-400">{phone.brand} · {phone.price_inr ? `₹${phone.price_inr.toLocaleString()}` : 'No price'} · /{phone.slug}</p>
+                  <p className="text-xs text-gray-400">{phone.brand} · {phone.price_inr ? `₹${phone.price_inr.toLocaleString()}` : 'No price'}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <Link href={`/admin/phones/edit/${phone.slug}`}
+                  className="text-xs text-blue-600 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition">
+                  Edit
+                </Link>
                 <Link href={`/phones/${phone.slug}`} target="_blank"
                   className="text-xs text-gray-500 border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition">
                   View
