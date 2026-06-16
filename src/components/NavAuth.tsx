@@ -44,7 +44,7 @@ export default function NavAuth() {
           {user.email?.[0].toUpperCase()}
         </button>
         {open && (
-          <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-xl shadow-lg p-2 w-48 z-50">
+          <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-xl shadow-lg p-2 w-52 z-50">
             <p className="text-xs text-gray-400 px-2 py-1 truncate">{user.email}</p>
             {isAdmin && <p className="text-xs text-blue-600 font-semibold px-2 py-1">Admin</p>}
             <hr className="my-1 border-gray-100" />
@@ -56,7 +56,13 @@ export default function NavAuth() {
               </button>
             )}
             <button
-              onMouseDown={() => { setOpen(false); signOut() }}
+              onMouseDown={() => { setOpen(false); router.push('/profile') }}
+              className="w-full text-left text-xs text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded-lg transition">
+              My Profile
+            </button>
+            <hr className="my-1 border-gray-100" />
+            <button
+              onMouseDown={() => { setOpen(false); signOut(); router.push('/') }}
               className="w-full text-left text-xs text-red-500 hover:bg-red-50 px-2 py-1.5 rounded-lg transition">
               Sign out
             </button>
