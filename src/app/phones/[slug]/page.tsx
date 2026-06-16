@@ -17,8 +17,9 @@ async function getPhone(slug: string) {
   return { phone, specs: specs || [] }
 }
 
-export default async function PhonePage({ params }: { params: { slug: string } }) {
-  const data = await getPhone(params.slug)
+export default async function PhonePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const data = await getPhone(slug)
   if (!data) notFound()
   const { phone, specs } = data
 
