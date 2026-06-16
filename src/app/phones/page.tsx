@@ -3,11 +3,14 @@ import Link from 'next/link'
 
 export const revalidate = 60
 
-export default async function PhonesPage({ searchParams }: { searchParams: { brand?: string } }) {
-  let query = supabase.from('phones').select('*').order('created_at', { ascending: false })
-  if (searchParams.brand) query = query.ilike('brand', searchParams.brand)
+export default async function PhonesPage({ searchParams }: { searchParams: Promise<{ brand?: string }> }) {
+  const params = await searchParams
+  const brand = params?.brand
 
+  let query = supabase.from('phones').select('*').order('created_at', { ascending: false })
+  if (brand) query = query.ilike('brand', brand)
   const { data: phones } = await query
+
   const { data: brandsRaw } = await supabase.from('phones').select('brand')
   const brands = [...new Set((brandsRaw || []).map((b: any) => b.brand))].sort()
 
@@ -15,21 +18,20 @@ export default async function PhonesPage({ searchParams }: { searchParams: { bra
     <main className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">
-          {searchParams.brand ? `${searchParams.brand} phones` : 'All phones'}
+          {brand ? `${brand} phones` : 'All phones'}
         </h1>
         <span className="text-sm text-gray-400">{phones?.length || 0} devices</span>
       </div>
 
-      {/* Brand filter */}
       <div className="flex flex-wrap gap-2 mb-8">
         <Link href="/phones"
-          className={`px-3 py-1.5 rounded-full text-sm border transition ${!searchParams.brand ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'}`}>
+          className={`px-3 py-1.5 rounded-full text-sm border transition ${!brand ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'}`}>
           All
         </Link>
-        {brands.map((brand: any) => (
-          <Link key={brand} href={`/phones?brand=${brand}`}
-            className={`px-3 py-1.5 rounded-full text-sm border transition ${searchParams.brand === brand ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'}`}>
-            {brand}
+        {brands.map((b: any) => (
+          <Link key={b} href={`/phones?brand=${b}`}
+            className={`px-3 py-1.5 rounded-full text-sm border transition ${brand === b ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'}`}>
+            {b}
           </Link>
         ))}
       </div>
@@ -55,7 +57,7 @@ export default async function PhonesPage({ searchParams }: { searchParams: { bra
       ) : (
         <div className="bg-white border border-dashed border-gray-200 rounded-xl py-20 text-center">
           <p className="text-gray-400 text-sm mb-3">No phones found</p>
-          <Link href="/admin/add-phone" className="text-blue-600 text-sm font-medium hover:underline">Add a phone →</Link>
+          <Link href="/phones" className="text-blue-600 text-sm font-medium hover:underline">View all phones →</Link>
         </div>
       )}
     </main>
