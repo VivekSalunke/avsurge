@@ -7,18 +7,22 @@ import { useRouter } from 'next/navigation'
 export default function NavAuth() {
   const { user, isAdmin, loading, signOut } = useAuth()
   const [open, setOpen] = useState(false)
+  const [showAddPhone, setShowAddPhone] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false)
+        setShowAddPhone(false)
+      }
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
-  if (loading) return <div className="w-16 h-7 bg-gray-100 rounded-lg animate-pulse" />
+  if (loading) return <div className="w-8 h-7 bg-gray-100 rounded-lg animate-pulse" />
 
   if (!user) {
     return (
@@ -30,14 +34,31 @@ export default function NavAuth() {
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div ref={ref} className="flex items-center gap-2">
       {isAdmin && (
-        <Link href="/admin/add-phone"
-          className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition font-medium">
-          + Add phone
-        </Link>
+        showAddPhone ? (
+          <div className="flex items-center gap-1">
+            <Link href="/admin/add-phone"
+              onClick={() => setShowAddPhone(false)}
+              className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition font-medium whitespace-nowrap">
+              + Add phone
+            </Link>
+            <button
+              onClick={() => setShowAddPhone(false)}
+              className="text-gray-400 hover:text-gray-600 text-lg leading-none px-1">
+              ×
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowAddPhone(true)}
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-blue-100 hover:bg-blue-200 transition text-blue-600 font-bold text-lg">
+            +
+          </button>
+        )
       )}
-      <div className="relative" ref={ref}>
+
+      <div className="relative">
         <button
           onClick={() => setOpen(o => !o)}
           className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xs font-bold hover:bg-blue-200 transition">
