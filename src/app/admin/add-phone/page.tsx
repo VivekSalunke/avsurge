@@ -1,8 +1,9 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-
-const ADMIN_PASSWORD = 'avsurge@admin2026'
+import { useAuth } from '@/context/AuthContext'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 const CATEGORIES = ['General','Display','Performance','Camera','Battery','Connectivity','Storage','Build']
 const DEFAULT_SPECS = [
@@ -22,9 +23,8 @@ const DEFAULT_SPECS = [
 ]
 
 export default function AddPhonePage() {
-  const [authed, setAuthed] = useState(false)
-  const [pwInput, setPwInput] = useState('')
-  const [pwError, setPwError] = useState(false)
+  const { user, isAdmin, loading } = useAuth()
+  const router = useRouter()
 
   const [name, setName] = useState('')
   const [brand, setBrand] = useState('')
@@ -35,15 +35,15 @@ export default function AddPhonePage() {
   const [status, setStatus] = useState<'idle'|'saving'|'success'|'error'>('idle')
   const [error, setError] = useState('')
 
+  useEffect(() => {
+    if (!loading && !user) router.push('/login')
+    if (!loading && user && !isAdmin) router.push('/')
+  }, [user, isAdmin, loading])
+
   const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 
   const updateSpec = (i: number, field: string, val: string) =>
     setSpecs(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: val } : s))
-
-  const handleLogin = () => {
-    if (pwInput === ADMIN_PASSWORD) { setAuthed(true); setPwError(false) }
-    else { setPwError(true) }
-  }
 
   const handleSubmit = async () => {
     if (!name.trim() || !brand.trim()) { setError('Name and brand are required'); setStatus('error'); return }
@@ -67,48 +67,20 @@ export default function AddPhonePage() {
     setSpecs(DEFAULT_SPECS.map(s => ({ ...s })))
   }
 
-  if (!authed) {
-    return (
-      <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="bg-white border border-gray-200 rounded-2xl p-8 w-full max-w-sm shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-sm">AV</div>
-            <div>
-              <p className="font-bold text-gray-900 text-sm">AVSurge Admin</p>
-              <p className="text-xs text-gray-400">Restricted access</p>
-            </div>
-          </div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">Password</label>
-          <input
-            type="password"
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400 mb-3"
-            placeholder="Enter admin password"
-            value={pwInput}
-            onChange={e => setPwInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleLogin()}
-          />
-          {pwError && <p className="text-xs text-red-500 mb-3">Incorrect password</p>}
-          <button
-            onClick={handleLogin}
-            className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 transition">
-            Login
-          </button>
-        </div>
-      </main>
-    )
-  }
+  if (loading) return (
+    <main className="min-h-screen flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+    </main>
+  )
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-10">
-      <div className="flex items-center justify-between mb-1">
-        <h1 className="text-2xl font-bold text-gray-900">Add a phone</h1>
-        <button onClick={() => setAuthed(false)} className="text-xs text-gray-400 hover:text-red-500">Logout</button>
-      </div>
+      <h1 className="text-2xl font-bold text-gray-900 mb-1">Add a phone</h1>
       <p className="text-sm text-gray-400 mb-8">Manually enter phone details into the AVSurge database.</p>
 
       {status === 'success' && (
         <div className="bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm mb-6">
-          ✓ Phone saved! <a href={`/phones/${slug}`} className="underline font-medium">View page →</a>
+          ✓ Phone saved! <Link href={`/phones/${slug}`} className="underline font-medium">View page →</Link>
         </div>
       )}
       {status === 'error' && (
