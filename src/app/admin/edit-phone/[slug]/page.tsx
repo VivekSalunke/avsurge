@@ -1,13 +1,14 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 
 const CATEGORIES = ['General','Display','Performance','Camera','Battery','Connectivity','Storage','Build']
 
-export default function EditPhonePage({ params }: { params: { slug: string } }) {
+export default function EditPhonePage() {
   const router = useRouter()
+  const params = useParams()
   const [phone, setPhone] = useState<any>(null)
   const [name, setName] = useState('')
   const [brand, setBrand] = useState('')
