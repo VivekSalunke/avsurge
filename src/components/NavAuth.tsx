@@ -7,16 +7,14 @@ import { useRouter } from 'next/navigation'
 export default function NavAuth() {
   const { user, isAdmin, loading, signOut } = useAuth()
   const [open, setOpen] = useState(false)
-  const [showAddPhone, setShowAddPhone] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
+  const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'Profile'
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false)
-        setShowAddPhone(false)
-      }
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
@@ -36,36 +34,27 @@ export default function NavAuth() {
   return (
     <div ref={ref} className="flex items-center gap-2">
       {isAdmin && (
-        showAddPhone ? (
-          <div className="flex items-center gap-1">
-            <Link href="/admin/add-phone"
-              onClick={() => setShowAddPhone(false)}
-              className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition font-medium whitespace-nowrap">
-              + Add phone
-            </Link>
-            <button
-              onClick={() => setShowAddPhone(false)}
-              className="text-gray-400 hover:text-gray-600 text-lg leading-none px-1">
-              ×
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setShowAddPhone(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-xl bg-blue-100 hover:bg-blue-200 transition text-blue-600 font-bold text-lg">
-            +
-          </button>
-        )
+        <Link href="/admin/add-phone"
+          className="group flex items-center gap-0 overflow-hidden bg-blue-100 hover:bg-blue-600 text-blue-600 hover:text-white rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
+          <span className="font-bold text-lg leading-none">+</span>
+          <span className="max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-200 text-xs font-medium group-hover:ml-1.5">
+            Add phone
+          </span>
+        </Link>
       )}
 
       <div className="relative">
         <button
           onClick={() => setOpen(o => !o)}
-          className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xs font-bold hover:bg-blue-200 transition">
-          {user.email?.[0].toUpperCase()}
+          className="group flex items-center gap-0 overflow-hidden bg-blue-100 hover:bg-blue-600 text-blue-600 hover:text-white rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
+          <span className="text-xs font-bold leading-none">{user.email?.[0].toUpperCase()}</span>
+          <span className="max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-200 text-xs font-medium group-hover:ml-1.5">
+            {displayName}
+          </span>
         </button>
+
         {open && (
-          <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-xl shadow-lg p-2 w-52 z-50">
+          <div className="absolute right-0 top-11 bg-white border border-gray-200 rounded-xl shadow-lg p-2 w-52 z-50">
             <p className="text-xs text-gray-400 px-2 py-1 truncate">{user.email}</p>
             {isAdmin && <p className="text-xs text-blue-600 font-semibold px-2 py-1">Admin</p>}
             <hr className="my-1 border-gray-100" />

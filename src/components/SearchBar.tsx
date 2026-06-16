@@ -54,10 +54,13 @@ export default function SearchBar() {
       {!expanded ? (
         <button
           onClick={handleExpand}
-          className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 transition text-gray-500">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          className="group flex items-center gap-0 overflow-hidden bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
+          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
+          <span className="max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-200 text-xs font-medium group-hover:ml-1.5">
+            Search
+          </span>
         </button>
       ) : (
         <div className="flex items-center gap-2 bg-white border border-blue-400 rounded-xl px-3 py-2 w-56 shadow-sm">
@@ -77,7 +80,7 @@ export default function SearchBar() {
             <div className="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
           ) : (
             <button onClick={() => { setExpanded(false); setQuery(''); setOpen(false) }}
-              className="text-gray-400 hover:text-gray-600 flex-shrink-0 text-lg leading-none">x</button>
+              className="text-gray-400 hover:text-gray-600 flex-shrink-0 text-lg leading-none">×</button>
           )}
         </div>
       )}
@@ -98,7 +101,7 @@ export default function SearchBar() {
               </div>
               {phone.price_inr && (
                 <p className="text-xs text-blue-600 font-medium flex-shrink-0">
-                  Rs.{phone.price_inr.toLocaleString('en-IN')}
+                  ₹{phone.price_inr.toLocaleString('en-IN')}
                 </p>
               )}
             </button>
