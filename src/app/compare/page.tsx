@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -10,37 +10,134 @@ const ICONS: Record<string, string> = {
   Storage: '💾', General: '📋',
 }
 
+interface Phone {
+  id: number
+  name: string
+  brand: string
+  slug: string
+  price_inr: number | null
+  image_url: string | null
+}
+
+interface PhoneSelectorProps {
+  side: 'a' | 'b'
+  phone: Phone | null
+  phones: Phone[]
+  onSelect: (phone: Phone, side: 'a' | 'b') => void
+  onRemove: (side: 'a' | 'b') => void
+}
+
+function PhoneSelector({ side, phone, phones, onSelect, onRemove }: PhoneSelectorProps) {
+  const [search, setSearch] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const filtered = search.length > 0
+    ? phones.filter(p =>
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.brand.toLowerCase().includes(search.toLowerCase())
+      ).slice(0, 6)
+    : []
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-2xl p-5">
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+        Phone {side === 'a' ? '1' : '2'}
+      </p>
+
+      <div className="relative mb-3">
+        <input
+          ref={inputRef}
+          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400"
+          placeholder="Search phone..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          autoComplete="off"
+        />
+        {search && filtered.length > 0 && (
+          <div className="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-lg z-10 overflow-hidden">
+            {filtered.map((p) => (
+              <button key={p.id}
+                onMouseDown={e => {
+                  e.preventDefault()
+                  onSelect(p, side)
+                  setSearch('')
+                }}
+                className="w-full text-left px-3 py-2.5 text-sm hover:bg-blue-50 transition border-b border-gray-50 last:border-0 flex items-center gap-2">
+                <div className="w-7 h-7 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
+                  {p.image_url
+                    ? <img src={p.image_url} alt={p.name} className="object-contain w-full h-full" />
+                    : <span className="text-xs">📱</span>}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium truncate text-xs">{p.name}</p>
+                  <p className="text-xs text-gray-400">{p.brand}</p>
+                </div>
+                {p.price_inr && (
+                  <p className="text-xs text-blue-600 flex-shrink-0">
+                    Rs.{p.price_inr.toLocaleString('en-IN')}
+                  </p>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {phone ? (
+        <div className="text-center">
+          <div className="w-28 h-28 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3 overflow-hidden">
+            {phone.image_url
+              ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full p-2" />
+              : <span className="text-5xl">📱</span>}
+          </div>
+          <p className="font-semibold text-gray-900 text-sm">{phone.name}</p>
+          <p className="text-xs text-gray-400 mb-1">{phone.brand}</p>
+          {phone.price_inr && (
+            <p className="text-blue-600 text-sm font-bold">Rs.{phone.price_inr.toLocaleString('en-IN')}</p>
+          )}
+          <button onClick={() => onRemove(side)}
+            className="text-xs text-gray-400 hover:text-red-500 mt-2 transition">
+            × Remove
+          </button>
+        </div>
+      ) : (
+        <div className="text-center py-8 text-gray-300">
+          <p className="text-3xl mb-2">📱</p>
+          <p className="text-xs">Search and select a phone</p>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function CompareContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [phones, setPhones] = useState<any[]>([])
-  const [phoneA, setPhoneA] = useState<any>(null)
-  const [phoneB, setPhoneB] = useState<any>(null)
+  const [phones, setPhones] = useState<Phone[]>([])
+  const [phoneA, setPhoneA] = useState<Phone | null>(null)
+  const [phoneB, setPhoneB] = useState<Phone | null>(null)
   const [specsA, setSpecsA] = useState<any[]>([])
   const [specsB, setSpecsB] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-  const [searchA, setSearchA] = useState('')
-  const [searchB, setSearchB] = useState('')
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     supabase.from('phones').select('*').order('name').then(({ data }) => {
-      setPhones(data || [])
-      // Load from URL params
+      const list = data || []
+      setPhones(list)
       const slugA = searchParams.get('a')
       const slugB = searchParams.get('b')
-      if (slugA && data) {
-        const p = data.find((p: any) => p.slug === slugA)
+      if (slugA) {
+        const p = list.find((p: Phone) => p.slug === slugA)
         if (p) { setPhoneA(p); loadSpecs(p.id, 'a') }
       }
-      if (slugB && data) {
-        const p = data.find((p: any) => p.slug === slugB)
+      if (slugB) {
+        const p = list.find((p: Phone) => p.slug === slugB)
         if (p) { setPhoneB(p); loadSpecs(p.id, 'b') }
       }
     })
   }, [])
 
-  // Update URL when phones change
   useEffect(() => {
     if (phoneA || phoneB) {
       const params = new URLSearchParams()
@@ -56,12 +153,17 @@ function CompareContent() {
     else setSpecsB(data || [])
   }
 
-  const selectPhone = async (phone: any, side: 'a' | 'b') => {
+  const handleSelect = async (phone: Phone, side: 'a' | 'b') => {
     setLoading(true)
-    if (side === 'a') { setPhoneA(phone); setSearchA('') }
-    else { setPhoneB(phone); setSearchB('') }
+    if (side === 'a') setPhoneA(phone)
+    else setPhoneB(phone)
     await loadSpecs(phone.id, side)
     setLoading(false)
+  }
+
+  const handleRemove = (side: 'a' | 'b') => {
+    if (side === 'a') { setPhoneA(null); setSpecsA([]) }
+    else { setPhoneB(null); setSpecsB([]) }
   }
 
   const copyShareLink = () => {
@@ -90,97 +192,24 @@ function CompareContent() {
     return numA > numB ? 'a' : numB > numA ? 'b' : null
   }
 
-  const filteredA = phones.filter(p =>
-    p.name.toLowerCase().includes(searchA.toLowerCase()) ||
-    p.brand.toLowerCase().includes(searchA.toLowerCase())
-  ).slice(0, 6)
-
-  const filteredB = phones.filter(p =>
-    p.name.toLowerCase().includes(searchB.toLowerCase()) ||
-    p.brand.toLowerCase().includes(searchB.toLowerCase())
-  ).slice(0, 6)
-
-  const PhoneSelector = ({ side, phone, search, setSearch, filtered }: any) => (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5">
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
-        Phone {side === 'a' ? '1' : '2'}
-      </p>
-
-      {/* Search input */}
-      <div className="relative mb-3">
-        <input
-          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400"
-          placeholder="Search phone..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-        {search && (
-          <div className="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-lg z-10 overflow-hidden">
-            {filtered.length === 0 ? (
-              <p className="px-3 py-2 text-xs text-gray-400">No phones found</p>
-            ) : filtered.map((p: any) => (
-              <button key={p.id} onClick={() => selectPhone(p, side)}
-                className="w-full text-left px-3 py-2.5 text-sm hover:bg-blue-50 transition border-b border-gray-50 last:border-0 flex items-center gap-2">
-                <div className="w-7 h-7 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                  {p.image_url
-                    ? <img src={p.image_url} alt={p.name} className="object-contain w-full h-full" />
-                    : <span className="text-xs flex items-center justify-center h-full">📱</span>}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{p.name}</p>
-                  <p className="text-xs text-gray-400">{p.brand}</p>
-                </div>
-                {p.price_inr && <p className="text-xs text-blue-600 flex-shrink-0">Rs.{p.price_inr.toLocaleString('en-IN')}</p>}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {phone ? (
-        <div className="text-center">
-          <div className="w-28 h-28 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3 overflow-hidden">
-            {phone.image_url
-              ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full p-2" />
-              : <span className="text-5xl">📱</span>}
-          </div>
-          <p className="font-semibold text-gray-900 text-sm">{phone.name}</p>
-          <p className="text-xs text-gray-400 mb-1">{phone.brand}</p>
-          {phone.price_inr && (
-            <p className="text-blue-600 text-sm font-bold">Rs.{phone.price_inr.toLocaleString('en-IN')}</p>
-          )}
-          <button onClick={() => { if (side === 'a') { setPhoneA(null); setSpecsA([]) } else { setPhoneB(null); setSpecsB([]) } }}
-            className="text-xs text-gray-400 hover:text-red-500 mt-2 transition">
-            × Remove
-          </button>
-        </div>
-      ) : (
-        <div className="text-center py-8 text-gray-400">
-          <p className="text-3xl mb-2">📱</p>
-          <p className="text-xs">Search and select a phone</p>
-        </div>
-      )}
-    </div>
-  )
-
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Compare phones</h1>
-          <p className="text-sm text-gray-400">Select two phones to compare specs side by side</p>
+          <p className="text-sm text-gray-400">Search and select two phones to compare</p>
         </div>
         {phoneA && phoneB && (
           <button onClick={copyShareLink}
             className={`text-xs px-4 py-2 rounded-xl border transition font-medium ${copied ? 'bg-green-50 border-green-200 text-green-600' : 'bg-white border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600'}`}>
-            {copied ? '✓ Link copied!' : '🔗 Share comparison'}
+            {copied ? '✓ Copied!' : '🔗 Share'}
           </button>
         )}
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-8">
-        <PhoneSelector side="a" phone={phoneA} search={searchA} setSearch={setSearchA} filtered={filteredA} />
-        <PhoneSelector side="b" phone={phoneB} search={searchB} setSearch={setSearchB} filtered={filteredB} />
+        <PhoneSelector side="a" phone={phoneA} phones={phones} onSelect={handleSelect} onRemove={handleRemove} />
+        <PhoneSelector side="b" phone={phoneB} phones={phones} onSelect={handleSelect} onRemove={handleRemove} />
       </div>
 
       {phoneA && phoneB && !loading && (
