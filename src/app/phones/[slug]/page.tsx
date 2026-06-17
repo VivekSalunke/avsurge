@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Reviews from '@/components/Reviews'
+import WishlistButton from '@/components/WishlistButton'
 import PriceHistory from '@/components/PriceHistory'
 
 export const revalidate = 60
@@ -78,6 +79,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
                 className="w-full bg-white border border-gray-200 text-gray-700 rounded-xl py-2.5 text-sm font-medium hover:bg-gray-50 transition text-center">
                 Check on Amazon →
               </a>
+              <WishlistButton phoneId={phone.id} />
               <Link href={`/compare?a=${phone.slug}`}
                 className="w-full text-center border border-dashed border-gray-300 text-gray-500 rounded-xl py-2.5 text-sm hover:border-blue-400 hover:text-blue-600 transition">
                 + Add to compare

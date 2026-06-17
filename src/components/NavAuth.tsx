@@ -66,6 +66,11 @@ export default function NavAuth() {
               </button>
             )}
             <button
+              onMouseDown={() => { setOpen(false); router.push('/wishlist') }}
+              className="w-full text-left text-xs text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded-lg transition">
+              ❤️ My Wishlist
+            </button>
+            <button
               onMouseDown={() => { setOpen(false); router.push('/profile') }}
               className="w-full text-left text-xs text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded-lg transition">
               My Profile
