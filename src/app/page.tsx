@@ -57,7 +57,7 @@ export default async function HomePage() {
 
   const PhoneCard = ({ phone }: { phone: any }) => (
     <Link href={`/phones/${phone.slug}`}
-      className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
+      className="bg-white border border-gray-200 rounded-xl p-3 text-center hover:border-blue-400 hover:shadow-sm transition group">
       <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 text-4xl overflow-hidden">
         {phone.image_url
           ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full" />
@@ -76,7 +76,7 @@ export default async function HomePage() {
       <div className="mb-10">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+            <h2 className="text-base font-bold text-gray-900">{title}</h2>
             {badge && <span className="text-xs bg-blue-100 text-blue-600 px-2.5 py-1 rounded-full font-medium">{badge}</span>}
           </div>
           <Link href={href} className="text-sm text-blue-600 hover:underline">See all →</Link>
@@ -114,15 +114,15 @@ export default async function HomePage() {
       </div>
 
       {/* Stats bar */}
-      <div className="grid grid-cols-3 gap-4 mb-10">
+      <div className="grid grid-cols-3 gap-3 mb-10">
         {[
           { label: 'Phones', value: (allPhones?.length || 0) + '+', icon: '📱' },
           { label: 'Brands', value: brands.length + '+', icon: '🏷️' },
           { label: 'Reviews', value: (reviews?.length || 0) + '+', icon: '⭐' },
         ].map(stat => (
-          <div key={stat.label} className="bg-white border border-gray-200 rounded-xl p-4 text-center">
-            <div className="text-2xl mb-1">{stat.icon}</div>
-            <div className="text-xl font-bold text-gray-900">{stat.value}</div>
+          <div key={stat.label} className="bg-white border border-gray-200 rounded-xl p-3 text-center">
+            <div className="text-xl mb-0.5">{stat.icon}</div>
+            <div className="text-base font-bold text-gray-900">{stat.value}</div>
             <div className="text-xs text-gray-400">{stat.label}</div>
           </div>
         ))}
@@ -164,7 +164,7 @@ export default async function HomePage() {
       {/* Brands */}
       {brands.length > 0 && (
         <div className="mb-10">
-          <h2 className="text-xl font-bold text-gray-900 mb-5">Browse by brand</h2>
+          <h2 className="text-base font-bold text-gray-900 mb-5">Browse by brand</h2>
           <div className="flex flex-wrap gap-2">
             {brands.map((brand: any) => (
               <Link key={brand} href={`/phones?brand=${brand}`}
