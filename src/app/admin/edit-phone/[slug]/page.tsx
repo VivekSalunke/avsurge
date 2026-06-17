@@ -58,6 +58,7 @@ export default function EditPhonePage() {
     if (newPrice && newPrice !== phone.price_inr) {
       await supabase.from('price_history').insert({
         phone_id: phone.id,
+        store: 'Amazon',
         price_inr: newPrice,
       })
     }
@@ -75,7 +76,8 @@ export default function EditPhonePage() {
     const validSpecs = specs.filter(s => s.label?.trim() && s.value?.trim())
     if (validSpecs.length > 0) {
       const { error: e2 } = await supabase.from('phone_specs').insert(
-        validSpecs.map(s => ({ phone_id: phone.id, category: s.category, label: s.label, value: s.value }))
+        validSpecs.map(s => ({ phone_id: phone.id,
+        store: 'Amazon', category: s.category, label: s.label, value: s.value }))
       )
       if (e2) { setError(e2.message); setStatus('error'); return }
     }
