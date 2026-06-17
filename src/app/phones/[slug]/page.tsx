@@ -4,6 +4,8 @@ import Link from 'next/link'
 import Reviews from '@/components/Reviews'
 import WishlistButton from '@/components/WishlistButton'
 import RelatedPhones from '@/components/RelatedPhones'
+import RecentlyViewed from '@/components/RecentlyViewed'
+import ViewTracker from '@/components/ViewTracker'
 import PriceHistory from '@/components/PriceHistory'
 
 export const revalidate = 60
@@ -133,7 +135,9 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
 
           <RelatedPhones phoneId={phone.id} brand={phone.brand} priceInr={phone.price_inr} />
           <PriceHistory phoneId={phone.id} currentPrice={phone.price_inr} />
+          <RecentlyViewed currentSlug={slug} />
           <Reviews phoneId={phone.id} />
+          <ViewTracker slug={slug} />
         </div>
       </div>
     </main>
