@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Reviews from '@/components/Reviews'
 import WishlistButton from '@/components/WishlistButton'
+import RelatedPhones from '@/components/RelatedPhones'
 import PriceHistory from '@/components/PriceHistory'
 
 export const revalidate = 60
@@ -130,6 +131,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
             </div>
           )}
 
+          <RelatedPhones phoneId={phone.id} brand={phone.brand} priceInr={phone.price_inr} />
           <PriceHistory phoneId={phone.id} currentPrice={phone.price_inr} />
           <Reviews phoneId={phone.id} />
         </div>
