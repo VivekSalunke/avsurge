@@ -2,11 +2,11 @@ import { supabase } from '@/lib/supabase'
 import { MetadataRoute } from 'next'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { data: phones } = await supabase.from('phones').select('slug, updated_at')
+  const { data: phones } = await supabase.from('phones').select('slug')
 
   const phoneUrls = (phones || []).map(phone => ({
     url: `https://avsurge.com/phones/${phone.slug}`,
-    lastModified: new Date(phone.updated_at || Date.now()),
+    lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }))
