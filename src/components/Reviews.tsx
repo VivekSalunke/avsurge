@@ -7,7 +7,6 @@ interface Review {
   id: number
   user_email: string
   rating: number
-  title: string
   body: string
   created_at: string
 }
@@ -17,7 +16,6 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
   const [reviews, setReviews] = useState<Review[]>([])
   const [rating, setRating] = useState(0)
   const [hovered, setHovered] = useState(0)
-  const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [status, setStatus] = useState<'idle'|'saving'|'success'|'error'>('idle')
   const [error, setError] = useState('')
@@ -40,8 +38,6 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
 
   const handleSubmit = async () => {
     if (!rating) { setError('Please select a rating'); setStatus('error'); return }
-    if (!title.trim()) { setError('Please add a title'); setStatus('error'); return }
-    if (!body.trim()) { setError('Please write a review'); setStatus('error'); return }
     setStatus('saving'); setError('')
 
     const { error: e } = await supabase.from('reviews').insert({
@@ -49,14 +45,14 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
       user_id: user?.id,
       user_email: user?.email,
       rating,
-      title: title.trim(),
-      body: body.trim(),
+      title: '',
+      body: body.trim() || null,
     })
 
     if (e) { setError(e.message); setStatus('error'); return }
 
     setStatus('success')
-    setRating(0); setTitle(''); setBody('')
+    setRating(0); setBody('')
     setShowForm(false)
     fetchReviews()
   }
@@ -76,7 +72,6 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-      {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 bg-gray-50 border-b border-gray-100">
         <div className="flex items-center gap-3">
           <span className="text-sm font-semibold text-gray-700">⭐ Reviews</span>
@@ -100,7 +95,6 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
         )}
       </div>
 
-      {/* Review form */}
       {showForm && (
         <div className="px-5 py-5 border-b border-gray-100 bg-blue-50/30">
           <h3 className="text-sm font-semibold text-gray-800 mb-4">Your review</h3>
@@ -109,7 +103,6 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
             <div className="bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-3 py-2 mb-3">{error}</div>
           )}
 
-          {/* Star rating */}
           <div className="mb-4">
             <label className="block text-xs font-medium text-gray-500 mb-2">Rating *</label>
             <div className="flex gap-1">
@@ -131,26 +124,15 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
             )}
           </div>
 
-          <div className="flex flex-col gap-3 mb-4">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Title *</label>
-              <input
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
-                placeholder="Summarize your experience"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Review *</label>
-              <textarea
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400 resize-none"
-                placeholder="Share your experience with this phone..."
-                rows={4}
-                value={body}
-                onChange={e => setBody(e.target.value)}
-              />
-            </div>
+          <div className="mb-4">
+            <label className="block text-xs font-medium text-gray-500 mb-1">Review <span className="text-gray-300">(optional)</span></label>
+            <textarea
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400 resize-none"
+              placeholder="Share your experience with this phone... (optional)"
+              rows={4}
+              value={body}
+              onChange={e => setBody(e.target.value)}
+            />
           </div>
 
           <div className="flex gap-2">
@@ -161,7 +143,7 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
               {status === 'saving' ? 'Posting…' : 'Post review'}
             </button>
             <button
-              onClick={() => { setShowForm(false); setRating(0); setTitle(''); setBody(''); setError('') }}
+              onClick={() => { setShowForm(false); setRating(0); setBody(''); setError('') }}
               className="px-4 py-2.5 border border-gray-200 text-gray-500 rounded-xl text-sm hover:bg-gray-50 transition">
               Cancel
             </button>
@@ -169,7 +151,6 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
         </div>
       )}
 
-      {/* Reviews list */}
       {reviews.length === 0 ? (
         <div className="px-5 py-12 text-center text-gray-400 text-sm">
           No reviews yet. Be the first to review!
@@ -190,7 +171,7 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
                 </div>
                 <div className="flex items-center gap-2">
                   {stars(review.rating, 'text-sm')}
-                  {(user?.email === review.user_email) && (
+                  {user?.email === review.user_email && (
                     <button
                       onClick={() => deleteReview(review.id)}
                       className="text-xs text-red-400 hover:text-red-600 ml-2">
@@ -199,8 +180,9 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
                   )}
                 </div>
               </div>
-              <p className="text-sm font-semibold text-gray-900 mb-1">{review.title}</p>
-              <p className="text-sm text-gray-600 leading-relaxed">{review.body}</p>
+              {review.body && (
+                <p className="text-sm text-gray-600 leading-relaxed">{review.body}</p>
+              )}
             </div>
           ))}
         </div>
