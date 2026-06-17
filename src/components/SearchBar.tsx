@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 
 export default function SearchBar() {
   const [query, setQuery] = useState('')
@@ -50,15 +49,13 @@ export default function SearchBar() {
     router.push('/phones/' + slug)
   }
 
-  const handleSearchPage = () => {
-    if (query.length >= 2) {
+  const handleEnter = () => {
+    if (query.length >= 1) {
       router.push('/search?q=' + encodeURIComponent(query))
-    } else {
-      router.push('/search')
+      setOpen(false)
+      setExpanded(false)
+      setQuery('')
     }
-    setOpen(false)
-    setExpanded(false)
-    setQuery('')
   }
 
   return (
@@ -76,9 +73,11 @@ export default function SearchBar() {
         </button>
       ) : (
         <div className="flex items-center gap-2 bg-white border border-blue-400 rounded-xl px-3 py-2 w-56 shadow-sm">
-          <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <button onClick={handleEnter}>
+            <svg className="w-4 h-4 text-gray-400 flex-shrink-0 hover:text-blue-500 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
           <input
             ref={inputRef}
             type="text"
@@ -86,15 +85,15 @@ export default function SearchBar() {
             value={query}
             onChange={e => setQuery(e.target.value)}
             onFocus={() => results.length > 0 && setOpen(true)}
-            onKeyDown={e => e.key === 'Enter' && handleSearchPage()}
+            onKeyDown={e => e.key === 'Enter' && handleEnter()}
             className="bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none w-full"
           />
           {loading ? (
             <div className="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-          ) : (
-            <button onClick={() => { setExpanded(false); setQuery(''); setOpen(false) }}
-              className="text-gray-400 hover:text-gray-600 flex-shrink-0 text-lg leading-none">x</button>
-          )}
+          ) : query ? (
+            <button onClick={() => { setQuery(''); setOpen(false) }}
+              className="text-gray-400 hover:text-gray-600 flex-shrink-0 text-lg leading-none">×</button>
+          ) : null}
         </div>
       )}
 
@@ -119,40 +118,12 @@ export default function SearchBar() {
               )}
             </button>
           ))}
-          <button
-            onClick={handleSearchPage}
-            className="w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 border-t border-gray-100 hover:bg-blue-50 transition">
-            <span className="text-xs text-gray-500">{results.length} result{results.length !== 1 ? 's' : ''} for "{query}"</span>
-            <span className="text-xs text-blue-600 font-medium flex items-center gap-1">
-              Advanced search + filters →
-            </span>
-          </button>
         </div>
       )}
 
       {open && query.length >= 2 && results.length === 0 && !loading && (
-        <div className="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg z-50 w-72 overflow-hidden">
-          <div className="px-4 py-3 text-sm text-gray-400">No phones found for "{query}"</div>
-          <button
-            onClick={handleSearchPage}
-            className="w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 border-t border-gray-100 hover:bg-blue-50 transition">
-            <span className="text-xs text-gray-500">Try advanced search</span>
-            <span className="text-xs text-blue-600 font-medium">Search with filters →</span>
-          </button>
-        </div>
-      )}
-
-      {expanded && !open && (
-        <div className="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg z-50 w-72 overflow-hidden">
-          <button
-            onClick={handleSearchPage}
-            className="w-full flex items-center justify-between px-4 py-3 hover:bg-blue-50 transition">
-            <div className="flex items-center gap-2">
-              <span className="text-lg">🔍</span>
-              <span className="text-sm text-gray-700 font-medium">Advanced search</span>
-            </div>
-            <span className="text-xs text-blue-600">Filter by brand, price, 5G →</span>
-          </button>
+        <div className="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg px-4 py-3 z-50 w-72">
+          <p className="text-sm text-gray-400">No phones found for "{query}"</p>
         </div>
       )}
     </div>
