@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Reviews from '@/components/Reviews'
 
 export const revalidate = 60
 
@@ -33,7 +34,6 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
-      {/* Breadcrumb */}
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-blue-600">Home</Link>
         <span>›</span>
@@ -45,7 +45,6 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left card */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-2xl border border-gray-200 p-6 sticky top-20">
             <div className="w-full aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-5 text-7xl overflow-hidden">
@@ -86,10 +85,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
           </div>
         </div>
 
-        {/* Right — specs */}
         <div className="lg:col-span-2 flex flex-col gap-5">
-
-          {/* Highlights */}
           {highlights.some(h => grouped[h]) && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {highlights.map(cat => {
@@ -106,7 +102,6 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
             </div>
           )}
 
-          {/* Spec tables */}
           {Object.entries(grouped).map(([category, catSpecs]: [string, any]) => (
             <div key={category} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
               <div className="flex items-center gap-2 px-5 py-3 bg-gray-50 border-b border-gray-100">
@@ -128,10 +123,12 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
 
           {specs.length === 0 && (
             <div className="bg-white rounded-2xl border border-dashed border-gray-200 py-16 text-center text-gray-400 text-sm">
-              No specs yet.{' '}
-              <Link href="/admin/add-phone" className="text-blue-500 hover:underline">Add specs →</Link>
+              No specs yet.
             </div>
           )}
+
+          {/* Reviews */}
+          <Reviews phoneId={phone.id} />
         </div>
       </div>
     </main>
@@ -144,7 +141,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!phone) return { title: 'Phone not found' }
   return {
     title: `${phone.name} Specs & Price in India`,
-    description: `${phone.name} full specifications, price in India (₹${phone.price_inr?.toLocaleString('en-IN') || 'N/A'}), camera, battery, display and more. Compare ${phone.name} on AVSurge.`,
+    description: `${phone.name} full specifications, price in India (₹${phone.price_inr?.toLocaleString('en-IN') || 'N/A'}), camera, battery, display and more.`,
     keywords: [phone.name, phone.brand, 'specs', 'price India', 'review'],
     openGraph: {
       title: `${phone.name} — Full Specs & Price`,
