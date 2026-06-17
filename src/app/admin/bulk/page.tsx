@@ -17,18 +17,35 @@ const SAMPLE = JSON.stringify([
   }
 ], null, 2)
 
-function similarity(a: string, b: string): number {
-  a = a.toLowerCase().replace(/[^a-z0-9]/g, '')
-  b = b.toLowerCase().replace(/[^a-z0-9]/g, '')
-  if (a === b) return 1
-  if (a.includes(b) || b.includes(a)) return 0.9
-  const longer = a.length > b.length ? a : b
-  const shorter = a.length > b.length ? b : a
+function normalize(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, '')
+}
+
+function isDuplicate(incoming: string, existing: string): boolean {
+  const a = normalize(incoming)
+  const b = normalize(existing)
+
+  // Exact match
+  if (a === b) return true
+
+  // Only flag if strings are very similar length AND one contains the other fully
+  if (a === b) return true
+
+  // Levenshtein distance for short strings
+  const maxLen = Math.max(a.length, b.length)
+  if (maxLen < 5) return a === b
+
+  // Count matching characters in sequence
   let matches = 0
-  for (let i = 0; i < shorter.length; i++) {
-    if (longer.includes(shorter[i])) matches++
+  let j = 0
+  for (let i = 0; i < a.length && j < b.length; i++) {
+    if (a[i] === b[j]) { matches++; j++ }
   }
-  return matches / longer.length
+  const ratio = matches / maxLen
+
+  // Only flag as duplicate if >95% match AND length difference is small
+  const lenDiff = Math.abs(a.length - b.length) / maxLen
+  return ratio > 0.95 && lenDiff < 0.05
 }
 
 export default function BulkImportPage() {
@@ -39,7 +56,7 @@ export default function BulkImportPage() {
   const [message, setMessage] = useState('')
   const [imported, setImported] = useState(0)
   const [duplicates, setDuplicates] = useState<any[]>([])
-  const [skipped, setSkipped] = useState<string[]>([])
+  const [toImport, setToImport] = useState<any[]>([])
   const [showDuplicates, setShowDuplicates] = useState(false)
 
   useEffect(() => {
@@ -47,66 +64,61 @@ export default function BulkImportPage() {
     if (!loading && user && !isAdmin) router.push('/')
   }, [user, isAdmin, loading])
 
-  const handleImport = async (skipDupes = false) => {
-    setStatus('checking'); setMessage(''); setImported(0); setDuplicates([]); setSkipped([])
+  const handleImport = async (skipDupes = false, phonesToImport?: any[]) => {
+    setStatus('checking'); setMessage(''); setImported(0)
 
-    let phones
-    try {
-      phones = JSON.parse(json)
-      if (!Array.isArray(phones)) throw new Error('Must be an array')
-    } catch (e: any) {
-      setMessage('Invalid JSON: ' + e.message); setStatus('error'); return
+    let phones = phonesToImport
+    if (!phones) {
+      try {
+        phones = JSON.parse(json)
+        if (!Array.isArray(phones)) throw new Error('Must be an array')
+      } catch (e: any) {
+        setMessage('Invalid JSON: ' + e.message); setStatus('error'); return
+      }
     }
 
-    // Fetch all existing phones for duplicate detection
     const { data: existing } = await supabase.from('phones').select('id, name, slug')
     const existingPhones = existing || []
 
-    // Check for duplicates
     const dupes: any[] = []
-    const toImport: any[] = []
+    const toImportList: any[] = []
 
-    for (const p of phones) {
+    for (const p of phones!) {
       const slug = p.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-      
-      // Check exact slug match
-      const exactMatch = existingPhones.find(e => e.slug === slug)
-      if (exactMatch) {
-        dupes.push({ incoming: p.name, existing: exactMatch.name, type: 'exact', id: exactMatch.id })
+      const exactSlug = existingPhones.find(e => e.slug === slug)
+      if (exactSlug) {
+        dupes.push({ incoming: p.name, existing: exactSlug.name, type: 'exact' })
         continue
       }
-
-      // Check fuzzy name match (>85% similarity)
-      const fuzzyMatch = existingPhones.find(e => similarity(e.name, p.name) > 0.85)
-      if (fuzzyMatch) {
-        dupes.push({ incoming: p.name, existing: fuzzyMatch.name, type: 'similar', id: fuzzyMatch.id })
+      const fuzzy = existingPhones.find(e => isDuplicate(e.name, p.name))
+      if (fuzzy) {
+        dupes.push({ incoming: p.name, existing: fuzzy.name, type: 'similar' })
         continue
       }
-
-      toImport.push(p)
+      toImportList.push(p)
     }
 
     if (dupes.length > 0 && !skipDupes) {
       setDuplicates(dupes)
+      setToImport(toImportList)
       setShowDuplicates(true)
       setStatus('idle')
       return
     }
 
-    // Import non-duplicate phones
+    const finalList = skipDupes ? toImportList : phones!
     setStatus('importing')
     let count = 0
-    const skippedNames: string[] = []
+    const skipped: string[] = []
 
-    for (const p of (skipDupes ? toImport : phones)) {
+    for (const p of finalList) {
       const slug = p.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-      
       const { data: phone, error: e1 } = await supabase
         .from('phones')
         .insert({ slug, name: p.name, brand: p.brand, price_inr: p.price_inr || null, released_at: p.released_at || null })
         .select().single()
 
-      if (e1) { skippedNames.push(`${p.name} (${e1.message})`); continue }
+      if (e1) { skipped.push(`${p.name} (${e1.message})`); continue }
 
       if (p.specs?.length > 0) {
         await supabase.from('phone_specs').insert(p.specs.map((s: any) => ({ phone_id: phone.id, ...s })))
@@ -115,10 +127,10 @@ export default function BulkImportPage() {
       setImported(count)
     }
 
-    setSkipped(skippedNames)
     setStatus('success')
-    setMessage(`Successfully imported ${count} phones!${skippedNames.length > 0 ? ` (${skippedNames.length} skipped)` : ''}`)
+    setMessage(`Successfully imported ${count} phones!${skipped.length > 0 ? ` (${skipped.length} errors)` : ''}`)
     setShowDuplicates(false)
+    setDuplicates([])
   }
 
   if (loading) return (
@@ -132,7 +144,7 @@ export default function BulkImportPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Bulk Import</h1>
-          <p className="text-sm text-gray-400">Paste a JSON array of phones — duplicates are detected automatically</p>
+          <p className="text-sm text-gray-400">Duplicates detected by exact slug + strict name matching</p>
         </div>
         <Link href="/admin" className="text-sm text-gray-500 hover:text-gray-700 px-3 py-2">← Admin</Link>
       </div>
@@ -140,11 +152,6 @@ export default function BulkImportPage() {
       {status === 'success' && (
         <div className="bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm mb-4">
           ✓ {message}
-          {skipped.length > 0 && (
-            <ul className="mt-2 text-xs">
-              {skipped.map((s, i) => <li key={i}>⚠ {s}</li>)}
-            </ul>
-          )}
         </div>
       )}
       {status === 'error' && (
@@ -156,30 +163,28 @@ export default function BulkImportPage() {
         </div>
       )}
 
-      {/* Duplicate warning */}
       {showDuplicates && duplicates.length > 0 && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
           <p className="text-sm font-semibold text-yellow-800 mb-3">
-            ⚠ {duplicates.length} duplicate{duplicates.length > 1 ? 's' : ''} detected
+            ⚠ {duplicates.length} duplicate{duplicates.length > 1 ? 's' : ''} detected — {toImport.length} new phones ready to import
           </p>
-          <div className="flex flex-col gap-2 mb-4">
+          <div className="flex flex-col gap-2 mb-4 max-h-48 overflow-y-auto">
             {duplicates.map((d, i) => (
               <div key={i} className="flex items-center gap-2 text-xs bg-white border border-yellow-200 rounded-lg px-3 py-2">
-                <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${d.type === 'exact' ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'}`}>
+                <span className={`px-1.5 py-0.5 rounded text-xs font-medium flex-shrink-0 ${d.type === 'exact' ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'}`}>
                   {d.type === 'exact' ? 'Exact' : 'Similar'}
                 </span>
-                <span className="text-gray-500">"{d.incoming}"</span>
-                <span className="text-gray-400">→</span>
-                <span className="text-gray-700 font-medium">"{d.existing}"</span>
-                <Link href={`/admin/edit-phone/${existingSlug(d.existing)}`} className="ml-auto text-blue-600 hover:underline">Edit existing</Link>
+                <span className="text-gray-500 truncate">"{d.incoming}"</span>
+                <span className="text-gray-400 flex-shrink-0">→</span>
+                <span className="text-gray-700 font-medium truncate">"{d.existing}"</span>
               </div>
             ))}
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => handleImport(true)}
+              onClick={() => handleImport(true, toImport)}
               className="flex-1 bg-yellow-500 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-yellow-600 transition">
-              Skip duplicates & import rest
+              Skip duplicates & import {toImport.length} new phones
             </button>
             <button
               onClick={() => { setShowDuplicates(false); setDuplicates([]) }}
@@ -204,8 +209,4 @@ export default function BulkImportPage() {
       </button>
     </main>
   )
-}
-
-function existingSlug(name: string) {
-  return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 }
