@@ -5,7 +5,8 @@ import { supabase } from '@/lib/supabase'
 interface PriceEntry {
   id: number
   price_inr: number
-  recorded_at: string
+  tracked_at: string
+  store: string
 }
 
 export default function PriceHistory({ phoneId, currentPrice }: { phoneId: number, currentPrice: number | null }) {
@@ -14,12 +15,12 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
   useEffect(() => { fetchHistory() }, [phoneId])
 
   const fetchHistory = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('price_history')
       .select('*')
       .eq('phone_id', phoneId)
-      .order('recorded_at', { ascending: true })
-    setHistory(data || [])
+      .order('tracked_at', { ascending: true })
+    if (!error) setHistory(data || [])
   }
 
   if (history.length === 0) return null
@@ -31,7 +32,6 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
   const priceChange = latestPrice - firstPrice
   const priceDrop = priceChange < 0
 
-  // Simple bar chart
   const chartMax = maxPrice * 1.05
   const chartMin = minPrice * 0.95
 
@@ -47,7 +47,6 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
       </div>
 
       <div className="px-5 py-4">
-        {/* Stats row */}
         <div className="grid grid-cols-3 gap-3 mb-5">
           <div className="bg-gray-50 rounded-xl p-3 text-center">
             <p className="text-xs text-gray-400 mb-1">Lowest</p>
@@ -63,7 +62,6 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
           </div>
         </div>
 
-        {/* Bar chart */}
         <div className="flex items-end gap-1.5 h-24 mb-2">
           {history.map((entry, i) => {
             const heightPct = ((entry.price_inr - chartMin) / (chartMax - chartMin)) * 100
@@ -74,24 +72,22 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
                   className={`w-full rounded-t-md transition-all ${isLatest ? 'bg-blue-500' : 'bg-blue-200 group-hover:bg-blue-300'}`}
                   style={{ height: `${Math.max(heightPct, 5)}%` }}
                 />
-                {/* Tooltip */}
                 <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none z-10">
                   ₹{entry.price_inr.toLocaleString('en-IN')}
                   <br />
-                  <span className="text-gray-400">{new Date(entry.recorded_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</span>
+                  <span className="text-gray-400">{new Date(entry.tracked_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</span>
                 </div>
               </div>
             )
           })}
         </div>
 
-        {/* X axis labels */}
         <div className="flex gap-1.5">
           {history.map((entry, i) => (
             <div key={entry.id} className="flex-1 text-center">
               {(i === 0 || i === history.length - 1) && (
                 <p className="text-xs text-gray-400 truncate">
-                  {new Date(entry.recorded_at).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' })}
+                  {new Date(entry.tracked_at).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' })}
                 </p>
               )}
             </div>
