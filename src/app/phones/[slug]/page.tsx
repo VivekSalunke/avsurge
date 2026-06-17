@@ -37,11 +37,11 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
     <main className="max-w-5xl mx-auto px-4 py-8">
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-blue-600">Home</Link>
-        <span>›</span>
+        <span>&rsaquo;</span>
         <Link href="/phones" className="hover:text-blue-600">Phones</Link>
-        <span>›</span>
+        <span>&rsaquo;</span>
         <Link href={`/phones?brand=${phone.brand}`} className="hover:text-blue-600">{phone.brand}</Link>
-        <span>›</span>
+        <span>&rsaquo;</span>
         <span className="text-gray-600">{phone.name}</span>
       </div>
 
