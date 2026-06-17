@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
+import { useAuth } from '@/context/AuthContext'
 
 const CATEGORIES = ['General','Display','Performance','Camera','Battery','Connectivity','Storage','Build']
 
 export default function EditPhonePage() {
   const router = useRouter()
   const params = useParams()
+  const { user, isAdmin, loading: authLoading } = useAuth()
   const [phone, setPhone] = useState<any>(null)
   const [name, setName] = useState('')
   const [brand, setBrand] = useState('')
@@ -21,8 +23,14 @@ export default function EditPhonePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!authLoading && !user) router.push('/login')
+    if (!authLoading && user && !isAdmin) router.push('/')
+  }, [user, isAdmin, authLoading])
+
+  useEffect(() => {
     const load = async () => {
-      const { data: p } = await supabase.from('phones').select('*').eq('slug', params.slug).single()
+      const slug = params?.slug as string
+      const { data: p } = await supabase.from('phones').select('*').eq('slug', slug).single()
       if (!p) { setLoading(false); return }
       setPhone(p)
       setName(p.name)
@@ -34,8 +42,8 @@ export default function EditPhonePage() {
       setSpecs(s || [])
       setLoading(false)
     }
-    load()
-  }, [params.slug])
+    if (!authLoading && isAdmin) load()
+  }, [params?.slug, authLoading, isAdmin])
 
   const updateSpec = (i: number, field: string, val: string) =>
     setSpecs(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: val } : s))
@@ -44,16 +52,25 @@ export default function EditPhonePage() {
     if (!name.trim() || !brand.trim()) { setError('Name and brand required'); setStatus('error'); return }
     setStatus('saving'); setError('')
 
+    const newPrice = price ? parseInt(price) : null
+
+    // Log price change if price changed
+    if (newPrice && newPrice !== phone.price_inr) {
+      await supabase.from('price_history').insert({
+        phone_id: phone.id,
+        price_inr: newPrice,
+      })
+    }
+
     const { error: e1 } = await supabase.from('phones').update({
       name, brand,
-      price_inr: price ? parseInt(price) : null,
+      price_inr: newPrice,
       image_url: imageUrl || null,
       released_at: releasedAt || null,
     }).eq('id', phone.id)
 
     if (e1) { setError(e1.message); setStatus('error'); return }
 
-    // Delete old specs and reinsert
     await supabase.from('phone_specs').delete().eq('phone_id', phone.id)
     const validSpecs = specs.filter(s => s.label?.trim() && s.value?.trim())
     if (validSpecs.length > 0) {
@@ -64,23 +81,30 @@ export default function EditPhonePage() {
     }
 
     setStatus('success')
-    setTimeout(() => router.push('/admin'), 1500)
+    setTimeout(() => router.push('/admin/phones'), 1500)
   }
 
-  if (loading) return <div className="max-w-2xl mx-auto px-4 py-16 text-center text-gray-400">Loading…</div>
-  if (!phone) return <div className="max-w-2xl mx-auto px-4 py-16 text-center text-gray-400">Phone not found.</div>
+  if (authLoading || loading) return (
+    <main className="min-h-screen flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+    </main>
+  )
+
+  if (!phone) return (
+    <main className="max-w-2xl mx-auto px-4 py-16 text-center text-gray-400">Phone not found.</main>
+  )
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-10">
       <div className="flex items-center gap-3 mb-8">
-        <Link href="/admin" className="text-sm text-gray-400 hover:text-blue-600">← Admin</Link>
+        <Link href="/admin/phones" className="text-sm text-gray-400 hover:text-blue-600">← Phones</Link>
         <span className="text-gray-300">/</span>
         <h1 className="text-xl font-bold text-gray-900">Edit — {phone.name}</h1>
       </div>
 
       {status === 'success' && (
         <div className="bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm mb-6">
-          ✓ Saved! Redirecting to admin…
+          ✓ Saved! Redirecting…
         </div>
       )}
       {status === 'error' && (
@@ -104,6 +128,7 @@ export default function EditPhonePage() {
             <label className="block text-xs font-medium text-gray-500 mb-1">Price (₹)</label>
             <input type="number" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
               value={price} onChange={e => setPrice(e.target.value)} />
+            <p className="text-xs text-gray-400 mt-1">Current: ₹{phone.price_inr?.toLocaleString('en-IN') || 'N/A'}</p>
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1">Release date</label>
@@ -114,6 +139,9 @@ export default function EditPhonePage() {
             <label className="block text-xs font-medium text-gray-500 mb-1">Image URL</label>
             <input className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
               value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
+            {imageUrl && (
+              <img src={imageUrl} alt="preview" className="mt-2 h-20 object-contain rounded-lg border border-gray-100" />
+            )}
           </div>
         </div>
       </div>
@@ -145,7 +173,7 @@ export default function EditPhonePage() {
           className="flex-1 bg-blue-600 text-white rounded-xl py-3 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-50">
           {status === 'saving' ? 'Saving…' : 'Save changes'}
         </button>
-        <Link href="/admin"
+        <Link href="/admin/phones"
           className="px-6 py-3 border border-gray-200 text-gray-500 rounded-xl text-sm font-medium hover:bg-gray-50 transition text-center">
           Cancel
         </Link>

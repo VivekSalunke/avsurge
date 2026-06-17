@@ -2,6 +2,87 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Reviews from '@/components/Reviews'
+import PriceHistory from '@/components/PriceHistory'
+
+export const revalidate = 60
+
+const ICONS: Record<string, string> = {
+  Display: '🖥️', Performance: '⚡', Camera: '📷',
+  Battery: '🔋', Connectivity: '📡', Build: '🏗️',
+  Storage: '💾', General: '📋',
+}
+
+async function getPhone(slug: string) {
+  const { data: phone } = await supabase.from('phones').select('*').eq('slug', slug).single()
+  if (!phone) return null
+  const { data: specs } = await supabase.from('phone_specs').select('*').eq('phone_id', phone.id).order('id')
+  return { phone, specs: specs || [] }
+}
+
+export default async function PhonePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const data = await getPhone(slug)
+  if (!data) notFound()
+  const { phone, specs } = data
+
+  const grouped = specs.reduce((acc: Record<string, any[]>, s: any) => {
+    if (!acc[s.category]) acc[s.category] = []
+    acc[s.category].push(s)
+    return acc
+  }, {})
+
+  const highlights = ['Camera', 'Battery', 'Display', 'Performance']
+
+  return (
+    <main className="max-w-5xl mx-auto px-4 py-8">
+      <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
+        <Link href="/" className="hover:text-blue-600">Home</Link>
+        <span>›</span>
+        <Link href="/phones" className="hover:text-blue-600">Phones</Link>
+        <span>›</span>
+        <Link href={`/phones?brand=${phone.brand}`} className="hover:text-blue-600">{phone.brand}</Link>
+        <span>›</span>
+        <span className="text-gray-600">{phone.name}</span>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 sticky top-20">
+            <div className="w-full aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-5 text-7xl overflow-hidden">
+              {phone.image_url
+                ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full" />
+                : '📱'}
+            </div>
+            <h1 className="text-xl font-bold text-gray-900 mb-1">{phone.name}</h1>
+            <p className="text-sm text-gray-400 mb-4">{phone.brand}</p>
+
+            {phone.price_inr && (
+              <div className="bg-blue-50 rounded-xl px-4 py-3 mb-4 text-center">
+                <div className="text-xs text-blue-400 mb-0.5">Starting price in India</div>
+                <div className="text-2xl font-bold text-blue-700">₹{phone.price_inr.toLocaleString('en-IN')}</div>
+              </div>
+            )}
+
+            {phone.released_at && (
+              <p className="text-xs text-gray-400 text-center mb-4">
+                Released {new Date(phone.released_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
+              </p>
+            )}
+
+            <div className="flex flex-col gap-2">
+              <a href={`https://www.flipkart.com/search?q=${encodeURIComponent(phone.name)}`} target="_blank"
+                className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-medium hover:bg-blue-700 transition text-center">
+                Check on Flipkart →
+              </a>
+              <a href={`https://www.amazon.in/s?k=${encodeURIComponent(phone.name)}`} target="_blank"
+                className="w-full
+
+cat > ~/avsurge/src/app/phones/\[slug\]/page.tsx << 'ENDOFFILE'
+import { supabase } from '@/lib/supabase'
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import Reviews from '@/components/Reviews'
+import PriceHistory from '@/components/PriceHistory'
 
 export const revalidate = 60
 
@@ -127,7 +208,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
             </div>
           )}
 
-          {/* Reviews */}
+          <PriceHistory phoneId={phone.id} currentPrice={phone.price_inr} />
           <Reviews phoneId={phone.id} />
         </div>
       </div>
