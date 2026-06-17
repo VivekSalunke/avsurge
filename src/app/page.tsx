@@ -4,83 +4,179 @@ import Link from 'next/link'
 export const revalidate = 60
 
 export default async function HomePage() {
-  const { data: phones } = await supabase
+  const { data: latestPhones } = await supabase
     .from('phones')
     .select('*')
     .order('created_at', { ascending: false })
-    .limit(12)
+    .limit(6)
 
-  const { data: brandsRaw } = await supabase
+  const { data: budgetPhones } = await supabase
     .from('phones')
-    .select('brand')
+    .select('*')
+    .lte('price_inr', 40000)
+    .order('price_inr', { ascending: true })
+    .limit(6)
 
+  const { data: premiumPhones } = await supabase
+    .from('phones')
+    .select('*')
+    .gte('price_inr', 80000)
+    .order('price_inr', { ascending: false })
+    .limit(6)
+
+  const { data: reviews } = await supabase
+    .from('reviews')
+    .select('phone_id, rating')
+
+  // Calculate top rated phones
+  const ratingMap: Record<number, { total: number; count: number }> = {}
+  for (const r of reviews || []) {
+    if (!ratingMap[r.phone_id]) ratingMap[r.phone_id] = { total: 0, count: 0 }
+    ratingMap[r.phone_id].total += r.rating
+    ratingMap[r.phone_id].count += 1
+  }
+
+  const { data: allPhones } = await supabase.from('phones').select('*')
+  const topRated = (allPhones || [])
+    .filter(p => ratingMap[p.id]?.count >= 1)
+    .sort((a, b) => {
+      const avgA = ratingMap[a.id].total / ratingMap[a.id].count
+      const avgB = ratingMap[b.id].total / ratingMap[b.id].count
+      return avgB - avgA
+    })
+    .slice(0, 6)
+
+  const { data: brandsRaw } = await supabase.from('phones').select('brand')
   const brands = [...new Set((brandsRaw || []).map((b: any) => b.brand))].sort()
+
+  const brandIcons: Record<string, string> = {
+    Samsung: '🔵', Apple: '🍎', OnePlus: '🔴', Google: '🟡',
+    Xiaomi: '🟠', Realme: '🟢', Vivo: '🔷', OPPO: '🟣',
+    Nothing: '⚫', iQOO: '🔸', Motorola: '🔹',
+  }
+
+  const PhoneCard = ({ phone }: { phone: any }) => (
+    <Link href={`/phones/${phone.slug}`}
+      className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
+      <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 text-4xl overflow-hidden">
+        {phone.image_url
+          ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full" />
+          : '📱'}
+      </div>
+      <p className="text-xs text-gray-400 mb-0.5">{phone.brand}</p>
+      <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{phone.name}</p>
+      {phone.price_inr && (
+        <p className="text-xs text-blue-600 font-medium mt-1">Rs.{phone.price_inr.toLocaleString('en-IN')}</p>
+      )}
+    </Link>
+  )
+
+  const Section = ({ title, href, phones, badge }: { title: string, href: string, phones: any[], badge?: string }) => (
+    phones.length > 0 ? (
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+            {badge && <span className="text-xs bg-blue-100 text-blue-600 px-2.5 py-1 rounded-full font-medium">{badge}</span>}
+          </div>
+          <Link href={href} className="text-sm text-blue-600 hover:underline">See all →</Link>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {phones.map((phone: any) => <PhoneCard key={phone.id} phone={phone} />)}
+        </div>
+      </div>
+    ) : null
+  )
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
 
       {/* Hero */}
-      <div className="bg-blue-600 rounded-2xl p-8 mb-10 text-white">
-        <p className="text-blue-200 text-sm mb-2 uppercase tracking-widest">India's phone database</p>
-        <h1 className="text-3xl font-bold mb-2">Find your perfect phone</h1>
-        <p className="text-blue-100 mb-6">Specs, prices, and comparisons for every phone in India</p>
-        <div className="flex gap-3">
-          <Link href="/phones" className="bg-white text-blue-600 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-50 transition">
-            Browse all phones
-          </Link>
-          <Link href="/finder" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
-            Phone finder →
-          </Link>
+      <div className="relative bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-8 mb-10 text-white overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+        <div className="relative">
+          <p className="text-blue-200 text-xs mb-2 uppercase tracking-widest font-medium">India's phone database</p>
+          <h1 className="text-3xl font-bold mb-2">Find your perfect phone</h1>
+          <p className="text-blue-100 mb-6 max-w-md">Specs, prices, comparisons and reviews for every smartphone in India.</p>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/phones" className="bg-white text-blue-600 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-50 transition">
+              Browse all phones
+            </Link>
+            <Link href="/finder" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
+              Phone finder →
+            </Link>
+            <Link href="/compare" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
+              Compare →
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* Latest phones */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-xl font-bold text-gray-900">Latest phones</h2>
-          <Link href="/phones" className="text-sm text-blue-600 hover:underline">See all →</Link>
-        </div>
+      {/* Stats bar */}
+      <div className="grid grid-cols-3 gap-4 mb-10">
+        {[
+          { label: 'Phones', value: (allPhones?.length || 0) + '+', icon: '📱' },
+          { label: 'Brands', value: brands.length + '+', icon: '🏷️' },
+          { label: 'Reviews', value: (reviews?.length || 0) + '+', icon: '⭐' },
+        ].map(stat => (
+          <div key={stat.label} className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+            <div className="text-2xl mb-1">{stat.icon}</div>
+            <div className="text-xl font-bold text-gray-900">{stat.value}</div>
+            <div className="text-xs text-gray-400">{stat.label}</div>
+          </div>
+        ))}
+      </div>
 
-        {phones && phones.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {phones.map((phone: any) => (
-              <Link key={phone.id} href={`/phones/${phone.slug}`}
-                className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
-                <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 text-4xl">
-                  {phone.image_url ? (
-                    <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full" />
-                  ) : '📱'}
-                </div>
-                <p className="text-xs text-gray-400 mb-0.5">{phone.brand}</p>
-                <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{phone.name}</p>
-                {phone.price_inr && (
-                  <p className="text-xs text-blue-600 font-medium mt-1">₹{phone.price_inr.toLocaleString('en-IN')}</p>
-                )}
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="bg-white border border-dashed border-gray-200 rounded-xl py-16 text-center">
-            <p className="text-gray-400 text-sm mb-3">No phones added yet</p>
-            <Link href="/admin/add-phone" className="text-blue-600 text-sm font-medium hover:underline">Add your first phone →</Link>
-          </div>
-        )}
+      {/* Latest phones */}
+      <Section title="Latest phones" href="/phones" phones={latestPhones || []} badge="New" />
+
+      {/* Top rated */}
+      {topRated.length > 0 && (
+        <Section title="Top rated" href="/phones" phones={topRated} badge="⭐ Rated" />
+      )}
+
+      {/* Budget phones */}
+      <Section title="Best under Rs.40,000" href="/phones?maxPrice=40000" phones={budgetPhones || []} badge="Budget" />
+
+      {/* Premium phones */}
+      <Section title="Premium phones" href="/phones?minPrice=80000" phones={premiumPhones || []} badge="Flagship" />
+
+      {/* Quick actions */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        <Link href="/compare" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
+          <div className="text-3xl mb-3">⚖️</div>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600">Compare phones</h3>
+          <p className="text-xs text-gray-400">Side by side spec comparison</p>
+        </Link>
+        <Link href="/finder" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
+          <div className="text-3xl mb-3">🔍</div>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600">Phone finder</h3>
+          <p className="text-xs text-gray-400">Find by budget, camera, battery</p>
+        </Link>
+        <Link href="/news" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
+          <div className="text-3xl mb-3">📰</div>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600">Latest news</h3>
+          <p className="text-xs text-gray-400">Reviews and phone news</p>
+        </Link>
       </div>
 
       {/* Brands */}
       {brands.length > 0 && (
-        <div>
+        <div className="mb-10">
           <h2 className="text-xl font-bold text-gray-900 mb-5">Browse by brand</h2>
           <div className="flex flex-wrap gap-2">
             {brands.map((brand: any) => (
               <Link key={brand} href={`/phones?brand=${brand}`}
-                className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-600 hover:border-blue-400 hover:text-blue-600 transition">
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-600 hover:border-blue-400 hover:text-blue-600 transition">
+                <span>{brandIcons[brand] || '📱'}</span>
                 {brand}
               </Link>
             ))}
           </div>
         </div>
       )}
+
     </main>
   )
 }
