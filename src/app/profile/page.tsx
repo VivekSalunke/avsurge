@@ -3,17 +3,20 @@ import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import Link from 'next/link'
 
 export default function ProfilePage() {
   const { user, loading, signOut } = useAuth()
   const router = useRouter()
   const [displayName, setDisplayName] = useState('')
-  const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [status, setStatus] = useState<'idle'|'saving'|'success'|'error'>('idle')
   const [deleteConfirm, setDeleteConfirm] = useState('')
   const [message, setMessage] = useState('')
   const [showDelete, setShowDelete] = useState(false)
+  const [reviews, setReviews] = useState<any[]>([])
+  const [wishlistCount, setWishlistCount] = useState(0)
+  const [stats, setStats] = useState({ reviews: 0, wishlist: 0, avgRating: 0 })
 
   useEffect(() => {
     if (!loading && !user) router.push('/login')
@@ -22,14 +25,30 @@ export default function ProfilePage() {
   useEffect(() => {
     if (user) {
       setDisplayName(user.user_metadata?.display_name || '')
+      fetchStats()
+      fetchReviews()
     }
   }, [user])
 
+  const fetchStats = async () => {
+    const { data: wl } = await supabase.from('wishlist').select('id').eq('user_id', user?.id)
+    const { data: rv } = await supabase.from('reviews').select('rating').eq('user_id', user?.id)
+    const avgRating = rv?.length ? (rv.reduce((a, r) => a + r.rating, 0) / rv.length).toFixed(1) : 0
+    setStats({ reviews: rv?.length || 0, wishlist: wl?.length || 0, avgRating: Number(avgRating) })
+  }
+
+  const fetchReviews = async () => {
+    const { data } = await supabase
+      .from('reviews')
+      .select('*, phones(name, slug, image_url)')
+      .eq('user_id', user?.id)
+      .order('created_at', { ascending: false })
+    setReviews(data || [])
+  }
+
   const handleSaveProfile = async () => {
     setStatus('saving'); setMessage('')
-    const { error } = await supabase.auth.updateUser({
-      data: { display_name: displayName }
-    })
+    const { error } = await supabase.auth.updateUser({ data: { display_name: displayName } })
     if (error) { setMessage(error.message); setStatus('error') }
     else { setMessage('Profile updated!'); setStatus('success') }
   }
@@ -40,24 +59,24 @@ export default function ProfilePage() {
     setStatus('saving'); setMessage('')
     const { error } = await supabase.auth.updateUser({ password: newPassword })
     if (error) { setMessage(error.message); setStatus('error') }
-    else { setMessage('Password updated!'); setStatus('success'); setNewPassword(''); setCurrentPassword('') }
+    else { setMessage('Password updated!'); setStatus('success'); setNewPassword('') }
   }
 
   const handleDeleteAccount = async () => {
-    if (deleteConfirm !== user?.email) {
-      setMessage('Email does not match'); setStatus('error'); return
-    }
-    setStatus('saving')
-    const { error } = await supabase.functions.invoke('delete-user')
-    if (error) {
-      // Fallback: just sign out if delete function not available
-      await signOut()
-      router.push('/')
-    } else {
-      await signOut()
-      router.push('/')
-    }
+    if (deleteConfirm !== user?.email) { setMessage('Email does not match'); setStatus('error'); return }
+    await signOut()
+    router.push('/')
   }
+
+  const deleteReview = async (id: number) => {
+    await supabase.from('reviews').delete().eq('id', id)
+    fetchReviews()
+    fetchStats()
+  }
+
+  const stars = (n: number) => [1,2,3,4,5].map(i => (
+    <span key={i} className={i <= n ? 'text-yellow-400' : 'text-gray-200'}>★</span>
+  ))
 
   if (loading) return (
     <main className="min-h-screen flex items-center justify-center">
@@ -66,9 +85,9 @@ export default function ProfilePage() {
   )
 
   return (
-    <main className="max-w-xl mx-auto px-4 py-10">
+    <main className="max-w-2xl mx-auto px-4 py-10">
       <h1 className="text-2xl font-bold text-gray-900 mb-1">My Profile</h1>
-      <p className="text-sm text-gray-400 mb-8">Manage your AVSurge account</p>
+      <p className="text-sm text-gray-400 mb-6">Manage your AVSurge account</p>
 
       {message && (
         <div className={`rounded-xl px-4 py-3 text-sm mb-6 border ${status === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
@@ -76,10 +95,44 @@ export default function ProfilePage() {
         </div>
       )}
 
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+          <p className="text-2xl font-bold text-blue-600">{stats.wishlist}</p>
+          <p className="text-xs text-gray-400 mt-1">Wishlisted</p>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+          <p className="text-2xl font-bold text-blue-600">{stats.reviews}</p>
+          <p className="text-xs text-gray-400 mt-1">Reviews</p>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+          <p className="text-2xl font-bold text-yellow-500">{stats.avgRating || '—'}</p>
+          <p className="text-xs text-gray-400 mt-1">Avg rating</p>
+        </div>
+      </div>
+
+      {/* Quick links */}
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        <Link href="/wishlist" className="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3 hover:border-blue-300 transition">
+          <span className="text-2xl">❤️</span>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">My Wishlist</p>
+            <p className="text-xs text-gray-400">{stats.wishlist} phones saved</p>
+          </div>
+        </Link>
+        <Link href="/search" className="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3 hover:border-blue-300 transition">
+          <span className="text-2xl">🔍</span>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">Find phones</p>
+            <p className="text-xs text-gray-400">Search & filter</p>
+          </div>
+        </Link>
+      </div>
+
       {/* Account info */}
       <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-4">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Account info</h2>
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-4 mb-5">
           <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xl font-bold">
             {user?.email?.[0].toUpperCase()}
           </div>
@@ -98,9 +151,7 @@ export default function ProfilePage() {
               onChange={e => setDisplayName(e.target.value)}
             />
           </div>
-          <button
-            onClick={handleSaveProfile}
-            disabled={status === 'saving'}
+          <button onClick={handleSaveProfile} disabled={status === 'saving'}
             className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-50">
             Save profile
           </button>
@@ -111,30 +162,53 @@ export default function ProfilePage() {
       <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-4">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Change password</h2>
         <div className="flex flex-col gap-3">
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">New password</label>
-            <input
-              type="password"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
-              placeholder="••••••••"
-              value={newPassword}
-              onChange={e => setNewPassword(e.target.value)}
-            />
-          </div>
-          <button
-            onClick={handleChangePassword}
-            disabled={status === 'saving'}
+          <input
+            type="password"
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+            placeholder="New password"
+            value={newPassword}
+            onChange={e => setNewPassword(e.target.value)}
+          />
+          <button onClick={handleChangePassword} disabled={status === 'saving'}
             className="w-full bg-gray-900 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-gray-800 transition disabled:opacity-50">
             Update password
           </button>
         </div>
       </div>
 
+      {/* Review history */}
+      {reviews.length > 0 && (
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-4">
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">My reviews</h2>
+          <div className="flex flex-col gap-3">
+            {reviews.map(review => (
+              <div key={review.id} className="flex items-start gap-3 border border-gray-100 rounded-xl p-3">
+                <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
+                  {review.phones?.image_url
+                    ? <img src={review.phones.image_url} alt={review.phones.name} className="object-contain w-full h-full" />
+                    : <span>📱</span>}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <Link href={`/phones/${review.phones?.slug}`} className="text-sm font-semibold text-gray-900 hover:text-blue-600 truncate block">
+                    {review.phones?.name}
+                  </Link>
+                  <div className="flex text-xs gap-0.5 my-0.5">{stars(review.rating)}</div>
+                  {review.body && <p className="text-xs text-gray-500 line-clamp-2">{review.body}</p>}
+                  <p className="text-xs text-gray-400 mt-1">{new Date(review.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                </div>
+                <button onClick={() => deleteReview(review.id)}
+                  className="text-xs text-red-400 hover:text-red-600 flex-shrink-0">
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Sign out */}
       <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-4">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Session</h2>
-        <button
-          onClick={() => { signOut(); router.push('/') }}
+        <button onClick={() => { signOut(); router.push('/') }}
           className="w-full border border-gray-200 text-gray-600 rounded-xl py-2.5 text-sm font-semibold hover:bg-gray-50 transition">
           Sign out
         </button>
@@ -145,8 +219,7 @@ export default function ProfilePage() {
         <h2 className="text-sm font-semibold text-red-500 uppercase tracking-wide mb-1">Danger zone</h2>
         <p className="text-xs text-gray-400 mb-4">Deleting your account is permanent and cannot be undone.</p>
         {!showDelete ? (
-          <button
-            onClick={() => setShowDelete(true)}
+          <button onClick={() => setShowDelete(true)}
             className="w-full border border-red-200 text-red-500 rounded-xl py-2.5 text-sm font-semibold hover:bg-red-50 transition">
             Delete account
           </button>
@@ -160,14 +233,11 @@ export default function ProfilePage() {
               onChange={e => setDeleteConfirm(e.target.value)}
             />
             <div className="flex gap-2">
-              <button
-                onClick={handleDeleteAccount}
-                disabled={status === 'saving'}
+              <button onClick={handleDeleteAccount} disabled={status === 'saving'}
                 className="flex-1 bg-red-500 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-red-600 transition disabled:opacity-50">
                 Confirm delete
               </button>
-              <button
-                onClick={() => { setShowDelete(false); setDeleteConfirm('') }}
+              <button onClick={() => { setShowDelete(false); setDeleteConfirm('') }}
                 className="flex-1 border border-gray-200 text-gray-500 rounded-xl py-2.5 text-sm font-semibold hover:bg-gray-50 transition">
                 Cancel
               </button>
