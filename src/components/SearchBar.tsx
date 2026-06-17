@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function SearchBar() {
   const [query, setQuery] = useState('')
@@ -49,6 +50,17 @@ export default function SearchBar() {
     router.push('/phones/' + slug)
   }
 
+  const handleSearchPage = () => {
+    if (query.length >= 2) {
+      router.push('/search?q=' + encodeURIComponent(query))
+    } else {
+      router.push('/search')
+    }
+    setOpen(false)
+    setExpanded(false)
+    setQuery('')
+  }
+
   return (
     <div ref={ref} className="relative flex items-center">
       {!expanded ? (
@@ -74,13 +86,14 @@ export default function SearchBar() {
             value={query}
             onChange={e => setQuery(e.target.value)}
             onFocus={() => results.length > 0 && setOpen(true)}
+            onKeyDown={e => e.key === 'Enter' && handleSearchPage()}
             className="bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none w-full"
           />
           {loading ? (
             <div className="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
           ) : (
             <button onClick={() => { setExpanded(false); setQuery(''); setOpen(false) }}
-              className="text-gray-400 hover:text-gray-600 flex-shrink-0 text-lg leading-none">×</button>
+              className="text-gray-400 hover:text-gray-600 flex-shrink-0 text-lg leading-none">x</button>
           )}
         </div>
       )}
@@ -101,20 +114,45 @@ export default function SearchBar() {
               </div>
               {phone.price_inr && (
                 <p className="text-xs text-blue-600 font-medium flex-shrink-0">
-                  ₹{phone.price_inr.toLocaleString('en-IN')}
+                  Rs.{phone.price_inr.toLocaleString('en-IN')}
                 </p>
               )}
             </button>
           ))}
-          <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
-            <p className="text-xs text-gray-400">{results.length} result{results.length !== 1 ? 's' : ''} for "{query}"</p>
-          </div>
+          <button
+            onClick={handleSearchPage}
+            className="w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 border-t border-gray-100 hover:bg-blue-50 transition">
+            <span className="text-xs text-gray-500">{results.length} result{results.length !== 1 ? 's' : ''} for "{query}"</span>
+            <span className="text-xs text-blue-600 font-medium flex items-center gap-1">
+              Advanced search + filters →
+            </span>
+          </button>
         </div>
       )}
 
       {open && query.length >= 2 && results.length === 0 && !loading && (
-        <div className="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg px-4 py-3 z-50 w-72">
-          <p className="text-sm text-gray-400">No phones found for "{query}"</p>
+        <div className="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg z-50 w-72 overflow-hidden">
+          <div className="px-4 py-3 text-sm text-gray-400">No phones found for "{query}"</div>
+          <button
+            onClick={handleSearchPage}
+            className="w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 border-t border-gray-100 hover:bg-blue-50 transition">
+            <span className="text-xs text-gray-500">Try advanced search</span>
+            <span className="text-xs text-blue-600 font-medium">Search with filters →</span>
+          </button>
+        </div>
+      )}
+
+      {expanded && !open && (
+        <div className="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg z-50 w-72 overflow-hidden">
+          <button
+            onClick={handleSearchPage}
+            className="w-full flex items-center justify-between px-4 py-3 hover:bg-blue-50 transition">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🔍</span>
+              <span className="text-sm text-gray-700 font-medium">Advanced search</span>
+            </div>
+            <span className="text-xs text-blue-600">Filter by brand, price, 5G →</span>
+          </button>
         </div>
       )}
     </div>
