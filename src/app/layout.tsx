@@ -9,8 +9,37 @@ import NavAuth from '@/components/NavAuth'
 const geist = Geist({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'AVSurge — Phone Specs & Reviews',
-  description: 'Phone specifications, reviews, comparisons and prices for India',
+  title: {
+    default: 'AVSurge — Phone Specs, Reviews & Prices in India',
+    template: '%s | AVSurge'
+  },
+  description: 'Compare phone specifications, prices, and reviews for every smartphone in India. Find the best phone for your budget with AVSurge.',
+  keywords: ['phone specs', 'mobile comparison', 'smartphone prices India', 'best phone India', 'phone finder'],
+  authors: [{ name: 'AVSurge' }],
+  creator: 'AVSurge',
+  publisher: 'AVSurge',
+  metadataBase: new URL('https://avsurge.com'),
+  alternates: { canonical: 'https://avsurge.com' },
+  openGraph: {
+    type: 'website',
+    locale: 'en_IN',
+    url: 'https://avsurge.com',
+    siteName: 'AVSurge',
+    title: 'AVSurge — Phone Specs, Reviews & Prices in India',
+    description: 'Compare phone specifications, prices, and reviews for every smartphone in India.',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'AVSurge' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AVSurge — Phone Specs & Reviews',
+    description: 'Compare phone specifications and prices for every smartphone in India.',
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' }
+  }
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -32,7 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <Link href="/news" className="hover:text-blue-600 transition">News</Link>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <SearchBar />
                 <NavAuth />
               </div>
@@ -50,6 +79,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Link href="/phones" className="hover:text-blue-600">Phones</Link>
                 <Link href="/compare" className="hover:text-blue-600">Compare</Link>
                 <Link href="/finder" className="hover:text-blue-600">Finder</Link>
+                <Link href="/news" className="hover:text-blue-600">News</Link>
+                <Link href="/sitemap.xml" className="hover:text-blue-600">Sitemap</Link>
               </div>
             </div>
           </footer>

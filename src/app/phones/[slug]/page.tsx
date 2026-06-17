@@ -137,3 +137,21 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
     </main>
   )
 }
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const { data: phone } = await supabase.from('phones').select('*').eq('slug', slug).single()
+  if (!phone) return { title: 'Phone not found' }
+  return {
+    title: `${phone.name} Specs & Price in India`,
+    description: `${phone.name} full specifications, price in India (₹${phone.price_inr?.toLocaleString('en-IN') || 'N/A'}), camera, battery, display and more. Compare ${phone.name} on AVSurge.`,
+    keywords: [phone.name, phone.brand, 'specs', 'price India', 'review'],
+    openGraph: {
+      title: `${phone.name} — Full Specs & Price`,
+      description: `${phone.name} specifications and price in India.`,
+      images: phone.image_url ? [{ url: phone.image_url }] : [],
+      url: `https://avsurge.com/phones/${slug}`,
+    },
+    alternates: { canonical: `https://avsurge.com/phones/${slug}` }
+  }
+}
