@@ -80,7 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Link href="/compare" className="hover:text-blue-600">Compare</Link>
                 <Link href="/finder" className="hover:text-blue-600">Finder</Link>
                 <Link href="/news" className="hover:text-blue-600">News</Link>
-                <Link href="/sitemap.xml" className="hover:text-blue-600">Sitemap</Link>
+                <Link href="/sitemap-page" className="hover:text-blue-600">Sitemap</Link>
               </div>
             </div>
           </footer>
