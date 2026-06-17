@@ -34,11 +34,11 @@ export default function NavAuth() {
   return (
     <div ref={ref} className="flex items-center gap-2">
       {isAdmin && (
-        <Link href="/admin/add-phone"
+        <Link href="/admin"
           className="group flex items-center gap-0 overflow-hidden bg-blue-100 hover:bg-blue-600 text-blue-600 hover:text-white rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
           <span className="font-bold text-lg leading-none">+</span>
           <span className="max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-200 text-xs font-medium group-hover:ml-1.5">
-            Add phone
+            Admin panel
           </span>
         </Link>
       )}
