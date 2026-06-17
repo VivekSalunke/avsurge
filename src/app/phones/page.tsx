@@ -40,7 +40,7 @@ export default async function PhonesPage({ searchParams }: { searchParams: Promi
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {phones.map((phone: any) => (
             <Link key={phone.id} href={`/phones/${phone.slug}`}
-              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
+              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 transition group card-hover">
               <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 text-4xl">
                 {phone.image_url ? (
                   <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full" />
