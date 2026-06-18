@@ -21,6 +21,11 @@ export const metadata: Metadata = {
   publisher: 'AVSurge',
   metadataBase: new URL('https://avsurge.com'),
   alternates: { canonical: 'https://avsurge.com' },
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_IN',
