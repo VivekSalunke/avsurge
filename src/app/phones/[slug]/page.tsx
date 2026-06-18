@@ -7,6 +7,7 @@ import RelatedPhones from '@/components/RelatedPhones'
 import RecentlyViewed from '@/components/RecentlyViewed'
 import ViewTracker from '@/components/ViewTracker'
 import PriceHistory from '@/components/PriceHistory'
+import PriceAlertButton from '@/components/PriceAlertButton'
 
 export const revalidate = 60
 
@@ -83,6 +84,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
                 Check on Amazon →
               </a>
               <WishlistButton phoneId={phone.id} />
+              <PriceAlertButton phoneId={phone.id} phoneName={phone.name} currentPrice={phone.price_inr} />
               <Link href={`/compare?a=${phone.slug}`}
                 className="w-full text-center border border-dashed border-gray-300 text-gray-500 rounded-xl py-2.5 text-sm hover:border-blue-400 hover:text-blue-600 transition">
                 + Add to compare
