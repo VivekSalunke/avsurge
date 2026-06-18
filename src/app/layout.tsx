@@ -68,6 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <Link href="/compare" className="hover:text-blue-600 transition">Compare</Link>
                   <Link href="/finder" className="hover:text-blue-600 transition">Finder</Link>
                   <Link href="/news" className="hover:text-blue-600 transition">News</Link>
+                  <Link href="/brands" className="hover:text-blue-600 transition">Brands</Link>
                 </div>
               </div>
               <div className="flex items-center gap-2">
