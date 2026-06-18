@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import PhoneOfTheDay from '@/components/PhoneOfTheDay'
 
 export const revalidate = 60
 
@@ -113,6 +114,7 @@ export default async function HomePage() {
         </div>
       </div>
 
+      <PhoneOfTheDay />
       {/* Stats bar */}
       <div className="grid grid-cols-3 gap-3 mb-10">
         {[
