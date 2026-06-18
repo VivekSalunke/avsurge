@@ -63,7 +63,7 @@ export default function PriceAlertButton({ phoneId, phoneName, currentPrice }: {
                 placeholder="you@example.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400 price-alert-input"
               />
             </div>
             <div>
@@ -76,7 +76,7 @@ export default function PriceAlertButton({ phoneId, phoneName, currentPrice }: {
                 placeholder="e.g. 45000"
                 value={targetPrice}
                 onChange={e => setTargetPrice(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400 price-alert-input"
               />
             </div>
           </div>
