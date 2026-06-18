@@ -92,7 +92,7 @@ export default async function PhoneOfTheDay() {
               </span>
               <a href={`https://www.amazon.in/s?k=${encodeURIComponent(phone.name)}`}
                 target="_blank"
-                onClick={e => e.stopPropagation()}
+                
                 className="inline-flex items-center gap-1.5 bg-white border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded-xl hover:border-blue-300 transition">
                 Buy on Amazon
               </a>
