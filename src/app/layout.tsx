@@ -5,6 +5,7 @@ import Link from 'next/link'
 import SearchBar from '@/components/SearchBar'
 import { AuthProvider } from '@/context/AuthContext'
 import NavAuth from '@/components/NavAuth'
+import Script from 'next/script'
 
 const geist = Geist({ subsets: ['latin'] })
 
@@ -45,6 +46,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3714977957944203"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className={`${geist.className} bg-gray-50 text-gray-900`}>
         <AuthProvider>
           <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -59,7 +68,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <Link href="/compare" className="hover:text-blue-600 transition">Compare</Link>
                   <Link href="/finder" className="hover:text-blue-600 transition">Finder</Link>
                   <Link href="/news" className="hover:text-blue-600 transition">News</Link>
-                  
                 </div>
               </div>
               <div className="flex items-center gap-2">
