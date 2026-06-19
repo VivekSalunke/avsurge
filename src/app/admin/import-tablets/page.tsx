@@ -50,10 +50,29 @@ export default function ImportTabletsPage() {
         </button>
 
         {status === 'done' && result && (
-          <div className="mt-4 bg-green-50 border border-green-200 rounded-xl p-4">
-            <p className="text-green-700 font-semibold">✅ {result.imported} tablets imported!</p>
+          <div className="mt-4 space-y-3">
+            {result.imported > 0 && (
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                <p className="text-green-700 font-semibold">✅ Successfully imported {result.imported} tablets!</p>
+              </div>
+            )}
             {result.duplicates > 0 && (
-              <p className="text-yellow-600 text-sm mt-1">⚠ {result.duplicates} duplicates skipped</p>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                <p className="text-yellow-700 font-semibold mb-2">⚠ {result.duplicates} duplicates detected — {result.imported} new tablets imported</p>
+                <div className="space-y-1">
+                  {result.duplicateNames.map((name: string, i: number) => (
+                    <p key={i} className="text-xs text-yellow-600">{name}</p>
+                  ))}
+                </div>
+              </div>
+            )}
+            {result.errors?.length > 0 && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                <p className="text-red-700 text-sm font-semibold mb-1">❌ {result.errors.length} errors:</p>
+                {result.errors.map((e: string, i: number) => (
+                  <p key={i} className="text-xs text-red-600">{e}</p>
+                ))}
+              </div>
             )}
           </div>
         )}

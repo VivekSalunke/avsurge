@@ -1,26 +1,52 @@
 import { supabase } from '@/lib/supabase'
 import { NextRequest, NextResponse } from 'next/server'
 
+function similarity(a: string, b: string): number {
+  a = a.toLowerCase().trim()
+  b = b.toLowerCase().trim()
+  if (a === b) return 1
+  const longer = a.length > b.length ? a : b
+  const shorter = a.length > b.length ? b : a
+  if (longer.length === 0) return 1
+  let matches = 0
+  for (let i = 0; i < shorter.length; i++) {
+    if (longer.includes(shorter[i])) matches++
+  }
+  return matches / longer.length
+}
+
 export async function POST(req: NextRequest) {
   const { tablets } = await req.json()
   if (!tablets || !Array.isArray(tablets)) {
     return NextResponse.json({ error: 'Invalid data' }, { status: 400 })
   }
 
+  const { data: existingTablets } = await supabase.from('tablets').select('id, name, slug')
+  const existing = existingTablets || []
+
   let imported = 0
   let duplicates = 0
   const duplicateNames: string[] = []
+  const errors: string[] = []
 
   for (const tablet of tablets) {
-    const { data: existing } = await supabase
-      .from('tablets')
-      .select('id, name')
-      .eq('slug', tablet.slug)
-      .single()
-
-    if (existing) {
+    // Exact slug match
+    const exactSlug = existing.find(e => e.slug === tablet.slug)
+    if (exactSlug) {
       duplicates++
-      duplicateNames.push(existing.name)
+      duplicateNames.push(`Exact "${tablet.name}" → "${exactSlug.name}"`)
+      continue
+    }
+
+    // Fuzzy name match (>90% similarity)
+    const fuzzyMatch = existing.find(e => {
+      const sim = similarity(e.name, tablet.name)
+      const lenDiff = Math.abs(e.name.length - tablet.name.length) / Math.max(e.name.length, tablet.name.length)
+      return sim > 0.9 && lenDiff < 0.1
+    })
+    if (fuzzyMatch) {
+      duplicates++
+      duplicateNames.push(`Similar "${tablet.name}" → "${fuzzyMatch.name}"`)
       continue
     }
 
@@ -37,7 +63,10 @@ export async function POST(req: NextRequest) {
       .select()
       .single()
 
-    if (error || !newTablet) continue
+    if (error || !newTablet) {
+      errors.push(tablet.name)
+      continue
+    }
 
     if (tablet.specs && tablet.specs.length > 0) {
       await supabase.from('tablet_specs').insert(
@@ -50,8 +79,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Add to existing list so subsequent tablets in same batch are also checked
+    existing.push({ id: newTablet.id, name: newTablet.name, slug: newTablet.slug })
     imported++
   }
 
-  return NextResponse.json({ imported, duplicates, duplicateNames })
+  return NextResponse.json({ imported, duplicates, duplicateNames, errors })
 }
