@@ -11,17 +11,17 @@ const BUDGET_PRESETS = [
   { label: 'Above 1L', min: 100000, max: 200000 },
 ]
 
-const RAM_OPTIONS = ['4GB', '6GB', '8GB', '12GB', '16GB', '16GB+']
-const STORAGE_OPTIONS = ['64GB', '128GB', '256GB', '512GB', '1TB']
-const CHARGING_OPTIONS = ['18W+', '33W+', '45W+', '67W+', '100W+', '120W+']
+const RAM_OPTIONS = ['4GB', '6GB', '8GB', '12GB', '16GB']
+const STORAGE_OPTIONS = ['64GB', '128GB', '256GB', '512GB']
+const CHARGING_OPTIONS = ['18W+', '33W+', '45W+', '67W+', '100W+']
 
 export default function FinderPage() {
-  const [allPhones, setAllPhones] = useState<any[]>([])
+  const [mode, setMode] = useState<'phones' | 'tablets'>('phones')
+  const [allItems, setAllItems] = useState<any[]>([])
   const [allSpecs, setAllSpecs] = useState<any[]>([])
   const [brands, setBrands] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Filters
   const [minBudget, setMinBudget] = useState(0)
   const [maxBudget, setMaxBudget] = useState(200000)
   const [selectedBrands, setSelectedBrands] = useState<string[]>([])
@@ -33,107 +33,107 @@ export default function FinderPage() {
   const [results, setResults] = useState<any[]>([])
 
   useEffect(() => {
-    async function load() {
-      const { data: phones } = await supabase.from('phones').select('*')
-      const { data: specs } = await supabase.from('phone_specs').select('*')
-      setAllPhones(phones || [])
+    loadData()
+  }, [mode])
+
+  const loadData = async () => {
+    setLoading(true)
+    reset(false)
+    if (mode === 'phones') {
+      const [{ data: items }, { data: specs }] = await Promise.all([
+        supabase.from('phones').select('*'),
+        supabase.from('phone_specs').select('*'),
+      ])
+      setAllItems(items || [])
       setAllSpecs(specs || [])
-      const b = [...new Set((phones || []).map((p: any) => p.brand))].sort()
-      setBrands(b as string[])
-      setLoading(false)
+      setBrands([...new Set((items || []).map((p: any) => p.brand))].sort() as string[])
+    } else {
+      const [{ data: items }, { data: specs }] = await Promise.all([
+        supabase.from('tablets').select('*'),
+        supabase.from('tablet_specs').select('*'),
+      ])
+      setAllItems(items || [])
+      setAllSpecs(specs || [])
+      setBrands([...new Set((items || []).map((t: any) => t.brand))].sort() as string[])
     }
-    load()
-  }, [])
+    setLoading(false)
+  }
 
   useEffect(() => {
     if (loading) return
 
+    const idKey = mode === 'phones' ? 'phone_id' : 'tablet_id'
     const specMap: Record<number, any[]> = {}
     for (const s of allSpecs) {
-      if (!specMap[s.phone_id]) specMap[s.phone_id] = []
-      specMap[s.phone_id].push(s)
+      if (!specMap[s[idKey]]) specMap[s[idKey]] = []
+      specMap[s[idKey]].push(s)
     }
 
-    const getSpec = (phoneId: number, label: string) =>
-      specMap[phoneId]?.find(s => s.label === label)?.value || ''
+    const getSpec = (id: number, label: string) =>
+      specMap[id]?.find(s => s.label === label)?.value || ''
 
     const parseNum = (val: string) => parseFloat(val.replace(/[^0-9.]/g, '')) || 0
 
-    let filtered = allPhones.filter(p => {
-      // Budget
+    let filtered = allItems.filter(p => {
       if (p.price_inr && (p.price_inr < minBudget || p.price_inr > maxBudget)) return false
-
-      // Brand
       if (selectedBrands.length > 0 && !selectedBrands.includes(p.brand)) return false
-
-      // 5G
       if (only5G && getSpec(p.id, '5G').toLowerCase() !== 'yes') return false
-
-      // RAM
-      if (minRAM) {
-        const minRAMNum = parseNum(minRAM)
-        const phoneRAM = parseNum(getSpec(p.id, 'RAM'))
-        if (phoneRAM < minRAMNum) return false
-      }
-
-      // Storage
-      if (minStorage) {
-        const minStorageNum = parseNum(minStorage)
-        const phoneStorage = parseNum(getSpec(p.id, 'Storage'))
-        if (phoneStorage < minStorageNum) return false
-      }
-
-      // Charging
-      if (minCharging) {
-        const minChargingNum = parseNum(minCharging)
-        const phoneCharging = parseNum(getSpec(p.id, 'Charging speed'))
-        if (phoneCharging < minChargingNum) return false
-      }
-
+      if (minRAM && parseNum(getSpec(p.id, 'RAM')) < parseNum(minRAM)) return false
+      if (minStorage && parseNum(getSpec(p.id, 'Storage')) < parseNum(minStorage)) return false
+      if (minCharging && parseNum(getSpec(p.id, 'Charging speed')) < parseNum(minCharging)) return false
       return true
     })
 
-    // Sort by priority
-    if (priority === 'camera') {
-      filtered = filtered.sort((a, b) => parseNum(getSpec(b.id, 'Main camera')) - parseNum(getSpec(a.id, 'Main camera')))
-    } else if (priority === 'battery') {
-      filtered = filtered.sort((a, b) => parseNum(getSpec(b.id, 'Capacity')) - parseNum(getSpec(a.id, 'Capacity')))
-    } else if (priority === 'charging') {
-      filtered = filtered.sort((a, b) => parseNum(getSpec(b.id, 'Charging speed')) - parseNum(getSpec(a.id, 'Charging speed')))
-    } else if (priority === 'display') {
-      filtered = filtered.sort((a, b) => parseNum(getSpec(b.id, 'Refresh rate')) - parseNum(getSpec(a.id, 'Refresh rate')))
-    } else if (priority === 'ram') {
-      filtered = filtered.sort((a, b) => parseNum(getSpec(b.id, 'RAM')) - parseNum(getSpec(a.id, 'RAM')))
-    } else {
-      filtered = filtered.sort((a, b) => (a.price_inr || 0) - (b.price_inr || 0))
-    }
+    if (priority === 'camera') filtered.sort((a, b) => parseNum(getSpec(b.id, 'Main camera')) - parseNum(getSpec(a.id, 'Main camera')))
+    else if (priority === 'battery') filtered.sort((a, b) => parseNum(getSpec(b.id, 'Capacity')) - parseNum(getSpec(a.id, 'Capacity')))
+    else if (priority === 'charging') filtered.sort((a, b) => parseNum(getSpec(b.id, 'Charging speed')) - parseNum(getSpec(a.id, 'Charging speed')))
+    else if (priority === 'display') filtered.sort((a, b) => parseNum(getSpec(b.id, 'Screen size')) - parseNum(getSpec(a.id, 'Screen size')))
+    else if (priority === 'ram') filtered.sort((a, b) => parseNum(getSpec(b.id, 'RAM')) - parseNum(getSpec(a.id, 'RAM')))
+    else filtered.sort((a, b) => (a.price_inr || 0) - (b.price_inr || 0))
 
     setResults(filtered)
-  }, [allPhones, allSpecs, minBudget, maxBudget, selectedBrands, only5G, minRAM, minStorage, minCharging, priority, loading])
+  }, [allItems, allSpecs, minBudget, maxBudget, selectedBrands, only5G, minRAM, minStorage, minCharging, priority, loading])
 
   const toggleBrand = (brand: string) =>
     setSelectedBrands(prev => prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand])
 
-  const reset = () => {
+  const reset = (reload = true) => {
     setMinBudget(0); setMaxBudget(200000); setSelectedBrands([])
     setOnly5G(false); setMinRAM(''); setMinStorage(''); setMinCharging(''); setPriority('')
   }
 
-  const fmt = (n: number) => 'Rs.' + n.toLocaleString('en-IN')
+  const fmt = (n: number) => '₹' + n.toLocaleString('en-IN')
 
   const activeFilters = [
-    selectedBrands.length > 0 && `${selectedBrands.join(', ')}`,
+    selectedBrands.length > 0 && selectedBrands.join(', '),
     only5G && '5G',
     minRAM && `${minRAM}+ RAM`,
     minStorage && `${minStorage}+ Storage`,
     minCharging && `${minCharging}+ Charging`,
   ].filter(Boolean)
 
+  const itemSlugBase = mode === 'phones' ? '/phones' : '/tablets'
+  const itemEmoji = mode === 'phones' ? '📱' : '📟'
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Phone Finder</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Finder</h1>
         <p className="text-sm text-gray-400 mt-1">Filter by budget, specs and what matters most</p>
+      </div>
+
+      {/* Mode toggle */}
+      <div className="flex gap-2 mb-6 bg-white border border-gray-200 rounded-xl p-1 w-fit">
+        <button
+          onClick={() => setMode('phones')}
+          className={`px-5 py-2 rounded-lg text-sm font-medium transition ${mode === 'phones' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+          📱 Phones
+        </button>
+        <button
+          onClick={() => setMode('tablets')}
+          className={`px-5 py-2 rounded-lg text-sm font-medium transition ${mode === 'tablets' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+          📟 Tablets
+        </button>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
@@ -176,7 +176,7 @@ export default function FinderPage() {
                 { key: 'camera', label: '📷 Best Camera' },
                 { key: 'battery', label: '🔋 Best Battery' },
                 { key: 'charging', label: '⚡ Fastest Charging' },
-                { key: 'display', label: '🖥️ Best Display' },
+                { key: 'display', label: '🖥️ Largest Display' },
                 { key: 'ram', label: '🚀 Most RAM' },
               ].map(p => (
                 <button key={p.key}
@@ -201,8 +201,7 @@ export default function FinderPage() {
               <label className="block text-xs font-medium text-gray-500 mb-1.5">Min RAM</label>
               <div className="flex flex-wrap gap-1.5">
                 {RAM_OPTIONS.map(r => (
-                  <button key={r}
-                    onClick={() => setMinRAM(minRAM === r ? '' : r)}
+                  <button key={r} onClick={() => setMinRAM(minRAM === r ? '' : r)}
                     className={`text-xs px-2.5 py-1 rounded-full border transition ${minRAM === r ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-500 hover:border-blue-400'}`}>
                     {r}
                   </button>
@@ -214,8 +213,7 @@ export default function FinderPage() {
               <label className="block text-xs font-medium text-gray-500 mb-1.5">Min Storage</label>
               <div className="flex flex-wrap gap-1.5">
                 {STORAGE_OPTIONS.map(s => (
-                  <button key={s}
-                    onClick={() => setMinStorage(minStorage === s ? '' : s)}
+                  <button key={s} onClick={() => setMinStorage(minStorage === s ? '' : s)}
                     className={`text-xs px-2.5 py-1 rounded-full border transition ${minStorage === s ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-500 hover:border-blue-400'}`}>
                     {s}
                   </button>
@@ -227,8 +225,7 @@ export default function FinderPage() {
               <label className="block text-xs font-medium text-gray-500 mb-1.5">Min Charging</label>
               <div className="flex flex-wrap gap-1.5">
                 {CHARGING_OPTIONS.map(c => (
-                  <button key={c}
-                    onClick={() => setMinCharging(minCharging === c ? '' : c)}
+                  <button key={c} onClick={() => setMinCharging(minCharging === c ? '' : c)}
                     className={`text-xs px-2.5 py-1 rounded-full border transition ${minCharging === c ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-500 hover:border-blue-400'}`}>
                     {c}
                   </button>
@@ -253,7 +250,7 @@ export default function FinderPage() {
             </div>
           </div>
 
-          <button onClick={reset}
+          <button onClick={() => reset()}
             className="w-full py-2.5 rounded-xl border border-gray-200 text-sm text-gray-500 hover:bg-gray-50 transition">
             Reset all filters
           </button>
@@ -269,29 +266,31 @@ export default function FinderPage() {
           )}
 
           {loading ? (
-            <div className="flex items-center justify-center h-60 text-gray-400 text-sm">Loading phones...</div>
+            <div className="flex items-center justify-center h-60 text-gray-400 text-sm">
+              Loading {mode}...
+            </div>
           ) : results.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-60 text-gray-400">
               <span className="text-3xl mb-2">😕</span>
-              <p className="text-sm">No phones match your filters.</p>
-              <button onClick={reset} className="mt-3 text-blue-600 text-sm hover:underline">Reset filters</button>
+              <p className="text-sm">No {mode} match your filters.</p>
+              <button onClick={() => reset()} className="mt-3 text-blue-600 text-sm hover:underline">Reset filters</button>
             </div>
           ) : (
             <>
-              <p className="text-sm text-gray-400 mb-4">{results.length} phone{results.length !== 1 ? 's' : ''} found</p>
+              <p className="text-sm text-gray-400 mb-4">{results.length} {mode === 'phones' ? 'phone' : 'tablet'}{results.length !== 1 ? 's' : ''} found</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {results.map(phone => (
-                  <Link key={phone.slug} href={`/phones/${phone.slug}`}
-                    className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group card-hover">
+                {results.map(item => (
+                  <Link key={item.slug} href={`${itemSlugBase}/${item.slug}`}
+                    className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
                     <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
-                      {phone.image_url
-                        ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full" />
-                        : <span className="text-4xl">📱</span>}
+                      {item.image_url
+                        ? <img src={item.image_url} alt={item.name} className="object-contain w-full h-full" />
+                        : <span className="text-4xl">{itemEmoji}</span>}
                     </div>
-                    <p className="text-xs text-gray-400 mb-0.5">{phone.brand}</p>
-                    <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{phone.name}</p>
-                    {phone.price_inr && (
-                      <p className="text-xs text-blue-600 font-medium mt-1">{fmt(phone.price_inr)}</p>
+                    <p className="text-xs text-gray-400 mb-0.5">{item.brand}</p>
+                    <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{item.name}</p>
+                    {item.price_inr && (
+                      <p className="text-xs text-blue-600 font-medium mt-1">{fmt(item.price_inr)}</p>
                     )}
                   </Link>
                 ))}
