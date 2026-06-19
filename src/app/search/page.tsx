@@ -7,11 +7,11 @@ import { Suspense } from 'react'
 
 const PRICE_RANGES = [
   { label: 'All prices', min: 0, max: 9999999 },
-  { label: 'Under Rs.15,000', min: 0, max: 15000 },
-  { label: 'Rs.15,000 – Rs.30,000', min: 15000, max: 30000 },
-  { label: 'Rs.30,000 – Rs.60,000', min: 30000, max: 60000 },
-  { label: 'Rs.60,000 – Rs.1,00,000', min: 60000, max: 100000 },
-  { label: 'Above Rs.1,00,000', min: 100000, max: 9999999 },
+  { label: 'Under ₹15,000', min: 0, max: 15000 },
+  { label: '₹15,000 – ₹30,000', min: 15000, max: 30000 },
+  { label: '₹30,000 – ₹60,000', min: 30000, max: 60000 },
+  { label: '₹60,000 – ₹1,00,000', min: 60000, max: 100000 },
+  { label: 'Above ₹1,00,000', min: 100000, max: 9999999 },
 ]
 
 const SORT_OPTIONS = [
@@ -26,33 +26,40 @@ function SearchContent() {
   const router = useRouter()
   const initialQ = searchParams.get('q') || ''
 
+  const [mode, setMode] = useState<'phones' | 'tablets'>('phones')
   const [query, setQuery] = useState(initialQ)
   const [results, setResults] = useState<any[]>([])
   const [brands, setBrands] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
 
-  // Filters
   const [selectedBrand, setSelectedBrand] = useState('')
   const [priceRange, setPriceRange] = useState(PRICE_RANGES[0])
   const [only5G, setOnly5G] = useState(false)
   const [sort, setSort] = useState('relevance')
 
   useEffect(() => {
-    supabase.from('phones').select('brand').then(({ data }) => {
-      const b = [...new Set((data || []).map((p: any) => p.brand))].sort()
-      setBrands(b as string[])
-    })
+    loadBrands()
     if (initialQ) doSearch(initialQ)
-  }, [])
+  }, [mode])
+
+  const loadBrands = async () => {
+    const table = mode === 'phones' ? 'phones' : 'tablets'
+    const { data } = await supabase.from(table).select('brand')
+    const b = [...new Set((data || []).map((p: any) => p.brand))].sort()
+    setBrands(b as string[])
+    setSelectedBrand('')
+  }
 
   const doSearch = useCallback(async (q: string) => {
     setLoading(true)
     setSearched(true)
 
-    let queryBuilder = supabase
-      .from('phones')
-      .select('*')
+    const table = mode === 'phones' ? 'phones' : 'tablets'
+    const specsTable = mode === 'phones' ? 'phone_specs' : 'tablet_specs'
+    const idKey = mode === 'phones' ? 'phone_id' : 'tablet_id'
+
+    let queryBuilder = supabase.from(table).select('*')
 
     if (q.length >= 2) {
       queryBuilder = queryBuilder.or(`name.ilike.%${q}%,brand.ilike.%${q}%`)
@@ -64,44 +71,71 @@ function SearchContent() {
 
     if (sort === 'price_asc') queryBuilder = queryBuilder.order('price_inr', { ascending: true })
     else if (sort === 'price_desc') queryBuilder = queryBuilder.order('price_inr', { ascending: false })
-    else if (sort === 'newest') queryBuilder = queryBuilder.order('released_at', { ascending: false })
+    else if (sort === 'newest') queryBuilder = queryBuilder.order('created_at', { ascending: false })
     else queryBuilder = queryBuilder.order('name', { ascending: true })
 
     const { data } = await queryBuilder.limit(50)
-    let phones = data || []
+    let items = data || []
 
-    // Filter 5G from specs if needed
     if (only5G) {
-      const phoneIds = phones.map(p => p.id)
+      const ids = items.map(p => p.id)
       const { data: specs } = await supabase
-        .from('phone_specs')
-        .select('phone_id')
-        .in('phone_id', phoneIds)
+        .from(specsTable)
+        .select(idKey)
+        .in(idKey, ids)
         .eq('label', '5G')
         .eq('value', 'Yes')
-      const fiveGIds = new Set((specs || []).map(s => s.phone_id))
-      phones = phones.filter(p => fiveGIds.has(p.id))
+      const fiveGIds = new Set((specs || []).map((s: any) => s[idKey]))
+      items = items.filter(p => fiveGIds.has(p.id))
     }
 
-    setResults(phones)
+    setResults(items)
     setLoading(false)
-  }, [selectedBrand, priceRange, only5G, sort])
+  }, [mode, selectedBrand, priceRange, only5G, sort])
 
   const handleSearch = () => {
     router.push(`/search?q=${encodeURIComponent(query)}`)
     doSearch(query)
   }
 
+  const switchMode = (newMode: 'phones' | 'tablets') => {
+    setMode(newMode)
+    setResults([])
+    setSearched(false)
+    setOnly5G(false)
+    setPriceRange(PRICE_RANGES[0])
+    setSort('relevance')
+  }
+
+  const itemBase = mode === 'phones' ? '/phones' : '/tablets'
+  const itemEmoji = mode === 'phones' ? '📱' : '📟'
+  const itemLabel = mode === 'phones' ? 'phone' : 'tablet'
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Search phones</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Search</h1>
+
+      {/* Mode toggle */}
+      <div className="flex gap-2 mb-5 bg-white border border-gray-200 rounded-xl p-1 w-fit">
+        <button
+          onClick={() => switchMode('phones')}
+          className={`px-5 py-2 rounded-lg text-sm font-medium transition ${mode === 'phones' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+          📱 Phones
+        </button>
+        <button
+          onClick={() => switchMode('tablets')}
+          className={`px-5 py-2 rounded-lg text-sm font-medium transition ${mode === 'tablets' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+          📟 Tablets
+        </button>
+      </div>
 
       {/* Search bar */}
       <div className="flex gap-3 mb-6">
         <input
           type="text"
           className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400"
-          placeholder="Search by phone name or brand..."
+          style={{ color: '#111827', backgroundColor: '#ffffff' }}
+          placeholder={`Search by ${itemLabel} name or brand...`}
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSearch()}
@@ -118,15 +152,14 @@ function SearchContent() {
         <div className="lg:col-span-1 flex flex-col gap-4">
           <div className="bg-white border border-gray-200 rounded-2xl p-4">
             <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Brand</h2>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5 max-h-48 overflow-y-auto">
               <button
                 onClick={() => setSelectedBrand('')}
                 className={`text-left text-sm px-3 py-2 rounded-lg transition ${!selectedBrand ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
                 All brands
               </button>
               {brands.map(b => (
-                <button
-                  key={b}
+                <button key={b}
                   onClick={() => setSelectedBrand(selectedBrand === b ? '' : b)}
                   className={`text-left text-sm px-3 py-2 rounded-lg transition ${selectedBrand === b ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
                   {b}
@@ -139,8 +172,7 @@ function SearchContent() {
             <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Price range</h2>
             <div className="flex flex-col gap-1.5">
               {PRICE_RANGES.map(range => (
-                <button
-                  key={range.label}
+                <button key={range.label}
                   onClick={() => setPriceRange(range)}
                   className={`text-left text-sm px-3 py-2 rounded-lg transition ${priceRange.label === range.label ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
                   {range.label}
@@ -162,8 +194,7 @@ function SearchContent() {
             <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Sort by</h2>
             <div className="flex flex-col gap-1.5">
               {SORT_OPTIONS.map(opt => (
-                <button
-                  key={opt.value}
+                <button key={opt.value}
                   onClick={() => setSort(opt.value)}
                   className={`text-left text-sm px-3 py-2 rounded-lg transition ${sort === opt.value ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
                   {opt.label}
@@ -184,7 +215,7 @@ function SearchContent() {
           {!searched && (
             <div className="bg-white border border-dashed border-gray-200 rounded-2xl py-24 text-center">
               <p className="text-4xl mb-3">🔍</p>
-              <p className="text-gray-400 text-sm">Search for a phone or apply filters</p>
+              <p className="text-gray-400 text-sm">Search for a {itemLabel} or apply filters</p>
             </div>
           )}
 
@@ -197,27 +228,27 @@ function SearchContent() {
           {searched && !loading && results.length === 0 && (
             <div className="bg-white border border-dashed border-gray-200 rounded-2xl py-20 text-center">
               <p className="text-3xl mb-3">😕</p>
-              <p className="text-gray-500 text-sm font-medium mb-1">No phones found</p>
+              <p className="text-gray-500 text-sm font-medium mb-1">No {itemLabel}s found</p>
               <p className="text-gray-400 text-xs">Try different filters or search terms</p>
             </div>
           )}
 
           {searched && !loading && results.length > 0 && (
             <div>
-              <p className="text-sm text-gray-400 mb-4">{results.length} phone{results.length !== 1 ? 's' : ''} found</p>
+              <p className="text-sm text-gray-400 mb-4">{results.length} {itemLabel}{results.length !== 1 ? 's' : ''} found</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {results.map(phone => (
-                  <Link key={phone.id} href={`/phones/${phone.slug}`}
+                {results.map(item => (
+                  <Link key={item.id} href={`${itemBase}/${item.slug}`}
                     className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
                     <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
-                      {phone.image_url
-                        ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full" />
-                        : <span className="text-4xl">📱</span>}
+                      {item.image_url
+                        ? <img src={item.image_url} alt={item.name} className="object-contain w-full h-full" />
+                        : <span className="text-4xl">{itemEmoji}</span>}
                     </div>
-                    <p className="text-xs text-gray-400 mb-0.5">{phone.brand}</p>
-                    <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition line-clamp-2">{phone.name}</p>
-                    {phone.price_inr && (
-                      <p className="text-xs text-blue-600 font-medium mt-1">Rs.{phone.price_inr.toLocaleString('en-IN')}</p>
+                    <p className="text-xs text-gray-400 mb-0.5">{item.brand}</p>
+                    <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition line-clamp-2">{item.name}</p>
+                    {item.price_inr && (
+                      <p className="text-xs text-blue-600 font-medium mt-1">₹{item.price_inr.toLocaleString('en-IN')}</p>
                     )}
                   </Link>
                 ))}
