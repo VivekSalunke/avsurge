@@ -31,6 +31,9 @@ export default async function TabletsPage({ searchParams }: { searchParams: Prom
         <p className="text-blue-200 text-xs mb-2 uppercase tracking-widest font-medium">India's tablet database</p>
         <h1 className="text-3xl font-bold mb-2">Find your perfect tablet</h1>
         <p className="text-blue-100 max-w-md">Specs, prices and comparisons for every tablet in India.</p>
+          <div className="flex gap-3 mt-6">
+            <Link href="/compare-tablets" className="bg-white text-blue-600 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-50 transition">Compare tablets →</Link>
+          </div>
       </div>
 
       {/* Brand filter */}
