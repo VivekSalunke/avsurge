@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import TabletReviews from '@/components/TabletReviews'
 import TabletWishlistButton from '@/components/TabletWishlistButton'
 
 export const revalidate = 60
@@ -127,6 +128,9 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
               No specs yet.
             </div>
           )}
+        </div>
+      </div>
+              <TabletReviews tabletId={tablet.id} />
         </div>
       </div>
     </main>
