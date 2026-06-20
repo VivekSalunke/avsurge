@@ -7,8 +7,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing query or phones' }, { status: 400 })
   }
 
-  // Limit to 50 phones to stay within token limits
-  const limitedPhones = phones.slice(0, 50)
+  const limitedPhones = phones.slice(0, 80)
 
   const phoneSummary = limitedPhones.map((p: any) =>
     `${p.name} (${p.brand}) - ₹${p.price_inr?.toLocaleString('en-IN')} - RAM: ${p.specs['RAM'] || 'N/A'}, Camera: ${p.specs['Main camera'] || 'N/A'}, Battery: ${p.specs['Capacity'] || 'N/A'}, Charging: ${p.specs['Charging speed'] || 'N/A'}, 5G: ${p.specs['5G'] || 'N/A'}, Chipset: ${p.specs['Chipset'] || 'N/A'}`
@@ -33,25 +32,29 @@ Respond ONLY with a JSON object in this exact format, no markdown, no extra text
 }`
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.3, maxOutputTokens: 500 },
-        }),
-      }
-    )
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://avsurge.com',
+        'X-Title': 'AVSurge',
+      },
+      body: JSON.stringify({
+        model: 'meta-llama/llama-3.1-8b-instruct:free',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 500,
+        temperature: 0.3,
+      }),
+    })
 
     const data = await response.json()
 
     if (!response.ok) {
-      return NextResponse.json({ error: 'Gemini API error', details: data }, { status: 500 })
+      return NextResponse.json({ error: 'OpenRouter API error', details: data }, { status: 500 })
     }
 
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    const text = data.choices?.[0]?.message?.content || ''
     const clean = text.replace(/```json|```/g, '').trim()
     const parsed = JSON.parse(clean)
     return NextResponse.json(parsed)
