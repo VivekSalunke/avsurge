@@ -128,9 +128,8 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
               No specs yet.
             </div>
           )}
-        </div>
-      </div>
-              <TabletReviews tabletId={tablet.id} />
+
+          <TabletReviews tabletId={tablet.id} />
         </div>
       </div>
     </main>
