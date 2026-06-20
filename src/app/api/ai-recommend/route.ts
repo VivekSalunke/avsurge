@@ -1,5 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+const FREE_MODELS = [
+  'meta-llama/llama-3.3-70b-instruct:free',
+  'deepseek/deepseek-r1:free',
+  'google/gemma-3-12b-it:free',
+  'qwen/qwen3-8b:free',
+]
+
+async function callOpenRouter(model: string, prompt: string) {
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://avsurge.com',
+      'X-Title': 'AVSurge',
+    },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 500,
+      temperature: 0.3,
+    }),
+  })
+  return response
+}
+
 export async function POST(req: NextRequest) {
   const { query, phones } = await req.json()
 
@@ -31,35 +57,28 @@ Respond ONLY with a JSON object in this exact format, no markdown, no extra text
   ]
 }`
 
-  try {
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://avsurge.com',
-        'X-Title': 'AVSurge',
-      },
-      body: JSON.stringify({
-        model: 'meta-llama/llama-3.3-70b-instruct:free',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 500,
-        temperature: 0.3,
-      }),
-    })
+  for (const model of FREE_MODELS) {
+    try {
+      const response = await callOpenRouter(model, prompt)
+      const data = await response.json()
 
-    const data = await response.json()
+      if (!response.ok || data.error) continue
 
-    if (!response.ok) {
-      return NextResponse.json({ error: 'OpenRouter API error', details: data }, { status: 500 })
+      const text = data.choices?.[0]?.message?.content || ''
+      const clean = text.replace(/```json|```/g, '').trim()
+
+      // Extract JSON from response
+      const jsonMatch = clean.match(/\{[\s\S]*\}/)
+      if (!jsonMatch) continue
+
+      const parsed = JSON.parse(jsonMatch[0])
+      if (parsed.recommendations) {
+        return NextResponse.json(parsed)
+      }
+    } catch {
+      continue
     }
-
-    const text = data.choices?.[0]?.message?.content || ''
-    const clean = text.replace(/```json|```/g, '').trim()
-    const parsed = JSON.parse(clean)
-    return NextResponse.json(parsed)
-
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
   }
+
+  return NextResponse.json({ error: 'All models unavailable. Please try again.' }, { status: 503 })
 }
