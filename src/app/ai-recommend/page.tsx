@@ -12,7 +12,7 @@ export default function AIRecommendPage() {
 
   const examples = [
     'Best camera phone under ₹30,000',
-    'Long battery life phone for heavy users under ₹20,000',
+    'Long battery life phone under ₹20,000',
     'Best gaming phone under ₹50,000 with 5G',
     'Compact phone with good performance under ₹40,000',
     'Best flagship phone with great display',
@@ -26,7 +26,6 @@ export default function AIRecommendPage() {
     setError('')
 
     try {
-      // Fetch phones from Supabase
       const { data: phones } = await supabase
         .from('phones')
         .select('id, name, brand, slug, price_inr, image_url')
@@ -40,7 +39,6 @@ export default function AIRecommendPage() {
 
       if (!phones) throw new Error('Failed to fetch phones')
 
-      // Build phone list for AI
       const specMap: Record<number, Record<string, string>> = {}
       for (const s of specs || []) {
         if (!specMap[s.phone_id]) specMap[s.phone_id] = {}
@@ -57,47 +55,17 @@ export default function AIRecommendPage() {
         specs: specMap[p.id] || {},
       }))
 
-      const phoneSummary = phoneList.map(p =>
-        `${p.name} (${p.brand}) - ₹${p.price_inr?.toLocaleString('en-IN')} - RAM: ${p.specs['RAM'] || 'N/A'}, Camera: ${p.specs['Main camera'] || 'N/A'}, Battery: ${p.specs['Capacity'] || 'N/A'}, Charging: ${p.specs['Charging speed'] || 'N/A'}, 5G: ${p.specs['5G'] || 'N/A'}, Chipset: ${p.specs['Chipset'] || 'N/A'}`
-      ).join('\n')
-
-      // Call Anthropic API
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('/api/ai-recommend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1000,
-          messages: [{
-            role: 'user',
-            content: `You are a phone recommendation expert for the Indian market. Based on the user's requirement, recommend the top 3-5 best phones from the list below.
-
-User requirement: "${query}"
-
-Available phones:
-${phoneSummary}
-
-Respond ONLY with a JSON object in this exact format, no markdown, no extra text:
-{
-  "explanation": "Brief 1-2 sentence explanation of your recommendation approach",
-  "recommendations": [
-    {
-      "name": "exact phone name from list",
-      "reason": "specific reason why this phone matches the requirement in 1-2 sentences"
-    }
-  ]
-}`
-          }]
-        })
+        body: JSON.stringify({ query, phones: phoneList }),
       })
 
-      const data = await response.json()
-      const text = data.content?.[0]?.text || ''
+      const parsed = await res.json()
+      if (!res.ok) throw new Error(parsed.error)
 
-      const parsed = JSON.parse(text.replace(/```json|```/g, '').trim())
       setExplanation(parsed.explanation)
 
-      // Match recommendations to full phone data
       const matched = parsed.recommendations.map((rec: any) => {
         const phone = phoneList.find(p =>
           p.name.toLowerCase() === rec.name.toLowerCase() ||
@@ -116,14 +84,12 @@ Respond ONLY with a JSON object in this exact format, no markdown, no extra text
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-8">
-      {/* Header */}
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">🤖</div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">AI Phone Recommender</h1>
         <p className="text-gray-400 text-sm">Describe what you need and AI will find the best phones for you</p>
       </div>
 
-      {/* Input */}
       <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">What are you looking for?</label>
         <textarea
@@ -161,14 +127,12 @@ Respond ONLY with a JSON object in this exact format, no markdown, no extra text
         </button>
       </div>
 
-      {/* Error */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-red-600 text-sm">
           {error}
         </div>
       )}
 
-      {/* Results */}
       {recommendations.length > 0 && (
         <div>
           {explanation && (
@@ -207,7 +171,7 @@ Respond ONLY with a JSON object in this exact format, no markdown, no extra text
           </div>
 
           <p className="text-xs text-gray-400 text-center mt-6">
-            Powered by Claude AI · Based on {`AVSurge's`} database of 250+ phones
+            Powered by Gemini AI · Based on AVSurge's database of 250+ phones
           </p>
         </div>
       )}
