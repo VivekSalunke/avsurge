@@ -6,6 +6,7 @@ import WishlistButton from '@/components/WishlistButton'
 import RelatedPhones from '@/components/RelatedPhones'
 import RecentlyViewed from '@/components/RecentlyViewed'
 import ViewTracker from '@/components/ViewTracker'
+import SpecExplainer from '@/components/SpecExplainer'
 import PriceHistory from '@/components/PriceHistory'
 import PhoneJsonLd from '@/components/PhoneJsonLd'
 import PriceAlertButton from '@/components/PriceAlertButton'
@@ -123,7 +124,10 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
                   {catSpecs.map((spec: any, i: number) => (
                     <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
                       <td className="px-5 py-3 text-sm text-gray-400 w-2/5">{spec.label}</td>
-                      <td className="px-5 py-3 text-sm text-gray-900 font-medium">{spec.value}</td>
+                      <td className="px-5 py-3 text-sm text-gray-900 font-medium">
+                      {spec.value}
+                      <SpecExplainer label={spec.label} value={spec.value} phoneName={phone.name} />
+                    </td>
                     </tr>
                   ))}
                 </tbody>
