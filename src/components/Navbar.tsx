@@ -46,6 +46,7 @@ export default function Navbar() {
               { href: '/finder', label: 'Phone Finder', desc: 'Find by budget & specs' },
               { href: '/brands', label: 'Brands', desc: 'Browse by brand' },
               { href: '/search', label: 'Advanced Search', desc: 'Filter by price, 5G, brand' },
+              { href: '/ai-recommend', label: '🤖 AI Recommender', desc: 'Get AI phone recommendations' },
             ]} />
             <NavDropdown label="Tablets" items={[
               { href: '/tablets', label: 'All Tablets', desc: 'Browse all tablets' },
