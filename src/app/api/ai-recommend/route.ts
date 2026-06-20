@@ -7,11 +7,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing query or phones' }, { status: 400 })
   }
 
-  const phoneSummary = phones.slice(0, 100).map((p: any) =>
+  // Limit to 50 phones to stay within token limits
+  const limitedPhones = phones.slice(0, 50)
+
+  const phoneSummary = limitedPhones.map((p: any) =>
     `${p.name} (${p.brand}) - ₹${p.price_inr?.toLocaleString('en-IN')} - RAM: ${p.specs['RAM'] || 'N/A'}, Camera: ${p.specs['Main camera'] || 'N/A'}, Battery: ${p.specs['Capacity'] || 'N/A'}, Charging: ${p.specs['Charging speed'] || 'N/A'}, 5G: ${p.specs['5G'] || 'N/A'}, Chipset: ${p.specs['Chipset'] || 'N/A'}`
   ).join('\n')
 
-  const prompt = `You are a phone recommendation expert for the Indian market. Based on the user's requirement, recommend the top 3-5 best phones from the list below.
+  const prompt = `You are a phone recommendation expert for the Indian market. Based on the user's requirement, recommend the top 3 best phones from the list below.
 
 User requirement: "${query}"
 
@@ -31,13 +34,13 @@ Respond ONLY with a JSON object in this exact format, no markdown, no extra text
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.3, maxOutputTokens: 1000 },
+          generationConfig: { temperature: 0.3, maxOutputTokens: 500 },
         }),
       }
     )
@@ -49,7 +52,6 @@ Respond ONLY with a JSON object in this exact format, no markdown, no extra text
     }
 
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
-
     const clean = text.replace(/```json|```/g, '').trim()
     const parsed = JSON.parse(clean)
     return NextResponse.json(parsed)
