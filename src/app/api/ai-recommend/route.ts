@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const FREE_MODELS = [
-  'meta-llama/llama-3.3-70b-instruct:free',
-  'deepseek/deepseek-r1:free',
-  'google/gemma-3-12b-it:free',
-  'qwen/qwen3-8b:free',
+  'openai/gpt-oss-20b:free',
+  'google/gemma-4-26b-a4b-it:free',
+  'qwen/qwen3-next-80b-a3b-instruct:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
 ]
 
 async function callOpenRouter(model: string, prompt: string) {
@@ -66,8 +66,6 @@ Respond ONLY with a JSON object in this exact format, no markdown, no extra text
 
       const text = data.choices?.[0]?.message?.content || ''
       const clean = text.replace(/```json|```/g, '').trim()
-
-      // Extract JSON from response
       const jsonMatch = clean.match(/\{[\s\S]*\}/)
       if (!jsonMatch) continue
 
