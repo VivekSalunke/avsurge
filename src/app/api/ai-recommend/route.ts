@@ -41,7 +41,7 @@ Respond ONLY with a JSON object in this exact format, no markdown, no extra text
         'X-Title': 'AVSurge',
       },
       body: JSON.stringify({
-        model: 'mistralai/mistral-7b-instruct:free',
+        model: 'meta-llama/llama-3.3-70b-instruct:free',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 500,
         temperature: 0.3,
