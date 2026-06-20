@@ -80,6 +80,7 @@ export default function ManageTabletsPage() {
                   <td className="px-5 py-3">
                     <div className="flex gap-3">
                       <Link href={`/tablets/${tablet.slug}`} className="text-xs text-blue-600 hover:underline">View</Link>
+                      <Link href={`/admin/edit-tablet/${tablet.slug}`} className="text-xs text-green-600 hover:underline">Edit</Link>
                       <button onClick={() => handleDelete(tablet.id, tablet.name)} className="text-xs text-red-500 hover:underline">Delete</button>
                     </div>
                   </td>
