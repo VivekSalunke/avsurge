@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import TabletReviews from '@/components/TabletReviews'
 import TabletWishlistButton from '@/components/TabletWishlistButton'
+import TabletPriceAlertButton from '@/components/TabletPriceAlertButton'
 
 export const revalidate = 60
 
@@ -79,6 +80,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
                 + Add to compare
               </Link>
               <TabletWishlistButton tabletId={tablet.id} />
+              <TabletPriceAlertButton tabletId={tablet.id} tabletName={tablet.name} currentPrice={tablet.price_inr} />
               <a href={`https://www.amazon.in/s?k=${encodeURIComponent(tablet.name)}`} target="_blank"
                 className="w-full bg-white border border-gray-200 text-gray-700 rounded-xl py-2.5 text-sm font-medium hover:bg-gray-50 transition text-center">
                 Check on Amazon →
