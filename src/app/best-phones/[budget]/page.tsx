@@ -62,7 +62,7 @@ export default async function UnderBudgetPage({ params }: { params: Promise<{ bu
         {VALID_BUDGETS.map(budget => (
           <Link
             key={budget}
-            href={`/best-phones/under-${budget}`}
+            href={`/best-phones/${budget}`}
             className={`px-3 py-1.5 rounded-full text-sm border transition ${
               budget === b
                 ? 'bg-blue-600 text-white border-blue-600'
