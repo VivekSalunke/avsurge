@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import TabletReviews from '@/components/TabletReviews'
 import TabletWishlistButton from '@/components/TabletWishlistButton'
+import SpecExplainer from '@/components/SpecExplainer'
 import TabletPriceAlertButton from '@/components/TabletPriceAlertButton'
 
 export const revalidate = 60
@@ -117,7 +118,12 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
                   {catSpecs.map((spec: any, i: number) => (
                     <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
                       <td className="px-5 py-3 text-sm text-gray-400 w-2/5">{spec.label}</td>
-                      <td className="px-5 py-3 text-sm text-gray-900 font-medium">{spec.value}</td>
+                      <td className="px-5 py-3 text-sm text-gray-900 font-medium">
+                        <div className="flex items-center gap-1">
+                          <span>{spec.value}</span>
+                          <SpecExplainer label={spec.label} value={spec.value} phoneName={tablet.name} />
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
