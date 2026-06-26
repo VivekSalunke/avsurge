@@ -1,9 +1,9 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Turnstile from 'react-turnstile'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -13,12 +13,7 @@ export default function LoginPage() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'success'>('idle')
   const [message, setMessage] = useState('')
   const [captchaToken, setCaptchaToken] = useState('')
-  const [turnstileKey, setTurnstileKey] = useState(0)
-
-  const resetTurnstile = () => {
-    setTurnstileKey(k => k + 1)
-    setCaptchaToken('')
-  }
+  const captchaRef = useRef<HCaptcha>(null)
 
   const handleSubmit = async () => {
     if (!email || !password) { setMessage('Email and password required'); setStatus('error'); return }
@@ -31,7 +26,7 @@ export default function LoginPage() {
         password,
         options: { captchaToken }
       })
-      if (error) { setMessage(error.message); setStatus('error'); resetTurnstile() }
+      if (error) { setMessage(error.message); setStatus('error'); captchaRef.current?.resetCaptcha() }
       else router.push('/')
     } else {
       const { error } = await supabase.auth.signUp({
@@ -39,7 +34,7 @@ export default function LoginPage() {
         password,
         options: { captchaToken }
       })
-      if (error) { setMessage(error.message); setStatus('error'); resetTurnstile() }
+      if (error) { setMessage(error.message); setStatus('error'); captchaRef.current?.resetCaptcha() }
       else { setMessage('Check your email for a confirmation link!'); setStatus('success') }
     }
   }
@@ -48,7 +43,8 @@ export default function LoginPage() {
     setMode(mode === 'login' ? 'signup' : 'login')
     setMessage('')
     setStatus('idle')
-    resetTurnstile()
+    setCaptchaToken('')
+    captchaRef.current?.resetCaptcha()
   }
 
   return (
@@ -99,13 +95,12 @@ export default function LoginPage() {
         </div>
 
         <div className="mb-4 flex justify-center">
-          <Turnstile
-            key={turnstileKey}
-            sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          <HCaptcha
+            ref={captchaRef}
+            sitekey="e132f9ca-dae8-4486-920e-96d2e9e6b00e"
             onVerify={(token) => setCaptchaToken(token)}
             onExpire={() => setCaptchaToken('')}
             onError={() => { setCaptchaToken(''); setMessage('Security check failed, please try again'); setStatus('error') }}
-            theme="light"
           />
         </div>
 
