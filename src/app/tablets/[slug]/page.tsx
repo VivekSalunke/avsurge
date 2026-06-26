@@ -4,6 +4,7 @@ import Link from 'next/link'
 import TabletReviews from '@/components/TabletReviews'
 import TabletWishlistButton from '@/components/TabletWishlistButton'
 import SpecExplainer from '@/components/SpecExplainer'
+import TabletJsonLd from '@/components/TabletJsonLd'
 import TabletPriceAlertButton from '@/components/TabletPriceAlertButton'
 
 export const revalidate = 60
@@ -37,6 +38,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
+      <TabletJsonLd tablet={tablet} specs={specs} />
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-blue-600">Home</Link>
         <span>&rsaquo;</span>
