@@ -144,6 +144,52 @@ export default async function HomePage() {
         ))}
       </div>
 
+      {/* Browse by Budget */}
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-base font-bold text-gray-900">Browse by budget</h2>
+        </div>
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+          {[
+            { label: 'Under ₹10K', budget: 10000 },
+            { label: 'Under ₹15K', budget: 15000 },
+            { label: 'Under ₹20K', budget: 20000 },
+            { label: 'Under ₹30K', budget: 30000 },
+            { label: 'Under ₹50K', budget: 50000 },
+            { label: 'Under ₹1L', budget: 100000 },
+          ].map(({ label, budget }) => (
+            <Link key={budget} href={`/best-phones/${budget}`}
+              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
+              <div className="text-2xl mb-1">💰</div>
+              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{label}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Browse by Budget */}
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-base font-bold text-gray-900">Browse by budget</h2>
+        </div>
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+          {[
+            { label: 'Under ₹10K', budget: 10000 },
+            { label: 'Under ₹15K', budget: 15000 },
+            { label: 'Under ₹20K', budget: 20000 },
+            { label: 'Under ₹30K', budget: 30000 },
+            { label: 'Under ₹50K', budget: 50000 },
+            { label: 'Under ₹1L', budget: 100000 },
+          ].map(({ label, budget }) => (
+            <Link key={budget} href={`/best-phones/${budget}`}
+              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
+              <div className="text-2xl mb-1">💰</div>
+              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{label}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* Latest phones */}
       <Section title="Latest phones" href="/phones" phones={latestPhones || []} badge="New" />
 
