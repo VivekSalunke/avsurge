@@ -9,14 +9,12 @@ async function getPhoneOfTheDay() {
 
   if (!phones || phones.length === 0) return null
 
-  // Rotate daily based on date
   const today = new Date()
   const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000)
   const index = dayOfYear % phones.length
 
   const phone = phones[index]
 
-  // Get top specs
   const { data: specs } = await supabase
     .from('phone_specs')
     .select('*')
@@ -43,29 +41,29 @@ export default async function PhoneOfTheDay() {
         </span>
       </div>
 
-      <Link href={`/phones/${phone.slug}`}
-        className="block bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-blue-300 hover:shadow-md transition group">
+      <div className="block bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-blue-300 hover:shadow-md transition group">
         <div className="grid grid-cols-1 md:grid-cols-3">
           {/* Image */}
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-8 min-h-48">
+          <Link href={`/phones/${phone.slug}`} className="bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-8 min-h-48">
             {phone.image_url
               ? <img src={phone.image_url} alt={phone.name} className="object-contain h-48 w-full" />
               : <span className="text-8xl">📱</span>}
-          </div>
+          </Link>
 
           {/* Info */}
           <div className="md:col-span-2 p-6 flex flex-col justify-center">
             <p className="text-xs text-gray-400 mb-1">{phone.brand}</p>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition">
-              {phone.name}
-            </h3>
+            <Link href={`/phones/${phone.slug}`}>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition">
+                {phone.name}
+              </h3>
+            </Link>
             {phone.price_inr && (
               <p className="text-xl font-bold text-blue-600 mb-4">
                 Rs.{phone.price_inr.toLocaleString('en-IN')}
               </p>
             )}
 
-            {/* Key specs grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
               {[
                 { label: 'Chipset', icon: '⚡' },
@@ -87,19 +85,20 @@ export default async function PhoneOfTheDay() {
             </div>
 
             <div className="flex gap-3">
-              <span className="inline-flex items-center gap-1.5 bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl group-hover:bg-blue-700 transition">
+              <Link href={`/phones/${phone.slug}`}
+                className="inline-flex items-center gap-1.5 bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition">
                 View full specs →
-              </span>
+              </Link>
               <a href={`https://www.amazon.in/s?k=${encodeURIComponent(phone.name)}`}
                 target="_blank"
-                
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 bg-white border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded-xl hover:border-blue-300 transition">
                 Buy on Amazon
               </a>
             </div>
           </div>
         </div>
-      </Link>
+      </div>
     </div>
   )
 }
