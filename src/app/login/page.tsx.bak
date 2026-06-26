@@ -1,9 +1,8 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Turnstile from 'react-turnstile'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -12,39 +11,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'success'>('idle')
   const [message, setMessage] = useState('')
-  const [captchaToken, setCaptchaToken] = useState('')
-  const turnstileRef = useRef<any>(null)
 
   const handleSubmit = async () => {
     if (!email || !password) { setMessage('Email and password required'); setStatus('error'); return }
-    if (!captchaToken) { setMessage('Please complete the security check'); setStatus('error'); return }
     setStatus('loading'); setMessage('')
 
     if (mode === 'login') {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-        options: { captchaToken }
-      })
-      if (error) { setMessage(error.message); setStatus('error'); turnstileRef.current?.reset() }
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) { setMessage(error.message); setStatus('error') }
       else router.push('/')
     } else {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { captchaToken }
-      })
-      if (error) { setMessage(error.message); setStatus('error'); turnstileRef.current?.reset() }
+      const { error } = await supabase.auth.signUp({ email, password })
+      if (error) { setMessage(error.message); setStatus('error') }
       else { setMessage('Check your email for a confirmation link!'); setStatus('success') }
     }
-  }
-
-  const handleModeSwitch = () => {
-    setMode(mode === 'login' ? 'signup' : 'login')
-    setMessage('')
-    setStatus('idle')
-    setCaptchaToken('')
-    turnstileRef.current?.reset()
   }
 
   return (
@@ -94,27 +74,17 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="mb-4 flex justify-center">
-          <Turnstile
-            ref={turnstileRef}
-            sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-            onVerify={(token) => setCaptchaToken(token)}
-            onExpire={() => setCaptchaToken('')}
-            onError={() => { setCaptchaToken(''); setMessage('Security check failed, please try again'); setStatus('error') }}
-            theme="light"
-          />
-        </div>
-
         <button
           onClick={handleSubmit}
-          disabled={status === 'loading' || !captchaToken}
+          disabled={status === 'loading'}
           className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-50 mb-4">
           {status === 'loading' ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Create account'}
         </button>
 
         <p className="text-xs text-center text-gray-400">
           {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-          <button onClick={handleModeSwitch} className="text-blue-600 font-medium hover:underline">
+          <button onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setMessage(''); setStatus('idle') }}
+            className="text-blue-600 font-medium hover:underline">
             {mode === 'login' ? 'Sign up' : 'Sign in'}
           </button>
         </p>
