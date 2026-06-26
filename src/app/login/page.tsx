@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -13,7 +13,12 @@ export default function LoginPage() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'success'>('idle')
   const [message, setMessage] = useState('')
   const [captchaToken, setCaptchaToken] = useState('')
-  const turnstileRef = useRef<any>(null)
+  const [turnstileKey, setTurnstileKey] = useState(0)
+
+  const resetTurnstile = () => {
+    setTurnstileKey(k => k + 1)
+    setCaptchaToken('')
+  }
 
   const handleSubmit = async () => {
     if (!email || !password) { setMessage('Email and password required'); setStatus('error'); return }
@@ -26,7 +31,7 @@ export default function LoginPage() {
         password,
         options: { captchaToken }
       })
-      if (error) { setMessage(error.message); setStatus('error'); turnstileRef.current?.reset() }
+      if (error) { setMessage(error.message); setStatus('error'); resetTurnstile() }
       else router.push('/')
     } else {
       const { error } = await supabase.auth.signUp({
@@ -34,7 +39,7 @@ export default function LoginPage() {
         password,
         options: { captchaToken }
       })
-      if (error) { setMessage(error.message); setStatus('error'); turnstileRef.current?.reset() }
+      if (error) { setMessage(error.message); setStatus('error'); resetTurnstile() }
       else { setMessage('Check your email for a confirmation link!'); setStatus('success') }
     }
   }
@@ -43,8 +48,7 @@ export default function LoginPage() {
     setMode(mode === 'login' ? 'signup' : 'login')
     setMessage('')
     setStatus('idle')
-    setCaptchaToken('')
-    turnstileRef.current?.reset()
+    resetTurnstile()
   }
 
   return (
@@ -96,7 +100,7 @@ export default function LoginPage() {
 
         <div className="mb-4 flex justify-center">
           <Turnstile
-            ref={turnstileRef}
+            key={turnstileKey}
             sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
             onVerify={(token) => setCaptchaToken(token)}
             onExpire={() => setCaptchaToken('')}
