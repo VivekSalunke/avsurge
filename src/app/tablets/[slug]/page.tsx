@@ -5,6 +5,7 @@ import TabletReviews from '@/components/TabletReviews'
 import TabletWishlistButton from '@/components/TabletWishlistButton'
 import SpecExplainer from '@/components/SpecExplainer'
 import TabletJsonLd from '@/components/TabletJsonLd'
+import TabletPriceHistory from '@/components/TabletPriceHistory'
 import TabletPriceAlertButton from '@/components/TabletPriceAlertButton'
 
 export const revalidate = 60
@@ -139,6 +140,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
             </div>
           )}
 
+          <TabletPriceHistory tabletId={tablet.id} currentPrice={tablet.price_inr} />
           <TabletReviews tabletId={tablet.id} />
         </div>
       </div>
