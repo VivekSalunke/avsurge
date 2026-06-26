@@ -60,6 +60,7 @@ export default function Navbar() {
           <div className="hidden md:flex gap-5 text-sm text-gray-500 items-center">
             <NavDropdown label="Phones" items={phoneItems} />
             <NavDropdown label="Tablets" items={tabletItems} />
+            <Link href="/laptops" className="hover:text-blue-600 transition">Laptops</Link>
             <Link href="/news" className="hover:text-blue-600 transition">News</Link>
             <Link href="/finder" className="hover:text-blue-600 transition">Finder</Link>
           </div>
