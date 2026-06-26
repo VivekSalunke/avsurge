@@ -21,6 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const uniqueBrands = [...seenBrands.values()]
 
   const BUDGETS = [10000, 15000, 20000, 30000, 50000, 100000]
+  const TABLET_BUDGETS = [10000, 20000, 30000, 50000, 100000, 150000]
 
   const phoneUrls = (phones || []).map(phone => ({
     url: `https://avsurge.com/phones/${phone.slug}`,
@@ -58,6 +59,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: 'https://avsurge.com/ai-recommend', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.6 },
     { url: 'https://avsurge.com/news', lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
     ...budgetUrls,
+    ...TABLET_BUDGETS.map(budget => ({
+      url: `https://avsurge.com/best-tablets/${budget}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    })),
     ...phoneUrls,
     ...tabletUrls,
     ...brandUrls,
