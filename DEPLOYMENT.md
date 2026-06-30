@@ -26,7 +26,9 @@ Visit [vercel.com](https://vercel.com) and connect your GitHub repository to Ver
 ### 2. Add Required Secrets to GitHub
 
 Go to your repository settings:
-- Settings → Secrets and Variables → Actions → New repository secret
+- Settings → **Secrets and variables** → **Actions** → **New repository secret**
+
+**Important**: Make sure you select the **Actions** scope (not Codespaces, Agents, or Dependabot)
 
 Add these secrets:
 
