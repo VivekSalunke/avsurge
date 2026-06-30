@@ -34,12 +34,52 @@ Add these secrets:
 
 | Secret Name | Value | Where to Find |
 |---|---|---|
-| `VERCEL_TOKEN` | Your Vercel API token | Vercel Dashboard → Settings → Tokens |
-| `VERCEL_ORG_ID` | Your Vercel Organization ID | Vercel Dashboard → Settings → General |
-| `VERCEL_PROJECT_ID` | Your Vercel Project ID | Vercel Project Settings → General |
-| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | Supabase Dashboard → Project Settings → API |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon key | Supabase Dashboard → Project Settings → API |
-| `NEXT_PUBLIC_HCAPTCHA_SITE_KEY` | Your hCaptcha site key | hCaptcha Dashboard |
+| `VERCEL_TOKEN` | Your Vercel API token | **Vercel Dashboard** → Settings (gear icon, top right) → **Tokens** → Click "Create" → Copy the token |
+| `VERCEL_ORG_ID` | Your Vercel Organization ID | **Vercel Dashboard** → Settings (gear icon) → **General** → Look for "Team ID" under "Organization" section → Copy it |
+| `VERCEL_PROJECT_ID` | Your Vercel Project ID | **Vercel Dashboard** → Select your **avsurge** project → Go to **Settings** tab → Copy "Project ID" from the top section |
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | **Supabase Dashboard** → Your project → **Settings** (gear icon) → **API** → Copy "Project URL" |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon key | **Supabase Dashboard** → Your project → **Settings** → **API** → Copy "anon public" key |
+| `NEXT_PUBLIC_HCAPTCHA_SITE_KEY` | Your hCaptcha site key | **hCaptcha Dashboard** → Your site → Copy "Site Key" |
+
+## Detailed Steps to Get Each Secret
+
+### VERCEL_TOKEN
+1. Go to https://vercel.com/dashboard
+2. Click your profile icon (top right) → **Settings**
+3. Left sidebar → **Tokens**
+4. Click **Create** button
+5. Name it (e.g., "GitHub Actions")
+6. Copy the token immediately (you won't see it again)
+7. Paste into GitHub as `VERCEL_TOKEN`
+
+### VERCEL_ORG_ID (Team ID)
+1. Go to https://vercel.com/dashboard
+2. Click profile icon (top right) → **Settings**
+3. Left sidebar → **General**
+4. Find section labeled **"Organization"** or **"Team"**
+5. Copy the ID shown (looks like: `team_xxxxx` or similar)
+6. Paste into GitHub as `VERCEL_ORG_ID`
+
+### VERCEL_PROJECT_ID
+1. Go to https://vercel.com/dashboard
+2. Click on your **avsurge** project
+3. Click **Settings** tab
+4. Look for **"Project ID"** near the top
+5. Copy it
+6. Paste into GitHub as `VERCEL_PROJECT_ID`
+
+### Supabase Secrets
+1. Go to https://app.supabase.com
+2. Select your project
+3. Click **Settings** (gear icon) → **API**
+4. Copy **"Project URL"** → Paste as `NEXT_PUBLIC_SUPABASE_URL`
+5. Copy **"anon public"** key → Paste as `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+### hCaptcha Secret
+1. Go to your hCaptcha dashboard
+2. Find your site
+3. Copy the **"Site Key"**
+4. Paste into GitHub as `NEXT_PUBLIC_HCAPTCHA_SITE_KEY`
 
 ### 3. Test the Workflow
 
