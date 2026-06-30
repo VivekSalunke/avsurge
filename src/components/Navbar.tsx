@@ -18,6 +18,12 @@ const tabletItems = [
   { href: '/compare-tablets', label: 'Compare Tablets', desc: 'Side by side comparison' },
 ]
 
+const laptopItems = [
+  { href: '/laptops', label: 'All Laptops', desc: 'Browse all laptops' },
+  { href: '/compare-laptops', label: 'Compare Laptops', desc: 'Side by side comparison' },
+  { href: '/best-laptops/50000', label: 'Browse by Budget', desc: 'Filter by price range' },
+]
+
 const NavDropdown = ({ label, items }: { label: string, items: { href: string, label: string, desc: string }[] }) => {
   const [open, setOpen] = useState(false)
   return (
@@ -60,7 +66,7 @@ export default function Navbar() {
           <div className="hidden md:flex gap-5 text-sm text-gray-500 items-center">
             <NavDropdown label="Phones" items={phoneItems} />
             <NavDropdown label="Tablets" items={tabletItems} />
-            <Link href="/laptops" className="hover:text-blue-600 transition">Laptops</Link>
+            <NavDropdown label="Laptops" items={laptopItems} />
             <Link href="/news" className="hover:text-blue-600 transition">News</Link>
             <Link href="/finder" className="hover:text-blue-600 transition">Finder</Link>
           </div>
@@ -124,6 +130,25 @@ export default function Navbar() {
               ))}
             </div>
           )}
+
+          {/* Laptops section */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl">
+            💻 Laptops
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          <div className="pl-4 space-y-1">
+            {laptopItems.map(item => (
+              <Link key={item.href} href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                {item.label}
+              </Link>
+            ))}
+          </div>
 
           {/* Direct links */}
           <Link href="/news" onClick={() => setMobileOpen(false)}
