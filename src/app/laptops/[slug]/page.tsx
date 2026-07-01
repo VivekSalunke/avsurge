@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import SpecExplainer from '@/components/SpecExplainer'
 export const revalidate = 60
 const ICONS: Record<string, string> = {
   Display: '🖥️', Performance: '⚡', Storage: '💾',
@@ -93,7 +94,12 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
                   {catSpecs.map((spec: any, i: number) => (
                     <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
                       <td className="px-5 py-3 text-sm text-gray-400 w-2/5">{spec.label}</td>
-                      <td className="px-5 py-3 text-sm text-gray-900 font-medium">{spec.value}</td>
+                      <td className="px-5 py-3 text-sm text-gray-900 font-medium">
+                        <div className="flex items-center gap-1">
+                          <span>{spec.value}</span>
+                          <SpecExplainer label={spec.label} value={spec.value} phoneName={laptop.name} />
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
