@@ -13,7 +13,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     supabase.from('laptops').select('slug'),
   ])
 
-  // Deduplicate brands case-insensitively
   const seenBrands = new Map<string, string>()
   for (const b of (brands || [])) {
     const key = b.brand.toLowerCase()
@@ -22,8 +21,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const uniqueBrands = [...seenBrands.values()]
 
   const BUDGETS = [10000, 15000, 20000, 30000, 50000, 100000]
-  const LAPTOP_BUDGETS = [30000, 50000, 70000, 100000, 150000, 200000]
   const TABLET_BUDGETS = [10000, 20000, 30000, 50000, 100000, 150000]
+  const LAPTOP_BUDGETS = [30000, 50000, 70000, 100000, 150000, 200000]
 
   const phoneUrls = (phones || []).map(phone => ({
     url: `https://avsurge.com/phones/${phone.slug}`,
@@ -31,18 +30,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }))
+
   const tabletUrls = (tablets || []).map(tablet => ({
     url: `https://avsurge.com/tablets/${tablet.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }))
+
+  const laptopUrls = (laptops || []).map(laptop => ({
+    url: `https://avsurge.com/laptops/${laptop.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }))
+
   const brandUrls = uniqueBrands.map(brand => ({
     url: `https://avsurge.com/brands/${encodeURIComponent(brand)}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.6,
   }))
+
   const budgetUrls = BUDGETS.map(budget => ({
     url: `https://avsurge.com/best-phones/${budget}`,
     lastModified: new Date(),
@@ -54,25 +63,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: 'https://avsurge.com', lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
     { url: 'https://avsurge.com/phones', lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: 'https://avsurge.com/tablets', lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+    { url: 'https://avsurge.com/laptops', lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: 'https://avsurge.com/compare', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: 'https://avsurge.com/compare-tablets', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+    { url: 'https://avsurge.com/compare-laptops', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: 'https://avsurge.com/finder', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: 'https://avsurge.com/brands', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: 'https://avsurge.com/ai-recommend', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.6 },
     { url: 'https://avsurge.com/news', lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
-    { url: 'https://avsurge.com/laptops', lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.9 },
-    { url: 'https://avsurge.com/compare-laptops', lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
     ...budgetUrls,
-    ...(laptops || []).map(l => ({ url: \`https://avsurge.com/laptops/\${l.slug}\`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 })),
-    ...LAPTOP_BUDGETS.map(budget => ({ url: \`https://avsurge.com/best-laptops/\${budget}\`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 })),
     ...TABLET_BUDGETS.map(budget => ({
       url: `https://avsurge.com/best-tablets/${budget}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),
+    ...LAPTOP_BUDGETS.map(budget => ({
+      url: `https://avsurge.com/best-laptops/${budget}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    })),
     ...phoneUrls,
     ...tabletUrls,
+    ...laptopUrls,
     ...brandUrls,
   ]
 }
