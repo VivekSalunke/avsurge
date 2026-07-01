@@ -14,6 +14,7 @@ export default async function HomePage() {
     { data: brandsRaw },
     { data: latestTablets },
     { data: allTablets },
+    { data: latestLaptops },
   ] = await Promise.all([
     supabase.from('phones').select('*').order('created_at', { ascending: false }).limit(6),
     supabase.from('phones').select('*').lte('price_inr', 40000).order('price_inr', { ascending: true }).limit(6),
@@ -23,6 +24,7 @@ export default async function HomePage() {
     supabase.from('phones').select('brand'),
     supabase.from('tablets').select('*').order('created_at', { ascending: false }).limit(6),
     supabase.from('tablets').select('id'),
+    supabase.from('laptops').select('*').order('created_at', { ascending: false }).limit(6),
   ])
 
   // Top rated phones
@@ -81,6 +83,22 @@ export default async function HomePage() {
     </Link>
   )
 
+  const LaptopCard = ({ laptop }: { laptop: any }) => (
+    <Link href={`/laptops/${laptop.slug}`}
+      className="bg-white border border-gray-200 rounded-xl p-3 text-center hover:border-blue-400 hover:shadow-sm transition group">
+      <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
+        {laptop.image_url
+          ? <img src={laptop.image_url} alt={laptop.name} className="object-contain w-full h-full" />
+          : <span className="text-4xl">💻</span>}
+      </div>
+      <p className="text-xs text-gray-400 mb-0.5">{laptop.brand}</p>
+      <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{laptop.name}</p>
+      {laptop.price_inr && (
+        <p className="text-xs text-blue-600 font-medium mt-1">₹{laptop.price_inr.toLocaleString('en-IN')}</p>
+      )}
+    </Link>
+  )
+
   const Section = ({ title, href, phones, badge }: { title: string, href: string, phones: any[], badge?: string }) => (
     phones.length > 0 ? (
       <div className="mb-10">
@@ -135,6 +153,7 @@ export default async function HomePage() {
           { label: 'Tablets', value: (allTablets?.length || 0) + '+', icon: '📟' },
           { label: 'Brands', value: brands.length + '+', icon: '🏷️' },
           { label: 'Reviews', value: (reviews?.length || 0) + '+', icon: '⭐' },
+          { label: 'Laptops', value: (latestLaptops?.length || 0) + '+', icon: '💻' },
         ].map(stat => (
           <div key={stat.label} className="bg-white border border-gray-200 rounded-xl p-3 text-center">
             <div className="text-xl mb-0.5">{stat.icon}</div>
@@ -193,6 +212,22 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {(latestTablets || []).map((tablet: any) => <TabletCard key={tablet.id} tablet={tablet} />)}
+          </div>
+        </div>
+      )}
+
+      {/* Latest laptops */}
+      {(latestLaptops || []).length > 0 && (
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-gray-900">Latest laptops</h2>
+              <span className="text-xs bg-blue-100 text-blue-600 px-2.5 py-1 rounded-full font-medium">💻 New</span>
+            </div>
+            <Link href="/laptops" className="text-sm text-blue-600 hover:underline">See all →</Link>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {(latestLaptops || []).map((laptop: any) => <LaptopCard key={laptop.id} laptop={laptop} />)}
           </div>
         </div>
       )}
