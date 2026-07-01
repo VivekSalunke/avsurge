@@ -1,167 +1,200 @@
 'use client'
-import { useState } from 'react'
+import { useAuth } from '@/context/AuthContext'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
-const LAPTOP_TEMPLATES = [
-  { name: 'Apple MacBook Air 13 M3', brand: 'Apple', price_inr: 114900, released_at: '2024-03-08' },
-  { name: 'Apple MacBook Air 15 M3', brand: 'Apple', price_inr: 134900, released_at: '2024-03-08' },
-  { name: 'Apple MacBook Pro 14 M3', brand: 'Apple', price_inr: 168900, released_at: '2023-11-07' },
-  { name: 'Apple MacBook Pro 16 M3 Pro', brand: 'Apple', price_inr: 249900, released_at: '2023-11-07' },
-  { name: 'Dell XPS 13 9340', brand: 'Dell', price_inr: 134990, released_at: '2024-01-01' },
-  { name: 'Dell XPS 15 9530', brand: 'Dell', price_inr: 169990, released_at: '2023-06-01' },
-  { name: 'Dell Inspiron 15 3520', brand: 'Dell', price_inr: 47990, released_at: '2023-01-01' },
-  { name: 'HP Pavilion 15', brand: 'HP', price_inr: 52990, released_at: '2023-06-01' },
-  { name: 'HP Envy x360 14', brand: 'HP', price_inr: 89990, released_at: '2024-01-01' },
-  { name: 'HP Spectre x360 14', brand: 'HP', price_inr: 154990, released_at: '2024-01-01' },
-  { name: 'Lenovo IdeaPad Slim 3', brand: 'Lenovo', price_inr: 38990, released_at: '2023-06-01' },
-  { name: 'Lenovo IdeaPad Slim 5', brand: 'Lenovo', price_inr: 57990, released_at: '2023-06-01' },
-  { name: 'Lenovo ThinkPad X1 Carbon Gen 11', brand: 'Lenovo', price_inr: 154990, released_at: '2023-01-01' },
-  { name: 'Lenovo Yoga 7i 14', brand: 'Lenovo', price_inr: 89990, released_at: '2024-01-01' },
-  { name: 'ASUS VivoBook 15', brand: 'ASUS', price_inr: 42990, released_at: '2023-06-01' },
-  { name: 'ASUS ZenBook 14 OLED', brand: 'ASUS', price_inr: 79990, released_at: '2023-06-01' },
-  { name: 'ASUS ROG Strix G15', brand: 'ASUS', price_inr: 119990, released_at: '2023-06-01' },
-  { name: 'ASUS TUF Gaming F15', brand: 'ASUS', price_inr: 74990, released_at: '2023-06-01' },
-  { name: 'Acer Aspire 5', brand: 'Acer', price_inr: 44990, released_at: '2023-06-01' },
-  { name: 'Acer Swift Go 14', brand: 'Acer', price_inr: 69990, released_at: '2023-06-01' },
-  { name: 'Acer Predator Helios 300', brand: 'Acer', price_inr: 89990, released_at: '2023-06-01' },
-  { name: 'Microsoft Surface Laptop 5', brand: 'Microsoft', price_inr: 109990, released_at: '2022-10-01' },
-  { name: 'Microsoft Surface Pro 9', brand: 'Microsoft', price_inr: 119990, released_at: '2022-10-01' },
-  { name: 'MSI Modern 14', brand: 'MSI', price_inr: 54990, released_at: '2023-06-01' },
-  { name: 'MSI Thin GF63', brand: 'MSI', price_inr: 64990, released_at: '2023-06-01' },
-  { name: 'Samsung Galaxy Book3 Pro', brand: 'Samsung', price_inr: 129990, released_at: '2023-02-01' },
-  { name: 'Samsung Galaxy Book3 360', brand: 'Samsung', price_inr: 89990, released_at: '2023-02-01' },
-  { name: 'LG Gram 14', brand: 'LG', price_inr: 89990, released_at: '2023-01-01' },
-  { name: 'LG Gram 16', brand: 'LG', price_inr: 109990, released_at: '2023-01-01' },
-  { name: 'Razer Blade 15', brand: 'Razer', price_inr: 189990, released_at: '2023-06-01' },
-]
+const SAMPLE = JSON.stringify([
+  {
+    name: "Apple MacBook Air 13 M3",
+    brand: "Apple",
+    price_inr: 114900,
+    released_at: "2024-03-08",
+    specs: [
+      { category: "Performance", label: "Processor", value: "Apple M3" },
+      { category: "Performance", label: "CPU Cores", value: "8-core" },
+      { category: "Performance", label: "GPU Cores", value: "10-core" },
+      { category: "Memory", label: "RAM", value: "8GB" },
+      { category: "Memory", label: "RAM Type", value: "Unified Memory" },
+      { category: "Storage", label: "Storage", value: "256GB SSD" },
+      { category: "Display", label: "Screen Size", value: "13.6 inch" },
+      { category: "Display", label: "Resolution", value: "2560 x 1664" },
+      { category: "Display", label: "Display Type", value: "Liquid Retina" },
+      { category: "Battery", label: "Battery Life", value: "Up to 18 hours" },
+      { category: "Build", label: "Weight", value: "1.24 kg" },
+      { category: "Build", label: "Color", value: "Midnight, Starlight, Space Grey, Sky Blue" },
+      { category: "Connectivity", label: "Ports", value: "2x USB-C, MagSafe, 3.5mm" },
+      { category: "Connectivity", label: "WiFi", value: "Wi-Fi 6E" },
+      { category: "Connectivity", label: "Bluetooth", value: "5.3" },
+      { category: "General", label: "OS", value: "macOS Sonoma" },
+    ]
+  }
+], null, 2)
 
-function autoSlug(name: string) {
+function normalize(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, '')
+}
+
+function isDuplicate(incoming: string, existing: string): boolean {
+  const a = normalize(incoming)
+  const b = normalize(existing)
+  if (a === b) return true
+  const maxLen = Math.max(a.length, b.length)
+  if (maxLen < 5) return a === b
+  let matches = 0, j = 0
+  for (let i = 0; i < a.length && j < b.length; i++) {
+    if (a[i] === b[j]) { matches++; j++ }
+  }
+  const ratio = matches / maxLen
+  const lenDiff = Math.abs(a.length - b.length) / maxLen
+  return ratio > 0.95 && lenDiff < 0.05
+}
+
+function autoSlug(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 }
 
-function similarity(a: string, b: string) {
-  const A = a.toLowerCase(), B = b.toLowerCase()
-  if (A === B) return 1
-  if (A.includes(B) || B.includes(A)) return 0.9
-  const wordsA = A.split(/\s+/), wordsB = B.split(/\s+/)
-  const common = wordsA.filter(w => wordsB.includes(w)).length
-  return common / Math.max(wordsA.length, wordsB.length)
-}
+export default function BulkImportLaptopsPage() {
+  const { user, isAdmin, loading } = useAuth()
+  const router = useRouter()
+  const [json, setJson] = useState(SAMPLE)
+  const [status, setStatus] = useState<'idle'|'checking'|'importing'|'success'|'error'>('idle')
+  const [message, setMessage] = useState('')
+  const [imported, setImported] = useState(0)
+  const [duplicates, setDuplicates] = useState<any[]>([])
+  const [toImport, setToImport] = useState<any[]>([])
+  const [showDuplicates, setShowDuplicates] = useState(false)
 
-export default function BulkImportLaptops() {
-  const [selected, setSelected] = useState<Set<number>>(new Set())
-  const [importing, setImporting] = useState(false)
-  const [results, setResults] = useState<{ name: string; status: string }[]>([])
-  const [existing, setExisting] = useState<string[]>([])
-  const [loaded, setLoaded] = useState(false)
-  const [search, setSearch] = useState('')
+  useEffect(() => {
+    if (!loading && !user) router.push('/login')
+    if (!loading && user && !isAdmin) router.push('/')
+  }, [user, isAdmin, loading])
 
-  const loadExisting = async () => {
-    const { data } = await supabase.from('laptops').select('name')
-    setExisting((data || []).map(l => l.name))
-    setLoaded(true)
-  }
-
-  const isDuplicate = (name: string) => existing.some(e => similarity(e, name) > 0.8)
-
-  const toggleAll = () => {
-    const filtered = LAPTOP_TEMPLATES.filter(l =>
-      !isDuplicate(l.name) &&
-      (!search || l.name.toLowerCase().includes(search.toLowerCase()) || l.brand.toLowerCase().includes(search.toLowerCase()))
-    )
-    if (selected.size === filtered.length) setSelected(new Set())
-    else setSelected(new Set(filtered.map(l => LAPTOP_TEMPLATES.indexOf(l))))
-  }
-
-  const importSelected = async () => {
-    setImporting(true)
-    setResults([])
-    const toImport = LAPTOP_TEMPLATES.filter((_, i) => selected.has(i))
-    const res: { name: string; status: string }[] = []
-    for (const laptop of toImport) {
-      const { error } = await supabase.from('laptops').insert({
-        name: laptop.name, brand: laptop.brand,
-        slug: autoSlug(laptop.name),
-        price_inr: laptop.price_inr,
-        released_at: laptop.released_at,
-      })
-      res.push({ name: laptop.name, status: error ? 'Failed' : 'Imported' })
+  const handleImport = async (skipDupes = false, laptopsToImport?: any[]) => {
+    setStatus('checking'); setMessage(''); setImported(0)
+    let laptops = laptopsToImport
+    if (!laptops) {
+      try {
+        laptops = JSON.parse(json)
+        if (!Array.isArray(laptops)) throw new Error('Must be an array')
+      } catch (e: any) {
+        setMessage('Invalid JSON: ' + e.message); setStatus('error'); return
+      }
     }
-    setResults(res)
-    setImporting(false)
-    setSelected(new Set())
-    loadExisting()
+    const { data: existing } = await supabase.from('laptops').select('id, name, slug')
+    const existingNames = (existing || []).map(l => l.name)
+    const dupes: any[] = []
+    const fresh: any[] = []
+    for (const laptop of laptops) {
+      const dup = existingNames.find(n => isDuplicate(laptop.name, n))
+      if (dup && !skipDupes) dupes.push({ ...laptop, existingName: dup })
+      else fresh.push(laptop)
+    }
+    if (dupes.length > 0 && !skipDupes) {
+      setDuplicates(dupes); setToImport(fresh); setShowDuplicates(true); setStatus('idle')
+      return
+    }
+    setStatus('importing')
+    let count = 0
+    for (const laptop of fresh) {
+      const slug = autoSlug(laptop.name)
+      const { data: inserted, error } = await supabase.from('laptops').insert({
+        name: laptop.name, brand: laptop.brand, slug,
+        price_inr: laptop.price_inr || null,
+        released_at: laptop.released_at || null,
+        image_url: laptop.image_url || null,
+      }).select().single()
+      if (error || !inserted) continue
+      if (laptop.specs && laptop.specs.length > 0) {
+        await supabase.from('laptop_specs').insert(
+          laptop.specs.map((s: any) => ({ laptop_id: inserted.id, category: s.category, label: s.label, value: s.value }))
+        )
+      }
+      count++
+    }
+    setImported(count)
+    setStatus('success')
+    setMessage(`Successfully imported ${count} laptop${count !== 1 ? 's' : ''}`)
+    setShowDuplicates(false)
+    setDuplicates([])
+    setToImport([])
   }
-
-  const filtered = LAPTOP_TEMPLATES.filter(l =>
-    !search || l.name.toLowerCase().includes(search.toLowerCase()) || l.brand.toLowerCase().includes(search.toLowerCase())
-  )
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-gray-900">Bulk Import Laptops</h1>
-        <Link href="/admin/laptops" className="text-sm text-blue-600 hover:underline">Back to Laptop Admin</Link>
+        <Link href="/admin/laptops" className="text-sm text-blue-600 hover:underline">← Laptop Admin</Link>
       </div>
-      {!loaded ? (
-        <button onClick={loadExisting} className="bg-blue-600 text-white rounded-xl px-6 py-3 text-sm font-semibold hover:bg-blue-700 transition">
-          Load Laptop Templates
-        </button>
-      ) : (
-        <>
-          <div className="flex items-center gap-3 mb-4">
-            <input placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)}
-              className="border border-gray-200 rounded-xl px-3 py-2 text-sm flex-1" />
-            <button onClick={toggleAll} className="border border-gray-200 rounded-xl px-4 py-2 text-sm hover:border-blue-400 transition">Toggle All</button>
-            <button onClick={importSelected} disabled={importing || selected.size === 0}
-              className="bg-blue-600 text-white rounded-xl px-5 py-2 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-50">
-              {importing ? 'Importing...' : `Import ${selected.size}`}
+
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-sm text-blue-700">
+        Paste a JSON array of laptops. Each laptop can include a <code>specs</code> array with category, label, and value fields.
+      </div>
+
+      {showDuplicates && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 mb-6">
+          <h3 className="font-semibold text-yellow-800 mb-3">⚠️ {duplicates.length} duplicate{duplicates.length !== 1 ? 's' : ''} found</h3>
+          <div className="space-y-1 mb-4">
+            {duplicates.map((d, i) => (
+              <p key={i} className="text-xs text-yellow-700">
+                <strong>{d.name}</strong> → already exists as "{d.existingName}"
+              </p>
+            ))}
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => handleImport(true, toImport)}
+              className="bg-blue-600 text-white rounded-xl px-4 py-2 text-sm font-semibold hover:bg-blue-700 transition">
+              Import {toImport.length} non-duplicates
+            </button>
+            <button onClick={() => handleImport(true, [...duplicates, ...toImport])}
+              className="bg-yellow-600 text-white rounded-xl px-4 py-2 text-sm font-semibold hover:bg-yellow-700 transition">
+              Import all anyway
+            </button>
+            <button onClick={() => setShowDuplicates(false)}
+              className="border border-gray-200 rounded-xl px-4 py-2 text-sm hover:border-gray-400 transition">
+              Cancel
             </button>
           </div>
-          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden mb-6">
-            <table className="w-full">
-              <thead>
-                <tr className="text-xs text-gray-400 border-b border-gray-100 bg-gray-50">
-                  <th className="px-4 py-3 text-left">Select</th>
-                  <th className="px-4 py-3 text-left">Name</th>
-                  <th className="px-4 py-3 text-left">Brand</th>
-                  <th className="px-4 py-3 text-left">Price</th>
-                  <th className="px-4 py-3 text-left">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((laptop) => {
-                  const realIdx = LAPTOP_TEMPLATES.indexOf(laptop)
-                  const dup = isDuplicate(laptop.name)
-                  return (
-                    <tr key={realIdx} className={`border-b border-gray-50 ${dup ? 'opacity-40' : ''}`}>
-                      <td className="px-4 py-3">
-                        <input type="checkbox" checked={selected.has(realIdx)} disabled={dup}
-                          onChange={() => {
-                            const s = new Set(selected)
-                            s.has(realIdx) ? s.delete(realIdx) : s.add(realIdx)
-                            setSelected(s)
-                          }} />
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-800">{laptop.name}</td>
-                      <td className="px-4 py-3 text-sm text-gray-500">{laptop.brand}</td>
-                      <td className="px-4 py-3 text-sm text-blue-600">₹{laptop.price_inr.toLocaleString('en-IN')}</td>
-                      <td className="px-4 py-3 text-xs">{dup ? <span className="text-orange-500">Exists</span> : <span className="text-green-500">Ready</span>}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-          {results.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-2xl p-5">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Results</h3>
-              {results.map((r, i) => <p key={i} className="text-xs text-gray-600">{r.status === 'Imported' ? '✅' : '❌'} {r.name}</p>)}
-            </div>
-          )}
-        </>
+        </div>
       )}
+
+      {status === 'success' && (
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 text-sm text-green-700">
+          ✅ {message}
+        </div>
+      )}
+
+      {status === 'error' && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-sm text-red-700">
+          ❌ {message}
+        </div>
+      )}
+
+      <textarea
+        value={json}
+        onChange={e => setJson(e.target.value)}
+        rows={24}
+        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono mb-4 focus:outline-none focus:border-blue-400"
+        style={{ color: '#111827', backgroundColor: '#ffffff' }}
+        placeholder="Paste JSON array here..."
+      />
+
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => handleImport()}
+          disabled={status === 'importing' || status === 'checking'}
+          className="bg-blue-600 text-white rounded-xl px-6 py-2.5 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-50">
+          {status === 'importing' ? 'Importing...' : status === 'checking' ? 'Checking...' : 'Import Laptops'}
+        </button>
+        <button onClick={() => setJson(SAMPLE)}
+          className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm hover:border-gray-400 transition">
+          Load Sample
+        </button>
+        <Link href="/laptops" className="text-sm text-blue-600 hover:underline ml-auto">
+          View Laptops →
+        </Link>
+      </div>
     </main>
   )
 }
