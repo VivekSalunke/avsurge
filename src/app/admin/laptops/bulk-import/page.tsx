@@ -67,9 +67,13 @@ export default function BulkImportLaptopsPage() {
   const [showDuplicates, setShowDuplicates] = useState(false)
 
   useEffect(() => {
-    if (!loading && !user) router.push('/login')
-    if (!loading && user && !isAdmin) router.push('/')
+    if (loading) return
+    if (!user) router.push('/login')
+    else if (!isAdmin) router.push('/')
   }, [user, isAdmin, loading])
+
+  if (loading) return <div className="flex items-center justify-center min-h-screen text-sm text-gray-400">Loading...</div>
+  if (!user || !isAdmin) return null
 
   const handleImport = async (skipDupes = false, laptopsToImport?: any[]) => {
     setStatus('checking'); setMessage(''); setImported(0)
