@@ -6,10 +6,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
-  const [{ data: phones }, { data: tablets }, { data: brands }] = await Promise.all([
+  const [{ data: phones }, { data: tablets }, { data: brands }, { data: laptops }] = await Promise.all([
     supabase.from('phones').select('slug'),
     supabase.from('tablets').select('slug'),
     supabase.from('phones').select('brand'),
+    supabase.from('laptops').select('slug'),
   ])
 
   // Deduplicate brands case-insensitively
@@ -21,6 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const uniqueBrands = [...seenBrands.values()]
 
   const BUDGETS = [10000, 15000, 20000, 30000, 50000, 100000]
+  const LAPTOP_BUDGETS = [30000, 50000, 70000, 100000, 150000, 200000]
   const TABLET_BUDGETS = [10000, 20000, 30000, 50000, 100000, 150000]
 
   const phoneUrls = (phones || []).map(phone => ({
@@ -58,7 +60,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: 'https://avsurge.com/brands', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: 'https://avsurge.com/ai-recommend', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.6 },
     { url: 'https://avsurge.com/news', lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
+    { url: 'https://avsurge.com/laptops', lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.9 },
+    { url: 'https://avsurge.com/compare-laptops', lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.7 },
     ...budgetUrls,
+    ...(laptops || []).map(l => ({ url: \`https://avsurge.com/laptops/\${l.slug}\`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 })),
+    ...LAPTOP_BUDGETS.map(budget => ({ url: \`https://avsurge.com/best-laptops/\${budget}\`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 })),
     ...TABLET_BUDGETS.map(budget => ({
       url: `https://avsurge.com/best-tablets/${budget}`,
       lastModified: new Date(),
