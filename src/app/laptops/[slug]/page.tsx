@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import SpecExplainer from '@/components/SpecExplainer'
+import LaptopJsonLd from '@/components/LaptopJsonLd'
 export const revalidate = 60
 const ICONS: Record<string, string> = {
   Display: '🖥️', Performance: '⚡', Storage: '💾',
@@ -27,6 +28,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
   const highlights = ['Performance', 'Display', 'Memory', 'Battery']
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
+      <LaptopJsonLd laptop={laptop} specs={specs} />
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-blue-600">Home</Link>
         <span>&rsaquo;</span>
