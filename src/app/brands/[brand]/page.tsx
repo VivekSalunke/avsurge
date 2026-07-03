@@ -21,7 +21,7 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
     supabase.from('laptops').select('*').ilike('brand', brandName).order('price_inr', { ascending: true }),
   ])
 
-  if ((!phones || phones.length === 0) && (!tablets || tablets.length === 0)) notFound()
+  if ((!phones || phones.length === 0) && (!tablets || tablets.length === 0) && (!laptops || laptops.length === 0)) notFound()
 
   const allPrices = [
     ...(phones || []).filter(p => p.price_inr).map(p => p.price_inr),
