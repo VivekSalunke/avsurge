@@ -10,7 +10,6 @@ const phoneItems = [
   { href: '/finder', label: 'Phone Finder', desc: 'Find by budget & specs' },
   { href: '/brands', label: 'Brands', desc: 'Browse by brand' },
   { href: '/search', label: 'Advanced Search', desc: 'Filter by price, 5G, brand' },
-  { href: '/ai-recommend', label: '🤖 AI Recommender', desc: 'Get AI phone recommendations' },
 ]
 
 const tabletItems = [
@@ -70,6 +69,7 @@ export default function Navbar() {
             <NavDropdown label="Laptops" items={laptopItems} />
             <Link href="/news" className="hover:text-blue-600 transition">News</Link>
             <Link href="/finder" className="hover:text-blue-600 transition">Finder</Link>
+            <Link href="/ai-recommend" className="flex items-center gap-1 text-sm text-purple-600 hover:text-purple-700 font-medium transition bg-purple-50 px-3 py-1 rounded-full">🤖 AI</Link>
           </div>
         </div>
 
@@ -163,7 +163,7 @@ export default function Navbar() {
             🔍 Finder
           </Link>
           <Link href="/ai-recommend" onClick={() => setMobileOpen(false)}
-            className="block px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl">
+            className="block px-3 py-2.5 text-sm font-medium text-purple-600 hover:bg-purple-50 rounded-xl">
             🤖 AI Recommender
           </Link>
         </div>
