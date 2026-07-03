@@ -3,7 +3,9 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import SpecExplainer from '@/components/SpecExplainer'
 import LaptopJsonLd from '@/components/LaptopJsonLd'
+import LaptopWishlistButton from '@/components/LaptopWishlistButton'
 import LaptopJsonLd from '@/components/LaptopJsonLd'
+import LaptopWishlistButton from '@/components/LaptopWishlistButton'
 export const revalidate = 60
 const ICONS: Record<string, string> = {
   Display: '🖥️', Performance: '⚡', Storage: '💾',
@@ -68,6 +70,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
                 className="w-full bg-white border border-gray-200 text-gray-700 rounded-xl py-2.5 text-sm font-medium hover:bg-gray-50 transition text-center">
                 Check on Amazon →
               </a>
+              <LaptopWishlistButton laptopId={laptop.id} />
             </div>
           </div>
         </div>
