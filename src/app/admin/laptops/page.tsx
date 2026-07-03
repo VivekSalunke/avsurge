@@ -91,6 +91,10 @@ export default function ManageLaptopsPage() {
                 className="text-xs border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:border-blue-400 hover:text-blue-600 transition">
                 View
               </Link>
+              <Link href={`/admin/edit-laptop/${laptop.slug}`}
+                className="text-xs border border-blue-200 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition">
+                Edit
+              </Link>
               <button
                 onClick={() => deleteLaptop(laptop.id, laptop.name)}
                 disabled={deleting === laptop.id}

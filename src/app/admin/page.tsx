@@ -90,10 +90,15 @@ export default function AdminPage() {
 
       <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-4">💻 Laptops</h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        <Link href="/admin/laptops/add"
+          className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
+          <h2 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600">Add Laptop</h2>
+          <p className="text-xs text-gray-400">Add a new laptop with full specs</p>
+        </Link>
         <Link href="/admin/laptops"
           className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
           <h2 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600">Manage Laptops</h2>
-          <p className="text-xs text-gray-400">Add or delete laptops in the database</p>
+          <p className="text-xs text-gray-400">Edit or delete laptops in the database</p>
         </Link>
         <Link href="/admin/laptops/bulk-import"
           className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
