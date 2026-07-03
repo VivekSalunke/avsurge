@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     default: 'AVSurge — Phone Specs, Reviews & Prices in India',
     template: '%s | AVSurge'
   },
-  description: 'Compare phone specifications, prices, and reviews for every smartphone in India. Find the best phone for your budget with AVSurge.',
+  description: 'Compare specs, prices and reviews for phones, tablets and laptops in India. Find the best device for your budget with AVSurge.',
   keywords: ['phone specs', 'mobile comparison', 'smartphone prices India', 'best phone India', 'phone finder'],
   authors: [{ name: 'AVSurge' }],
   creator: 'AVSurge',
@@ -31,13 +31,13 @@ export const metadata: Metadata = {
     url: 'https://avsurge.com',
     siteName: 'AVSurge',
     title: 'AVSurge — Phone Specs, Reviews & Prices in India',
-    description: 'Compare phone specifications, prices, and reviews for every smartphone in India.',
+    description: 'Compare specs, prices and reviews for phones, tablets and laptops in India.',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'AVSurge' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'AVSurge — Phone Specs & Reviews',
-    description: 'Compare phone specifications and prices for every smartphone in India.',
+    description: 'Compare specs and prices for phones, tablets and laptops in India.',
     images: ['/og-image.png'],
   },
   robots: {
