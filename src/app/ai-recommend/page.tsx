@@ -79,16 +79,17 @@ export default function AIRecommendPage() {
         .not('price_inr', 'is', null)
         .order('price_inr', { ascending: true })
 
-      const { data: specs } = await supabase
+      const { data: specsRaw } = await supabase
         .from(config.specsTable)
-        .select(`${config.idKey}, label, value`)
+        .select('*')
         .in('label', config.specLabels)
+      const specs = specsRaw as any[]
 
       if (!items) throw new Error('Failed to fetch data')
 
       const specMap: Record<number, Record<string, string>> = {}
-      for (const s of specs || []) {
-        const id = s[config.idKey]
+      for (const s of (specs || [])) {
+        const id = s[config.idKey] as number
         if (!specMap[id]) specMap[id] = {}
         specMap[id][s.label] = s.value
       }
