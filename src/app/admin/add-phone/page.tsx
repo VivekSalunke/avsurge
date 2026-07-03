@@ -23,7 +23,7 @@ const DEFAULT_SPECS = [
 ]
 
 export default function AddPhonePage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
 
   const [name, setName] = useState('')
@@ -36,10 +36,10 @@ export default function AddPhonePage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (loading) return
+    if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading])
+  }, [user, isAdmin, loading, profileLoading])
 
   const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 
@@ -68,7 +68,7 @@ export default function AddPhonePage() {
     setSpecs(DEFAULT_SPECS.map(s => ({ ...s })))
   }
 
-  if (loading) return (
+  if (loading || profileLoading) return (
     <main className="min-h-screen flex items-center justify-center">
       <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
     </main>

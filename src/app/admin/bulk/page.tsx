@@ -49,7 +49,7 @@ function isDuplicate(incoming: string, existing: string): boolean {
 }
 
 export default function BulkImportPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
   const [json, setJson] = useState(SAMPLE)
   const [status, setStatus] = useState<'idle'|'checking'|'importing'|'success'|'error'>('idle')
@@ -60,10 +60,10 @@ export default function BulkImportPage() {
   const [showDuplicates, setShowDuplicates] = useState(false)
 
   useEffect(() => {
-    if (loading) return
+    if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading])
+  }, [user, isAdmin, loading, profileLoading])
 
   const handleImport = async (skipDupes = false, phonesToImport?: any[]) => {
     setStatus('checking'); setMessage(''); setImported(0)
@@ -134,7 +134,7 @@ export default function BulkImportPage() {
     setDuplicates([])
   }
 
-  if (loading) return (
+  if (loading || profileLoading) return (
     <main className="min-h-screen flex items-center justify-center">
       <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
     </main>

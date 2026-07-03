@@ -18,7 +18,7 @@ const getRawUrl = (type: DeviceType, slug: string, ext = 'jpg') =>
   `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${type}/${slug}.${ext}`
 
 export default function AdminImagesPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
   const [mode, setMode] = useState<DeviceType>('phones')
   const [devices, setDevices] = useState<any[]>([])
@@ -32,10 +32,10 @@ export default function AdminImagesPage() {
   const [ext, setExt] = useState('jpg')
 
   useEffect(() => {
-    if (loading) return
+    if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading])
+  }, [user, isAdmin, loading, profileLoading])
 
   useEffect(() => {
     if (user && isAdmin) fetchDevices()

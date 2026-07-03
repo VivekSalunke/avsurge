@@ -56,7 +56,7 @@ function autoSlug(name: string): string {
 }
 
 export default function BulkImportLaptopsPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
   const [json, setJson] = useState(SAMPLE)
   const [status, setStatus] = useState<'idle'|'checking'|'importing'|'success'|'error'>('idle')
@@ -67,10 +67,10 @@ export default function BulkImportLaptopsPage() {
   const [showDuplicates, setShowDuplicates] = useState(false)
 
   useEffect(() => {
-    if (loading) return
+    if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading])
+  }, [user, isAdmin, loading, profileLoading])
 
   if (loading) return <div className="flex items-center justify-center min-h-screen text-sm text-gray-400">Loading...</div>
   if (!user || !isAdmin) return null

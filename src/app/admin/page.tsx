@@ -5,20 +5,21 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 
 export default function AdminPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (loading) return
+    if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading])
+  }, [user, isAdmin, loading, profileLoading])
 
-  if (loading) return (
+  if (loading || profileLoading) return (
     <main className="min-h-screen flex items-center justify-center">
       <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
     </main>
   )
+  if (!user || !isAdmin) return null
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-10">

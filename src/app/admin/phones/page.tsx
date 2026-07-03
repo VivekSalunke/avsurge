@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
 export default function ManagePhonesPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
   const [phones, setPhones] = useState<any[]>([])
   const [fetching, setFetching] = useState(true)
@@ -14,10 +14,10 @@ export default function ManagePhonesPage() {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    if (loading) return
+    if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading])
+  }, [user, isAdmin, loading, profileLoading])
 
   useEffect(() => {
     if (isAdmin) fetchPhones()

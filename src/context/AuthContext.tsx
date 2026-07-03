@@ -7,25 +7,33 @@ interface AuthContextType {
   user: User | null
   isAdmin: boolean
   loading: boolean
+  profileLoading: boolean
   signOut: () => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextType>({ user: null, isAdmin: false, loading: true, signOut: async () => {} })
+const AuthContext = createContext<AuthContextType>({ user: null, isAdmin: false, loading: true, profileLoading: true, signOut: async () => {} })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [profileLoading, setProfileLoading] = useState(true)
 
   const fetchProfile = async (userId: string) => {
+    setProfileLoading(true)
     const { data } = await supabase.from('profiles').select('is_admin').eq('id', userId).single()
     setIsAdmin(data?.is_admin ?? false)
+    setProfileLoading(false)
   }
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
-      if (session?.user) fetchProfile(session.user.id)
+      if (session?.user) {
+        fetchProfile(session.user.id)
+      } else {
+        setProfileLoading(false)
+      }
       setLoading(false)
     })
 
@@ -45,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading, signOut }}>
+    <AuthContext.Provider value={{ user, isAdmin, loading, profileLoading, signOut }}>
       {children}
     </AuthContext.Provider>
   )

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function AdminBrandsPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
   const [brands, setBrands] = useState<any[]>([])
   const [allBrands, setAllBrands] = useState<string[]>([])
@@ -17,10 +17,10 @@ export default function AdminBrandsPage() {
   const [editId, setEditId] = useState<number | null>(null)
 
   useEffect(() => {
-    if (loading) return
+    if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading])
+  }, [user, isAdmin, loading, profileLoading])
 
   useEffect(() => {
     if (user && isAdmin) fetchData()
