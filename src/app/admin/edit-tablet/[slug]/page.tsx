@@ -10,7 +10,7 @@ const CATEGORIES = ['General', 'Display', 'Performance', 'Camera', 'Battery', 'C
 export default function EditTabletPage() {
   const router = useRouter()
   const params = useParams()
-  const { user, isAdmin, loading: authLoading } = useAuth()
+  const { user, isAdmin, loading: authLoading, profileLoading } = useAuth()
   const [tablet, setTablet] = useState<any>(null)
   const [name, setName] = useState('')
   const [brand, setBrand] = useState('')
@@ -87,7 +87,7 @@ export default function EditTabletPage() {
 
   const inputStyle = { color: '#111827', backgroundColor: '#ffffff' }
 
-  if (loading || profileLoading) return (
+  if (authLoading || profileLoading) return (
     <main className="min-h-screen flex items-center justify-center">
       <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
     </main>
