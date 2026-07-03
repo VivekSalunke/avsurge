@@ -130,7 +130,7 @@ function SearchContent() {
       const ids = items.map(p => p.id)
       const { data: specs } = await supabase.from(specsTable).select(`${idKey}, value`).in(idKey, ids).eq('label', 'RAM')
       const ramMap: Record<number, number> = {}
-      for (const s of specs || []) ramMap[s[idKey]] = parseFloat(s.value) || 0
+      for (const s of (specs || []) as any[]) ramMap[s[idKey]] = parseFloat(s.value) || 0
       const minVal = parseFloat(minRAM) || 0
       items = items.filter(p => (ramMap[p.id] || 0) >= minVal)
     }
