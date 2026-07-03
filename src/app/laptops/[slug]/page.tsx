@@ -5,6 +5,7 @@ import SpecExplainer from '@/components/SpecExplainer'
 import LaptopJsonLd from '@/components/LaptopJsonLd'
 import LaptopViewTracker from '@/components/LaptopViewTracker'
 import RecentlyViewedLaptops from '@/components/RecentlyViewedLaptops'
+import LaptopReviews from '@/components/LaptopReviews'
 import LaptopWishlistButton from '@/components/LaptopWishlistButton'
 import LaptopPriceAlertButton from '@/components/LaptopPriceAlertButton'
 export const revalidate = 60
@@ -69,6 +70,10 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
                 className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-medium hover:bg-blue-700 transition text-center">
                 Check on Flipkart →
               </a>
+              <Link href={`/compare-laptops?a=${laptop.slug}`}
+                className="w-full text-center border border-dashed border-gray-300 text-gray-500 rounded-xl py-2.5 text-sm hover:border-blue-400 hover:text-blue-600 transition">
+                + Add to compare
+              </Link>
               <a href={`https://www.amazon.in/s?k=${encodeURIComponent(laptop.name)}`} target="_blank"
                 className="w-full bg-white border border-gray-200 text-gray-700 rounded-xl py-2.5 text-sm font-medium hover:bg-gray-50 transition text-center">
                 Check on Amazon →
@@ -117,6 +122,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
               </table>
             </div>
           ))}
+          <LaptopReviews laptopId={laptop.id} />
           <RecentlyViewedLaptops currentSlug={laptop.slug} />
           {specs.length === 0 && (
             <div className="bg-white rounded-2xl border border-dashed border-gray-200 py-16 text-center text-gray-400 text-sm">

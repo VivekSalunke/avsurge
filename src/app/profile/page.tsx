@@ -31,10 +31,15 @@ export default function ProfilePage() {
   }, [user])
 
   const fetchStats = async () => {
-    const { data: wl } = await supabase.from('wishlist').select('id').eq('user_id', user?.id)
-    const { data: rv } = await supabase.from('reviews').select('rating').eq('user_id', user?.id)
+    const [{ data: wl }, { data: twl }, { data: lwl }, { data: rv }] = await Promise.all([
+      supabase.from('wishlist').select('id').eq('user_id', user?.id),
+      supabase.from('tablet_wishlist').select('id').eq('user_id', user?.id),
+      supabase.from('laptop_wishlist').select('id').eq('user_id', user?.id),
+      supabase.from('reviews').select('rating').eq('user_id', user?.id),
+    ])
+    const totalWishlist = (wl?.length || 0) + (twl?.length || 0) + (lwl?.length || 0)
     const avgRating = rv?.length ? (rv.reduce((a, r) => a + r.rating, 0) / rv.length).toFixed(1) : 0
-    setStats({ reviews: rv?.length || 0, wishlist: wl?.length || 0, avgRating: Number(avgRating) })
+    setStats({ reviews: rv?.length || 0, wishlist: totalWishlist, avgRating: Number(avgRating) })
   }
 
   const fetchReviews = async () => {
@@ -117,7 +122,7 @@ export default function ProfilePage() {
           <span className="text-2xl">❤️</span>
           <div>
             <p className="text-sm font-semibold text-gray-900">My Wishlist</p>
-            <p className="text-xs text-gray-400">{stats.wishlist} phones saved</p>
+            <p className="text-xs text-gray-400">{stats.wishlist} devices saved</p>
           </div>
         </Link>
         <Link href="/search" className="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3 hover:border-blue-300 transition">
