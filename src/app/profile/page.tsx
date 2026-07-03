@@ -43,12 +43,17 @@ export default function ProfilePage() {
   }
 
   const fetchReviews = async () => {
-    const { data } = await supabase
-      .from('reviews')
-      .select('*, phones(name, slug, image_url)')
-      .eq('user_id', user?.id)
-      .order('created_at', { ascending: false })
-    setReviews(data || [])
+    const [{ data: phoneReviews }, { data: tabletReviews }, { data: laptopReviews }] = await Promise.all([
+      supabase.from('reviews').select('*, phones(name, slug, image_url)').eq('user_id', user?.id).order('created_at', { ascending: false }),
+      supabase.from('tablet_reviews').select('*, tablets(name, slug, image_url)').eq('user_id', user?.id).order('created_at', { ascending: false }),
+      supabase.from('laptop_reviews').select('*, laptops(name, slug, image_url)').eq('user_id', user?.id).order('created_at', { ascending: false }),
+    ])
+    const all = [
+      ...(phoneReviews || []).map(r => ({ ...r, deviceType: 'phone', device: r.phones })),
+      ...(tabletReviews || []).map(r => ({ ...r, deviceType: 'tablet', device: r.tablets })),
+      ...(laptopReviews || []).map(r => ({ ...r, deviceType: 'laptop', device: r.laptops })),
+    ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    setReviews(all)
   }
 
   const handleSaveProfile = async () => {
@@ -73,8 +78,9 @@ export default function ProfilePage() {
     router.push('/')
   }
 
-  const deleteReview = async (id: number) => {
-    await supabase.from('reviews').delete().eq('id', id)
+  const deleteReview = async (id: number, deviceType: string) => {
+    const table = deviceType === 'tablet' ? 'tablet_reviews' : deviceType === 'laptop' ? 'laptop_reviews' : 'reviews'
+    await supabase.from(table).delete().eq('id', id)
     fetchReviews()
     fetchStats()
   }
@@ -189,19 +195,20 @@ export default function ProfilePage() {
             {reviews.map(review => (
               <div key={review.id} className="flex items-start gap-3 border border-gray-100 rounded-xl p-3">
                 <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
-                  {review.phones?.image_url
-                    ? <img src={review.phones.image_url} alt={review.phones.name} className="object-contain w-full h-full" />
-                    : <span>📱</span>}
+                  {review.device?.image_url
+                    ? <img src={review.device.image_url} alt={review.device.name} className="object-contain w-full h-full" />
+                    : <span>{review.deviceType === 'tablet' ? '📟' : review.deviceType === 'laptop' ? '💻' : '📱'}</span>}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <Link href={`/phones/${review.phones?.slug}`} className="text-sm font-semibold text-gray-900 hover:text-blue-600 truncate block">
-                    {review.phones?.name}
+                  <Link href={`/${review.deviceType === 'phone' ? 'phones' : review.deviceType + 's'}/${review.device?.slug}`} className="text-sm font-semibold text-gray-900 hover:text-blue-600 truncate block">
+                    {review.device?.name}
                   </Link>
+                  <p className="text-xs text-gray-400 mb-0.5 capitalize">{review.deviceType}</p>
                   <div className="flex text-xs gap-0.5 my-0.5">{stars(review.rating)}</div>
                   {review.body && <p className="text-xs text-gray-500 line-clamp-2">{review.body}</p>}
                   <p className="text-xs text-gray-400 mt-1">{new Date(review.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                 </div>
-                <button onClick={() => deleteReview(review.id)}
+                <button onClick={() => deleteReview(review.id, review.deviceType)}
                   className="text-xs text-red-400 hover:text-red-600 flex-shrink-0">
                   Delete
                 </button>

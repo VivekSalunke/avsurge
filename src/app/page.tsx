@@ -15,6 +15,7 @@ export default async function HomePage() {
     { data: latestTablets },
     { data: allTablets },
     { data: latestLaptops },
+    { data: allLaptops },
   ] = await Promise.all([
     supabase.from('phones').select('*').order('created_at', { ascending: false }).limit(6),
     supabase.from('phones').select('*').lte('price_inr', 40000).order('price_inr', { ascending: true }).limit(6),
@@ -25,6 +26,7 @@ export default async function HomePage() {
     supabase.from('tablets').select('*').order('created_at', { ascending: false }).limit(6),
     supabase.from('tablets').select('id'),
     supabase.from('laptops').select('*').order('created_at', { ascending: false }).limit(6),
+    supabase.from('laptops').select('id'),
   ])
 
   // Top rated phones
@@ -156,7 +158,7 @@ export default async function HomePage() {
           { label: 'Tablets', value: (allTablets?.length || 0) + '+', icon: '📟' },
           { label: 'Brands', value: brands.length + '+', icon: '🏷️' },
           { label: 'Reviews', value: (reviews?.length || 0) + '+', icon: '⭐' },
-          { label: 'Laptops', value: (latestLaptops?.length || 0) + '+', icon: '💻' },
+          { label: 'Laptops', value: (allLaptops?.length || 0) + '+', icon: '💻' },
         ].map(stat => (
           <div key={stat.label} className="bg-white border border-gray-200 rounded-xl p-3 text-center">
             <div className="text-xl mb-0.5">{stat.icon}</div>

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     template: '%s | AVSurge'
   },
   description: 'Compare specs, prices and reviews for phones, tablets and laptops in India. Find the best device for your budget with AVSurge.',
-  keywords: ['phone specs', 'mobile comparison', 'smartphone prices India', 'best phone India', 'phone finder'],
+  keywords: ['phone specs', 'tablet specs', 'laptop specs', 'device comparison India', 'best phone India', 'best laptop India'],
   authors: [{ name: 'AVSurge' }],
   creator: 'AVSurge',
   publisher: 'AVSurge',
@@ -73,8 +73,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Link href="/phones" className="hover:text-blue-600">Phones</Link>
                 <Link href="/tablets" className="hover:text-blue-600">Tablets</Link>
                 <Link href="/laptops" className="hover:text-blue-600">Laptops</Link>
-                <Link href="/compare" className="hover:text-blue-600">Compare</Link>
-                <Link href="/finder" className="hover:text-blue-600">Finder</Link>
+                <Link href="/search" className="hover:text-blue-600">Search</Link>
+                <Link href="/brands" className="hover:text-blue-600">Brands</Link>
                 <Link href="/news" className="hover:text-blue-600">News</Link>
                 <Link href="/site-map" className="hover:text-blue-600">Sitemap</Link>
               </div>
