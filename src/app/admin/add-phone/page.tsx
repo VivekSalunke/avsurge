@@ -36,8 +36,9 @@ export default function AddPhonePage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (!loading && !user) router.push('/login')
-    if (!loading && user && !isAdmin) router.push('/')
+    if (loading) return
+    if (!user) router.push('/login')
+    else if (!isAdmin) router.push('/')
   }, [user, isAdmin, loading])
 
   const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')

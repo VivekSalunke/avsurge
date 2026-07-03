@@ -9,8 +9,9 @@ export default function AdminPage() {
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && !user) router.push('/login')
-    if (!loading && user && !isAdmin) router.push('/')
+    if (loading) return
+    if (!user) router.push('/login')
+    else if (!isAdmin) router.push('/')
   }, [user, isAdmin, loading])
 
   if (loading) return (

@@ -34,7 +34,7 @@ export default function AdminImagesPage() {
   useEffect(() => {
     if (loading) return
     if (!user) router.push('/login')
-    if (!isAdmin) router.push('/')
+    else if (!isAdmin) router.push('/')
   }, [user, isAdmin, loading])
 
   useEffect(() => {
