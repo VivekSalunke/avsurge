@@ -6,6 +6,7 @@ import LaptopJsonLd from '@/components/LaptopJsonLd'
 import LaptopViewTracker from '@/components/LaptopViewTracker'
 import RecentlyViewedLaptops from '@/components/RecentlyViewedLaptops'
 import LaptopWishlistButton from '@/components/LaptopWishlistButton'
+import LaptopPriceAlertButton from '@/components/LaptopPriceAlertButton'
 export const revalidate = 60
 const ICONS: Record<string, string> = {
   Display: '🖥️', Performance: '⚡', Storage: '💾',
@@ -73,6 +74,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
                 Check on Amazon →
               </a>
               <LaptopWishlistButton laptopId={laptop.id} />
+              <LaptopPriceAlertButton laptopId={laptop.id} laptopName={laptop.name} currentPrice={laptop.price_inr} />
             </div>
           </div>
         </div>
