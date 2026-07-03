@@ -147,11 +147,11 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
 export async function generateMetadata({ params }: { params: Promise<{ brand: string }> }) {
   const { brand } = await params
   const brandName = decodeURIComponent(brand)
-  const [{ data: phones }, { data: tablets }, { data: laptops }] = await Promise.all([
+  const [{ data: phones }, { data: tablets }, { data: laptopData }] = await Promise.all([
     supabase.from('phones').select('id').ilike('brand', brandName),
     supabase.from('tablets').select('id').ilike('brand', brandName),
+    supabase.from('laptops').select('id').ilike('brand', brandName),
   ])
-  const { data: laptopData } = await supabase.from('laptops').select('id').ilike('brand', brandName)
   const total = (phones?.length || 0) + (tablets?.length || 0) + (laptopData?.length || 0)
   return {
     title: `${brandName} Phones & Tablets Price List in India`,
@@ -164,6 +164,7 @@ export async function generateStaticParams() {
   const [{ data: phones }, { data: tablets }, { data: laptops }] = await Promise.all([
     supabase.from('phones').select('brand'),
     supabase.from('tablets').select('brand'),
+    supabase.from('laptops').select('brand'),
   ])
   const [{ data: laptopBrands }] = await Promise.all([
     supabase.from('laptops').select('brand'),
