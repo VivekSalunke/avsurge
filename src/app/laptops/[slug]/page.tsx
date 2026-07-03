@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import SpecExplainer from '@/components/SpecExplainer'
 import LaptopJsonLd from '@/components/LaptopJsonLd'
+import LaptopViewTracker from '@/components/LaptopViewTracker'
+import RecentlyViewedLaptops from '@/components/RecentlyViewedLaptops'
 import LaptopWishlistButton from '@/components/LaptopWishlistButton'
 export const revalidate = 60
 const ICONS: Record<string, string> = {
@@ -30,7 +32,9 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
       <LaptopJsonLd laptop={laptop} specs={specs} />
+      <LaptopViewTracker slug={laptop.slug} />
       <LaptopJsonLd laptop={laptop} specs={specs} />
+      <LaptopViewTracker slug={laptop.slug} />
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-blue-600">Home</Link>
         <span>&rsaquo;</span>
@@ -111,6 +115,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
               </table>
             </div>
           ))}
+          <RecentlyViewedLaptops currentSlug={laptop.slug} />
           {specs.length === 0 && (
             <div className="bg-white rounded-2xl border border-dashed border-gray-200 py-16 text-center text-gray-400 text-sm">
               No specs yet.
