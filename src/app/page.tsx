@@ -261,26 +261,36 @@ export default async function HomePage() {
       )}
 
       {/* Quick actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
         <Link href="/compare" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
-          <div className="text-3xl mb-3">⚖️</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Compare phones</h3>
-          <p className="text-xs text-gray-400">Side by side comparison</p>
+          <div className="text-3xl mb-3">📱</div>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Compare Phones</h3>
+          <p className="text-xs text-gray-400">Side by side</p>
         </Link>
         <Link href="/compare-tablets" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
           <div className="text-3xl mb-3">📟</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Compare tablets</h3>
-          <p className="text-xs text-gray-400">Side by side comparison</p>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Compare Tablets</h3>
+          <p className="text-xs text-gray-400">Side by side</p>
         </Link>
-        <Link href="/finder" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
+        <Link href="/compare-laptops" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
+          <div className="text-3xl mb-3">💻</div>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Compare Laptops</h3>
+          <p className="text-xs text-gray-400">Side by side</p>
+        </Link>
+        <Link href="/search" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
           <div className="text-3xl mb-3">🔍</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Device finder</h3>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Search & Filter</h3>
           <p className="text-xs text-gray-400">Find by budget & specs</p>
+        </Link>
+        <Link href="/ai-recommend" className="bg-white border border-purple-200 rounded-2xl p-5 hover:border-purple-300 hover:shadow-sm transition group">
+          <div className="text-3xl mb-3">🤖</div>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-purple-600 text-sm">AI Recommender</h3>
+          <p className="text-xs text-gray-400">Get AI suggestions</p>
         </Link>
         <Link href="/news" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
           <div className="text-3xl mb-3">📰</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Latest news</h3>
-          <p className="text-xs text-gray-400">Reviews and tech news</p>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Latest News</h3>
+          <p className="text-xs text-gray-400">Reviews & tech news</p>
         </Link>
       </div>
 

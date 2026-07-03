@@ -7,11 +7,13 @@ import NavAuth from './NavAuth'
 const phoneItems = [
   { href: '/phones', label: 'All Phones', desc: 'Browse all 250+ phones' },
   { href: '/compare', label: 'Compare Phones', desc: 'Side by side comparison' },
+  { href: '/search', label: 'Search & Discover', desc: 'Filter, find and AI search' },
 ]
 
 const tabletItems = [
   { href: '/tablets', label: 'All Tablets', desc: 'Browse all tablets' },
   { href: '/compare-tablets', label: 'Compare Tablets', desc: 'Side by side comparison' },
+  { href: '/best-tablets/30000', label: 'Browse by Budget', desc: 'Filter by price range' },
 ]
 
 const laptopItems = [
