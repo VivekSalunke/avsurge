@@ -2,6 +2,18 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
+const TYPE_ICON: Record<string, string> = {
+  phone: '📱',
+  tablet: '📟',
+  laptop: '💻',
+}
+
+const TYPE_LABEL: Record<string, string> = {
+  phone: 'Phone',
+  tablet: 'Tablet',
+  laptop: 'Laptop',
+}
+
 export default function SearchBar() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<any[]>([])
@@ -42,11 +54,12 @@ export default function SearchBar() {
     setTimeout(() => inputRef.current?.focus(), 50)
   }
 
-  const go = (slug: string) => {
+  const go = (item: any) => {
     setQuery('')
     setOpen(false)
     setExpanded(false)
-    router.push('/phones/' + slug)
+    const path = item.type === 'tablet' ? '/tablets/' : item.type === 'laptop' ? '/laptops/' : '/phones/'
+    router.push(path + item.slug)
   }
 
   const handleEnter = () => {
@@ -81,7 +94,7 @@ export default function SearchBar() {
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search phones..."
+            placeholder="Search devices..."
             value={query}
             onChange={e => setQuery(e.target.value)}
             onFocus={() => results.length > 0 && setOpen(true)}
@@ -99,31 +112,35 @@ export default function SearchBar() {
 
       {open && results.length > 0 && (
         <div className="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50 w-72">
-          {results.map(phone => (
-            <button key={phone.id} onClick={() => go(phone.slug)}
+          {results.map(item => (
+            <button key={`${item.type}-${item.id}`} onClick={() => go(item)}
               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition text-left border-b border-gray-100 last:border-0">
               <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center text-xl flex-shrink-0 overflow-hidden">
-                {phone.image_url
-                  ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full" />
-                  : '📱'}
+                {item.image_url
+                  ? <img src={item.image_url} alt={item.name} className="object-contain w-full h-full" />
+                  : TYPE_ICON[item.type]}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{phone.name}</p>
-                <p className="text-xs text-gray-400">{phone.brand}</p>
+                <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
+                <p className="text-xs text-gray-400">{item.brand} · {TYPE_LABEL[item.type]}</p>
               </div>
-              {phone.price_inr && (
+              {item.price_inr && (
                 <p className="text-xs text-blue-600 font-medium flex-shrink-0">
-                  Rs.{phone.price_inr.toLocaleString('en-IN')}
+                  ₹{item.price_inr.toLocaleString('en-IN')}
                 </p>
               )}
             </button>
           ))}
+          <button onClick={handleEnter}
+            className="w-full px-4 py-2.5 text-xs text-blue-600 hover:bg-blue-50 transition text-center border-t border-gray-100">
+            See all results for "{query}" →
+          </button>
         </div>
       )}
 
       {open && query.length >= 2 && results.length === 0 && !loading && (
         <div className="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg px-4 py-3 z-50 w-72">
-          <p className="text-sm text-gray-400">No phones found for "{query}"</p>
+          <p className="text-sm text-gray-400">No devices found for "{query}"</p>
         </div>
       )}
     </div>
