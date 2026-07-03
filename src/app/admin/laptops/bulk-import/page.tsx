@@ -88,10 +88,13 @@ export default function BulkImportLaptopsPage() {
     }
     const { data: existing } = await supabase.from('laptops').select('id, name, slug')
     const existingNames = (existing || []).map(l => l.name)
+    console.log('Existing laptops:', existingNames.length)
+    console.log('Laptops to import:', laptops.length)
     const dupes: any[] = []
     const fresh: any[] = []
     for (const laptop of laptops) {
       const dup = existingNames.find(n => isDuplicate(laptop.name, n))
+      console.log(laptop.name, '->', dup ? 'DUPLICATE of ' + dup : 'FRESH')
       if (dup && !skipDupes) dupes.push({ ...laptop, existingName: dup })
       else fresh.push(laptop)
     }
