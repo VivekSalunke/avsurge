@@ -4,8 +4,6 @@ import Link from 'next/link'
 import SpecExplainer from '@/components/SpecExplainer'
 import LaptopJsonLd from '@/components/LaptopJsonLd'
 import LaptopWishlistButton from '@/components/LaptopWishlistButton'
-import LaptopJsonLd from '@/components/LaptopJsonLd'
-import LaptopWishlistButton from '@/components/LaptopWishlistButton'
 export const revalidate = 60
 const ICONS: Record<string, string> = {
   Display: '🖥️', Performance: '⚡', Storage: '💾',
