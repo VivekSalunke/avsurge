@@ -177,7 +177,7 @@ export default function BulkImportLaptopsPage() {
 
       <textarea
         value={json}
-        onChange={e => setJson(e.target.value)}
+        onChange={e => { setJson(e.target.value); setStatus('idle'); setMessage('') }}
         rows={24}
         className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono mb-4 focus:outline-none focus:border-blue-400"
         style={{ color: '#111827', backgroundColor: '#ffffff' }}
