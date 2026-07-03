@@ -53,6 +53,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobilePhoneOpen, setMobilePhoneOpen] = useState(false)
   const [mobileTabletOpen, setMobileTabletOpen] = useState(false)
+  const [mobileLaptopOpen, setMobileLaptopOpen] = useState(false)
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -133,22 +134,24 @@ export default function Navbar() {
 
           {/* Laptops section */}
           <button
-            onClick={() => setMobileOpen(!mobileOpen)}
+            onClick={() => setMobileLaptopOpen(!mobileLaptopOpen)}
             className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl">
             💻 Laptops
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg className={`w-4 h-4 transition-transform ${mobileLaptopOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <div className="pl-4 space-y-1">
-            {laptopItems.map(item => (
-              <Link key={item.href} href={item.href}
-                onClick={() => setMobileOpen(false)}
-                className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
-                {item.label}
-              </Link>
-            ))}
-          </div>
+          {mobileLaptopOpen && (
+            <div className="pl-4 space-y-1">
+              {laptopItems.map(item => (
+                <Link key={item.href} href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          )}
 
           {/* Direct links */}
           <Link href="/news" onClick={() => setMobileOpen(false)}

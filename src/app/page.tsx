@@ -126,13 +126,16 @@ export default async function HomePage() {
         <div className="relative">
           <p className="text-blue-200 text-xs mb-2 uppercase tracking-widest font-medium">India's device database</p>
           <h1 className="text-3xl font-bold mb-2">Find your perfect device</h1>
-          <p className="text-blue-100 mb-6 max-w-md">Specs, prices, comparisons and reviews for every phone and tablet in India.</p>
+          <p className="text-blue-100 mb-6 max-w-md">Specs, prices, comparisons and reviews for every phone, tablet and laptop in India.</p>
           <div className="flex flex-wrap gap-3">
             <Link href="/phones" className="bg-white text-blue-600 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-50 transition">
               Browse phones
             </Link>
             <Link href="/tablets" className="bg-white/20 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/30 transition">
               Browse tablets
+            </Link>
+            <Link href="/laptops" className="bg-white/20 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/30 transition">
+              Browse laptops
             </Link>
             <Link href="/finder" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
               Finder →

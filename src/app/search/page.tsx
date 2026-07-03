@@ -21,12 +21,14 @@ const SORT_OPTIONS = [
   { label: 'Newest first', value: 'newest' },
 ]
 
+type Mode = 'phones' | 'tablets' | 'laptops'
+
 function SearchContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const initialQ = searchParams.get('q') || ''
 
-  const [mode, setMode] = useState<'phones' | 'tablets'>('phones')
+  const [mode, setMode] = useState<Mode>('phones')
   const [query, setQuery] = useState(initialQ)
   const [results, setResults] = useState<any[]>([])
   const [brands, setBrands] = useState<string[]>([])
@@ -44,8 +46,7 @@ function SearchContent() {
   }, [mode])
 
   const loadBrands = async () => {
-    const table = mode === 'phones' ? 'phones' : 'tablets'
-    const { data } = await supabase.from(table).select('brand')
+    const { data } = await supabase.from(mode).select('brand')
     const b = [...new Set((data || []).map((p: any) => p.brand))].sort()
     setBrands(b as string[])
     setSelectedBrand('')
@@ -55,20 +56,14 @@ function SearchContent() {
     setLoading(true)
     setSearched(true)
 
-    const table = mode === 'phones' ? 'phones' : 'tablets'
-    const specsTable = mode === 'phones' ? 'phone_specs' : 'tablet_specs'
-    const idKey = mode === 'phones' ? 'phone_id' : 'tablet_id'
+    const specsTable = mode === 'phones' ? 'phone_specs' : mode === 'tablets' ? 'tablet_specs' : 'laptop_specs'
+    const idKey = mode === 'phones' ? 'phone_id' : mode === 'tablets' ? 'tablet_id' : 'laptop_id'
 
-    let queryBuilder = supabase.from(table).select('*')
-
-    if (q.length >= 2) {
-      queryBuilder = queryBuilder.or(`name.ilike.%${q}%,brand.ilike.%${q}%`)
-    }
-
+    let queryBuilder = supabase.from(mode).select('*')
+    if (q.length >= 2) queryBuilder = queryBuilder.or(`name.ilike.%${q}%,brand.ilike.%${q}%`)
     if (selectedBrand) queryBuilder = queryBuilder.eq('brand', selectedBrand)
     if (priceRange.min > 0) queryBuilder = queryBuilder.gte('price_inr', priceRange.min)
     if (priceRange.max < 9999999) queryBuilder = queryBuilder.lte('price_inr', priceRange.max)
-
     if (sort === 'price_asc') queryBuilder = queryBuilder.order('price_inr', { ascending: true })
     else if (sort === 'price_desc') queryBuilder = queryBuilder.order('price_inr', { ascending: false })
     else if (sort === 'newest') queryBuilder = queryBuilder.order('created_at', { ascending: false })
@@ -77,14 +72,9 @@ function SearchContent() {
     const { data } = await queryBuilder.limit(50)
     let items = data || []
 
-    if (only5G) {
+    if (only5G && mode !== 'laptops') {
       const ids = items.map(p => p.id)
-      const { data: specs } = await supabase
-        .from(specsTable)
-        .select(idKey)
-        .in(idKey, ids)
-        .eq('label', '5G')
-        .eq('value', 'Yes')
+      const { data: specs } = await supabase.from(specsTable).select(idKey).in(idKey, ids).eq('label', '5G').eq('value', 'Yes')
       const fiveGIds = new Set((specs || []).map((s: any) => s[idKey]))
       items = items.filter(p => fiveGIds.has(p.id))
     }
@@ -98,7 +88,7 @@ function SearchContent() {
     doSearch(query)
   }
 
-  const switchMode = (newMode: 'phones' | 'tablets') => {
+  const switchMode = (newMode: Mode) => {
     setMode(newMode)
     setResults([])
     setSearched(false)
@@ -107,9 +97,9 @@ function SearchContent() {
     setSort('relevance')
   }
 
-  const itemBase = mode === 'phones' ? '/phones' : '/tablets'
-  const itemEmoji = mode === 'phones' ? '📱' : '📟'
-  const itemLabel = mode === 'phones' ? 'phone' : 'tablet'
+  const itemBase = mode === 'phones' ? '/phones' : mode === 'tablets' ? '/tablets' : '/laptops'
+  const itemEmoji = mode === 'phones' ? '📱' : mode === 'tablets' ? '📟' : '💻'
+  const itemLabel = mode === 'phones' ? 'phone' : mode === 'tablets' ? 'tablet' : 'laptop'
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
@@ -117,31 +107,24 @@ function SearchContent() {
 
       {/* Mode toggle */}
       <div className="flex gap-2 mb-5 bg-white border border-gray-200 rounded-xl p-1 w-fit">
-        <button
-          onClick={() => switchMode('phones')}
-          className={`px-5 py-2 rounded-lg text-sm font-medium transition ${mode === 'phones' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
-          📱 Phones
-        </button>
-        <button
-          onClick={() => switchMode('tablets')}
-          className={`px-5 py-2 rounded-lg text-sm font-medium transition ${mode === 'tablets' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
-          📟 Tablets
-        </button>
+        {(['phones', 'tablets', 'laptops'] as Mode[]).map(m => (
+          <button key={m} onClick={() => switchMode(m)}
+            className={`px-5 py-2 rounded-lg text-sm font-medium transition ${mode === m ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+            {m === 'phones' ? '📱 Phones' : m === 'tablets' ? '📟 Tablets' : '💻 Laptops'}
+          </button>
+        ))}
       </div>
 
       {/* Search bar */}
       <div className="flex gap-3 mb-6">
-        <input
-          type="text"
+        <input type="text"
           className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400"
           style={{ color: '#111827', backgroundColor: '#ffffff' }}
           placeholder={`Search by ${itemLabel} name or brand...`}
           value={query}
           onChange={e => setQuery(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleSearch()}
-        />
-        <button
-          onClick={handleSearch}
+          onKeyDown={e => e.key === 'Enter' && handleSearch()} />
+        <button onClick={handleSearch}
           className="bg-blue-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
           Search
         </button>
@@ -153,14 +136,12 @@ function SearchContent() {
           <div className="bg-white border border-gray-200 rounded-2xl p-4">
             <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Brand</h2>
             <div className="flex flex-col gap-1.5 max-h-48 overflow-y-auto">
-              <button
-                onClick={() => setSelectedBrand('')}
+              <button onClick={() => setSelectedBrand('')}
                 className={`text-left text-sm px-3 py-2 rounded-lg transition ${!selectedBrand ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
                 All brands
               </button>
               {brands.map(b => (
-                <button key={b}
-                  onClick={() => setSelectedBrand(selectedBrand === b ? '' : b)}
+                <button key={b} onClick={() => setSelectedBrand(selectedBrand === b ? '' : b)}
                   className={`text-left text-sm px-3 py-2 rounded-lg transition ${selectedBrand === b ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
                   {b}
                 </button>
@@ -172,8 +153,7 @@ function SearchContent() {
             <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Price range</h2>
             <div className="flex flex-col gap-1.5">
               {PRICE_RANGES.map(range => (
-                <button key={range.label}
-                  onClick={() => setPriceRange(range)}
+                <button key={range.label} onClick={() => setPriceRange(range)}
                   className={`text-left text-sm px-3 py-2 rounded-lg transition ${priceRange.label === range.label ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
                   {range.label}
                 </button>
@@ -181,21 +161,21 @@ function SearchContent() {
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-2xl p-4">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Features</h2>
-            <button
-              onClick={() => setOnly5G(!only5G)}
-              className={`w-full flex items-center gap-2 text-sm px-3 py-2 rounded-lg transition border ${only5G ? 'bg-blue-600 text-white border-blue-600' : 'text-gray-600 border-gray-200 hover:border-blue-300'}`}>
-              <span>📡</span> 5G only
-            </button>
-          </div>
+          {mode !== 'laptops' && (
+            <div className="bg-white border border-gray-200 rounded-2xl p-4">
+              <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Features</h2>
+              <button onClick={() => setOnly5G(!only5G)}
+                className={`w-full flex items-center gap-2 text-sm px-3 py-2 rounded-lg transition border ${only5G ? 'bg-blue-600 text-white border-blue-600' : 'text-gray-600 border-gray-200 hover:border-blue-300'}`}>
+                <span>📡</span> 5G only
+              </button>
+            </div>
+          )}
 
           <div className="bg-white border border-gray-200 rounded-2xl p-4">
             <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Sort by</h2>
             <div className="flex flex-col gap-1.5">
               {SORT_OPTIONS.map(opt => (
-                <button key={opt.value}
-                  onClick={() => setSort(opt.value)}
+                <button key={opt.value} onClick={() => setSort(opt.value)}
                   className={`text-left text-sm px-3 py-2 rounded-lg transition ${sort === opt.value ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
                   {opt.label}
                 </button>
@@ -203,8 +183,7 @@ function SearchContent() {
             </div>
           </div>
 
-          <button
-            onClick={() => doSearch(query)}
+          <button onClick={() => doSearch(query)}
             className="w-full bg-blue-600 text-white rounded-xl py-3 text-sm font-semibold hover:bg-blue-700 transition">
             Apply filters
           </button>
@@ -218,13 +197,11 @@ function SearchContent() {
               <p className="text-gray-400 text-sm">Search for a {itemLabel} or apply filters</p>
             </div>
           )}
-
           {loading && (
             <div className="text-center py-20">
               <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
             </div>
           )}
-
           {searched && !loading && results.length === 0 && (
             <div className="bg-white border border-dashed border-gray-200 rounded-2xl py-20 text-center">
               <p className="text-3xl mb-3">😕</p>
@@ -232,7 +209,6 @@ function SearchContent() {
               <p className="text-gray-400 text-xs">Try different filters or search terms</p>
             </div>
           )}
-
           {searched && !loading && results.length > 0 && (
             <div>
               <p className="text-sm text-gray-400 mb-4">{results.length} {itemLabel}{results.length !== 1 ? 's' : ''} found</p>
@@ -262,9 +238,5 @@ function SearchContent() {
 }
 
 export default function SearchPage() {
-  return (
-    <Suspense>
-      <SearchContent />
-    </Suspense>
-  )
+  return <Suspense><SearchContent /></Suspense>
 }
