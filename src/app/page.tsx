@@ -1,6 +1,8 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import PhoneOfTheDay from '@/components/PhoneOfTheDay'
+import TabletOfTheDay from '@/components/TabletOfTheDay'
+import LaptopOfTheDay from '@/components/LaptopOfTheDay'
 
 export const revalidate = 60
 
