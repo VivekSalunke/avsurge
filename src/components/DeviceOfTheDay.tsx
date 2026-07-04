@@ -55,34 +55,36 @@ export default async function DeviceOfTheDay() {
           const specs = Object.entries(specMap).slice(0, 3)
           return (
             <div key={type} className={`bg-gradient-to-br ${color} rounded-2xl p-5 text-white flex flex-col`}>
-              <p className="text-white/60 text-xs font-medium uppercase tracking-widest mb-3">{emoji} {label} of the day</p>
-              <div className="flex gap-4 items-center mb-4">
-                <div className={`w-16 h-16 ${light} rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden`}>
+              <p className="text-white/60 text-xs font-medium uppercase tracking-widest mb-4">{emoji} {label} of the day</p>
+              <div className="flex gap-4 flex-1">
+                {/* Image on left */}
+                <div className={`w-28 h-28 ${light} rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden`}>
                   {device.image_url
-                    ? <img src={device.image_url} alt={device.name} className="object-contain w-full h-full p-1" />
-                    : <span className="text-3xl">{emoji}</span>}
+                    ? <img src={device.image_url} alt={device.name} className="object-contain w-full h-full p-2" />
+                    : <span className="text-5xl">{emoji}</span>}
                 </div>
-                <div className="min-w-0">
-                  <p className="text-white/60 text-xs">{device.brand}</p>
-                  <p className="font-bold text-sm leading-tight line-clamp-2">{device.name}</p>
+                {/* Info on right */}
+                <div className="flex-1 min-w-0 flex flex-col">
+                  <p className="text-white/60 text-xs mb-0.5">{device.brand}</p>
+                  <p className="font-bold text-sm leading-tight mb-1">{device.name}</p>
                   {device.price_inr && (
-                    <p className="text-white/80 text-xs mt-0.5">₹{device.price_inr.toLocaleString('en-IN')}</p>
+                    <p className="text-white font-bold text-base mb-2">₹{device.price_inr.toLocaleString('en-IN')}</p>
                   )}
+                  {specs.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-3">
+                      {specs.map(([label, value]) => (
+                        <span key={label} className="text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                          {value}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <Link href={`/${type}/${device.slug}`}
+                    className="mt-auto inline-block bg-white/20 hover:bg-white/30 text-white text-xs font-semibold px-4 py-2 rounded-xl transition text-center">
+                    View specs →
+                  </Link>
                 </div>
               </div>
-              {specs.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {specs.map(([label, value]) => (
-                    <span key={label} className="text-xs bg-white/20 px-2 py-0.5 rounded-full truncate max-w-full">
-                      {value}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <Link href={`/${type}/${device.slug}`}
-                className="mt-auto inline-block bg-white/20 hover:bg-white/30 text-white text-xs font-semibold px-4 py-2 rounded-xl transition text-center">
-                View specs →
-              </Link>
             </div>
           )
         })}
