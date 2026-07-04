@@ -82,7 +82,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
                 className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-medium hover:bg-blue-700 transition text-center">
                 Check on Flipkart →
               </a>
-              <a href={`https://www.amazon.in/s?k=${encodeURIComponent(phone.name)}`} target="_blank"
+              <a href={`https://www.amazon.in/s?k=${encodeURIComponent(phone.name)}&tag=avsurge-21`} target="_blank"
                 className="w-full bg-white border border-gray-200 text-gray-700 rounded-xl py-2.5 text-sm font-medium hover:bg-gray-50 transition text-center">
                 Check on Amazon →
               </a>
