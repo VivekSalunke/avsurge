@@ -74,7 +74,7 @@ function PhoneSelector({ side, phone, phones, onSelect, onRemove }: PhoneSelecto
                 </div>
                 {p.price_inr && (
                   <p className="text-xs text-blue-600 flex-shrink-0">
-                    Rs.{p.price_inr.toLocaleString('en-IN')}
+                    ₹{p.price_inr.toLocaleString('en-IN')}
                   </p>
                 )}
               </button>
@@ -93,7 +93,7 @@ function PhoneSelector({ side, phone, phones, onSelect, onRemove }: PhoneSelecto
           <p className="font-semibold text-gray-900 text-sm">{phone.name}</p>
           <p className="text-xs text-gray-400 mb-1">{phone.brand}</p>
           {phone.price_inr && (
-            <p className="text-blue-600 text-sm font-bold">Rs.{phone.price_inr.toLocaleString('en-IN')}</p>
+            <p className="text-blue-600 text-sm font-bold">₹{phone.price_inr.toLocaleString('en-IN')}</p>
           )}
           <button onClick={() => onRemove(side)}
             className="text-xs text-gray-400 hover:text-red-500 mt-2 transition">

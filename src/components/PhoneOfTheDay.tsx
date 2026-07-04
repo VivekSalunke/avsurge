@@ -60,7 +60,7 @@ export default async function PhoneOfTheDay() {
             </Link>
             {phone.price_inr && (
               <p className="text-xl font-bold text-blue-600 mb-4">
-                Rs.{phone.price_inr.toLocaleString('en-IN')}
+                ₹{phone.price_inr.toLocaleString('en-IN')}
               </p>
             )}
 

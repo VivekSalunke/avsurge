@@ -40,7 +40,7 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
         <span className="text-sm font-semibold text-gray-700">Price History</span>
         {priceChange !== 0 && (
           <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${priceDrop ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-            {priceDrop ? 'Down' : 'Up'} Rs.{Math.abs(priceChange).toLocaleString('en-IN')} since launch
+            {priceDrop ? 'Down' : 'Up'} ₹{Math.abs(priceChange).toLocaleString('en-IN')} since launch
           </span>
         )}
       </div>
@@ -49,15 +49,15 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
         <div className="grid grid-cols-3 gap-3 mb-5">
           <div className="bg-gray-50 rounded-xl p-3 text-center">
             <p className="text-xs text-gray-400 mb-1">Lowest</p>
-            <p className="text-sm font-bold text-green-600">Rs.{minPrice.toLocaleString('en-IN')}</p>
+            <p className="text-sm font-bold text-green-600">₹{minPrice.toLocaleString('en-IN')}</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-3 text-center">
             <p className="text-xs text-gray-400 mb-1">Current</p>
-            <p className="text-sm font-bold text-blue-600">Rs.{(currentPrice || latestPrice).toLocaleString('en-IN')}</p>
+            <p className="text-sm font-bold text-blue-600">₹{(currentPrice || latestPrice).toLocaleString('en-IN')}</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-3 text-center">
             <p className="text-xs text-gray-400 mb-1">Highest</p>
-            <p className="text-sm font-bold text-red-500">Rs.{maxPrice.toLocaleString('en-IN')}</p>
+            <p className="text-sm font-bold text-red-500">₹{maxPrice.toLocaleString('en-IN')}</p>
           </div>
         </div>
 
@@ -73,7 +73,7 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
                   style={{ height: `${Math.max(heightPct, 8)}%` }}
                 />
                 <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none z-10">
-                  Rs.{entry.price_inr.toLocaleString('en-IN')}
+                  ₹{entry.price_inr.toLocaleString('en-IN')}
                   <br />
                   <span className="text-gray-400">{new Date(entry.tracked_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</span>
                 </div>

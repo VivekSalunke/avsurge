@@ -25,7 +25,7 @@ export default function PriceAlertButton({ phoneId, phoneName, currentPrice }: {
     const data = await res.json()
     if (res.ok) {
       setStatus('success')
-      setMessage(`We'll email you when ${phoneName} drops to Rs.${Number(targetPrice).toLocaleString('en-IN')}`)
+      setMessage(`We'll email you when ${phoneName} drops to ₹${Number(targetPrice).toLocaleString('en-IN')}`)
     } else {
       setStatus('error')
       setMessage(data.error || 'Something went wrong')
@@ -68,8 +68,8 @@ export default function PriceAlertButton({ phoneId, phoneName, currentPrice }: {
             </div>
             <div>
               <label className="text-xs text-gray-500 mb-1 block">
-                Notify me when price drops to (Rs.)
-                {currentPrice && <span className="text-gray-400 ml-1">· Current: Rs.{currentPrice.toLocaleString('en-IN')}</span>}
+                Notify me when price drops to (₹)
+                {currentPrice && <span className="text-gray-400 ml-1">· Current: ₹{currentPrice.toLocaleString('en-IN')}</span>}
               </label>
               <input
                 type="number"
