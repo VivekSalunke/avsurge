@@ -140,7 +140,7 @@ export default async function HomePage() {
               Browse laptops
             </Link>
             <Link href="/search" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
-              Finder →
+              Search & Discover →
             </Link>
             <Link href="/compare" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
               Compare →
