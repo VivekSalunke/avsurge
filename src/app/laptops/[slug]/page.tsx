@@ -5,6 +5,7 @@ import SpecExplainer from '@/components/SpecExplainer'
 import LaptopJsonLd from '@/components/LaptopJsonLd'
 import LaptopViewTracker from '@/components/LaptopViewTracker'
 import RecentlyViewedLaptops from '@/components/RecentlyViewedLaptops'
+import RelatedLaptops from '@/components/RelatedLaptops'
 import LaptopReviews from '@/components/LaptopReviews'
 import LaptopWishlistButton from '@/components/LaptopWishlistButton'
 import LaptopPriceAlertButton from '@/components/LaptopPriceAlertButton'
@@ -122,6 +123,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
               </table>
             </div>
           ))}
+          <RelatedLaptops laptopId={laptop.id} brand={laptop.brand} priceInr={laptop.price_inr} />
           <LaptopReviews laptopId={laptop.id} />
           <RecentlyViewedLaptops currentSlug={laptop.slug} />
           {specs.length === 0 && (
