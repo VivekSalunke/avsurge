@@ -151,7 +151,11 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <PhoneOfTheDay />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
+        <PhoneOfTheDay />
+        <TabletOfTheDay />
+        <LaptopOfTheDay />
+      </div>
 
       {/* Stats bar */}
       <div className="grid grid-cols-4 gap-3 mb-10">
