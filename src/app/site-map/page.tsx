@@ -31,9 +31,14 @@ export default async function SitemapPage() {
             {[
               { href: '/', label: 'Home' },
               { href: '/phones', label: 'All Phones' },
-              { href: '/compare', label: 'Compare Phones' },
-              { href: '/finder', label: 'Phone Finder' },
+              { href: '/tablets', label: 'All Tablets' },
+              { href: '/laptops', label: 'All Laptops' },
+              { href: '/search', label: 'Search & Discover' },
+              { href: '/ai-recommend', label: 'AI Recommender' },
+              { href: '/brands', label: 'All Brands' },
               { href: '/news', label: 'News & Reviews' },
+              { href: '/wishlist', label: 'My Wishlist' },
+              { href: '/profile', label: 'My Profile' },
             ].map(item => (
               <Link key={item.href} href={item.href}
                 className="text-sm text-blue-600 hover:underline flex items-center gap-1.5">
@@ -48,7 +53,7 @@ export default async function SitemapPage() {
           <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Browse by Brand</h2>
           <div className="flex flex-col gap-2">
             {brands.map(brand => (
-              <Link key={brand} href={`/phones?brand=${brand}`}
+              <Link key={brand} href={`/brands/${encodeURIComponent(brand)}`}
                 className="text-sm text-blue-600 hover:underline flex items-center gap-1.5">
                 <span className="text-gray-300">→</span> {brand}
               </Link>
@@ -79,7 +84,8 @@ export default async function SitemapPage() {
           <div className="flex flex-col gap-2">
             {[
               { href: '/login', label: 'Sign In' },
-              { href: '/profile', label: 'My Profile' },
+              { href: '/privacy', label: 'Privacy Policy' },
+              { href: '/terms', label: 'Terms & Conditions' },
             ].map(item => (
               <Link key={item.href} href={item.href}
                 className="text-sm text-blue-600 hover:underline flex items-center gap-1.5">
