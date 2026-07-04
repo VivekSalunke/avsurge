@@ -79,8 +79,8 @@ export default async function TabletsPage({ searchParams }: { searchParams: Prom
       {tablets && tablets.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {tablets.map((tablet: any) => (
-            <Link key={tablet.id} href={`/tablets/${tablet.slug}`}
-              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 transition group">
+            <div key={tablet.id} className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 transition group">
+              <Link href={`/tablets/${tablet.slug}`}>
               <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
                 {tablet.image_url
                   ? <img src={tablet.image_url} alt={tablet.name} className="object-contain w-full h-full" />
@@ -91,7 +91,12 @@ export default async function TabletsPage({ searchParams }: { searchParams: Prom
               {tablet.price_inr && (
                 <p className="text-xs text-blue-600 font-medium mt-1">₹{tablet.price_inr.toLocaleString('en-IN')}</p>
               )}
-            </Link>
+              </Link>
+              <Link href={`/compare-tablets?a=${tablet.slug}`}
+                className="mt-2 w-full flex items-center justify-center gap-1 text-xs text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg py-1.5 transition border border-transparent hover:border-blue-200">
+                ⚖️ Compare
+              </Link>
+            </div>
           ))}
         </div>
       ) : (

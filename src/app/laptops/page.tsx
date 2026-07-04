@@ -82,8 +82,8 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {laptops.map((laptop: any) => (
-            <Link key={laptop.id} href={`/laptops/${laptop.slug}`}
-              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
+            <div key={laptop.id} className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
+              <Link href={`/laptops/${laptop.slug}`}>
               <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
                 {laptop.image_url
                   ? <img src={laptop.image_url} alt={laptop.name} className="object-contain w-full h-full" />
@@ -94,7 +94,12 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
               {laptop.price_inr && (
                 <p className="text-xs text-blue-600 font-medium mt-1">₹{laptop.price_inr.toLocaleString('en-IN')}</p>
               )}
-            </Link>
+              </Link>
+              <Link href={`/compare-laptops?a=${laptop.slug}`}
+                className="mt-2 w-full flex items-center justify-center gap-1 text-xs text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg py-1.5 transition border border-transparent hover:border-blue-200">
+                ⚖️ Compare
+              </Link>
+            </div>
           ))}
         </div>
       )}

@@ -39,8 +39,8 @@ export default async function PhonesPage({ searchParams }: { searchParams: Promi
       {phones && phones.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {phones.map((phone: any) => (
-            <Link key={phone.id} href={`/phones/${phone.slug}`}
-              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 transition group card-hover">
+            <div key={phone.id} className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 transition group card-hover relative">
+              <Link href={`/phones/${phone.slug}`}>
               <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 text-4xl">
                 {phone.image_url ? (
                   <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full" />
@@ -51,7 +51,12 @@ export default async function PhonesPage({ searchParams }: { searchParams: Promi
               {phone.price_inr && (
                 <p className="text-xs text-blue-600 font-medium mt-1">₹{phone.price_inr.toLocaleString('en-IN')}</p>
               )}
-            </Link>
+              </Link>
+              <Link href={`/compare?a=${phone.slug}`}
+                className="mt-2 w-full flex items-center justify-center gap-1 text-xs text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg py-1.5 transition border border-transparent hover:border-blue-200">
+                ⚖️ Compare
+              </Link>
+            </div>
           ))}
         </div>
       ) : (
