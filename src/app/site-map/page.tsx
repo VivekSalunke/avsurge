@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Sitemap',
-  description: 'Browse all pages on AVSurge — phones, comparisons, finder and more.',
+  description: 'Browse all pages on AVSurge — phones, tablets, laptops, comparisons and more.',
 }
 
 export const revalidate = 3600

@@ -106,7 +106,7 @@ export default async function UnderBudgetTabletsPage({ params }: { params: Promi
         <p className="text-sm text-gray-500 leading-relaxed">
           When buying a tablet under {budgetLabel}, focus on display size, chipset, RAM, and battery life.
           Use the <Link href="/compare-tablets" className="text-blue-600 hover:underline">comparison tool</Link> to compare any two tablets side by side,
-          or try the <Link href="/finder" className="text-blue-600 hover:underline">device finder</Link> to filter by your priorities.
+          or try the <Link href="/search" className="text-blue-600 hover:underline">Search & Discover</Link> to filter by your priorities.
         </p>
       </div>
     </main>

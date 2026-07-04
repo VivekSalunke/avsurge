@@ -139,7 +139,7 @@ export default async function HomePage() {
             <Link href="/laptops" className="bg-white/20 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/30 transition">
               Browse laptops
             </Link>
-            <Link href="/finder" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
+            <Link href="/search" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
               Finder →
             </Link>
             <Link href="/compare" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">

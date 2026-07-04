@@ -106,7 +106,7 @@ export default async function UnderBudgetPage({ params }: { params: Promise<{ bu
         <p className="text-sm text-gray-500 leading-relaxed">
           When buying a phone under {budgetLabel}, focus on the processor (chipset), RAM, battery capacity, and camera quality.
           Use the <Link href="/compare" className="text-blue-600 hover:underline">comparison tool</Link> to compare any two phones side by side,
-          or try the <Link href="/finder" className="text-blue-600 hover:underline">phone finder</Link> to filter by your priorities.
+          or try the <Link href="/search" className="text-blue-600 hover:underline">Search & Discover</Link> to filter by your priorities.
         </p>
       </div>
     </main>
