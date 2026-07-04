@@ -134,8 +134,15 @@ export default function ProfilePage() {
         <Link href="/search" className="bg-white border border-gray-200 rounded-xl p-3 flex items-center gap-3 hover:border-blue-300 transition">
           <span className="text-2xl">🔍</span>
           <div>
-            <p className="text-sm font-semibold text-gray-900">Find phones</p>
-            <p className="text-xs text-gray-400">Search & filter</p>
+            <p className="text-sm font-semibold text-gray-900">Search & Discover</p>
+            <p className="text-xs text-gray-400">Filter & find devices</p>
+          </div>
+        </Link>
+        <Link href="/ai-recommend" className="bg-white border border-purple-200 rounded-xl p-3 flex items-center gap-3 hover:border-purple-300 transition">
+          <span className="text-2xl">🤖</span>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">AI Recommender</p>
+            <p className="text-xs text-gray-400">Get AI suggestions</p>
           </div>
         </Link>
       </div>
