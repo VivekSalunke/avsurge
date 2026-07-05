@@ -5,6 +5,7 @@ import TabletReviews from '@/components/TabletReviews'
 import TabletWishlistButton from '@/components/TabletWishlistButton'
 import SpecExplainer from '@/components/SpecExplainer'
 import TabletJsonLd from '@/components/TabletJsonLd'
+import RelatedTablets from '@/components/RelatedTablets'
 import TabletPriceHistory from '@/components/TabletPriceHistory'
 import RecentlyViewedTablets from '@/components/RecentlyViewedTablets'
 import TabletViewTracker from '@/components/TabletViewTracker'
@@ -143,6 +144,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
             </div>
           )}
 
+          <RelatedTablets tabletId={tablet.id} brand={tablet.brand} priceInr={tablet.price_inr} />
           <TabletPriceHistory tabletId={tablet.id} currentPrice={tablet.price_inr} />
           <RecentlyViewedTablets currentSlug={tablet.slug} />
           <TabletReviews tabletId={tablet.id} />
