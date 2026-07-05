@@ -7,6 +7,7 @@ import LaptopViewTracker from '@/components/LaptopViewTracker'
 import RecentlyViewedLaptops from '@/components/RecentlyViewedLaptops'
 import RelatedLaptops from '@/components/RelatedLaptops'
 import LaptopReviews from '@/components/LaptopReviews'
+import LaptopPriceHistory from '@/components/LaptopPriceHistory'
 import LaptopWishlistButton from '@/components/LaptopWishlistButton'
 import LaptopPriceAlertButton from '@/components/LaptopPriceAlertButton'
 export const revalidate = 60
@@ -123,6 +124,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
               </table>
             </div>
           ))}
+          <LaptopPriceHistory laptopId={laptop.id} currentPrice={laptop.price_inr} />
           <RelatedLaptops laptopId={laptop.id} brand={laptop.brand} priceInr={laptop.price_inr} />
           <LaptopReviews laptopId={laptop.id} />
           <RecentlyViewedLaptops currentSlug={laptop.slug} />
