@@ -9,6 +9,7 @@ import Script from 'next/script'
 const geist = Geist({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
+  manifest: '/manifest.json',
   title: {
     default: 'AVSurge — Phone Specs, Reviews & Prices in India',
     template: '%s | AVSurge'
@@ -58,6 +59,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           strategy="afterInteractive"
         />
       </head>
+      <meta name="theme-color" content="#2563eb" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      <meta name="apple-mobile-web-app-title" content="AVSurge" />
+      <link rel="apple-touch-icon" href="/icon-192.png" />
       <body className={`${geist.className} bg-gray-50 text-gray-900`}>
         <AuthProvider>
           <Navbar />

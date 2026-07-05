@@ -1,0 +1,42 @@
+{
+  "name": "AVSurge - Device Specs & Comparison",
+  "short_name": "AVSurge",
+  "description": "Compare specs, prices and reviews for phones, tablets and laptops in India",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "technology", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Search Devices",
+      "url": "/search",
+      "description": "Search and filter devices"
+    },
+    {
+      "name": "Compare Phones",
+      "url": "/compare",
+      "description": "Compare phones side by side"
+    },
+    {
+      "name": "AI Recommender",
+      "url": "/ai-recommend",
+      "description": "Get AI device recommendations"
+    }
+  ]
+}
