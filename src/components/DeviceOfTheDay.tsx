@@ -31,7 +31,7 @@ export default function DeviceOfTheDay({ cards }: { cards: DeviceCard[] }) {
         <span className="text-xs text-gray-400">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
       </div>
 
-      <div className="relative h-64">
+      <div className="relative h-96 sm:h-64">
         {cards.map(({ type, emoji, label, color, bgClass, device, specMap }, i) => {
           const specs = Object.entries(specMap).slice(0, 3)
           const total = cards.length
@@ -60,20 +60,20 @@ export default function DeviceOfTheDay({ cards }: { cards: DeviceCard[] }) {
               style={{ ...style, zIndex }}
             >
               {isActive ? (
-                <div className="flex h-full">
+                <div className="flex flex-col sm:flex-row h-full">
                   {/* Left - Image */}
-                  <div className={`w-56 flex-shrink-0 flex items-center justify-center ${bgClass} p-6`}>
+                  <div className={`h-40 sm:h-full sm:w-56 flex-shrink-0 flex items-center justify-center ${bgClass} p-4`}>
                     {device.image_url
                       ? <img src={device.image_url} alt={device.name} className="object-contain w-full h-full drop-shadow-xl" />
                       : <span className="text-8xl">{emoji}</span>}
                   </div>
                   {/* Right - Info */}
-                  <div className="flex-1 flex flex-col justify-center px-8 py-6">
+                  <div className="flex-1 flex flex-col justify-center px-5 py-4 sm:px-8 sm:py-6">
                     <p className="text-white/60 text-xs font-semibold uppercase tracking-widest mb-2">{emoji} {label} of the day</p>
                     <p className="text-white/70 text-sm mb-0.5">{device.brand}</p>
-                    <h3 className="font-bold text-2xl leading-tight mb-2">{device.name}</h3>
+                    <h3 className="font-bold text-lg sm:text-2xl leading-tight mb-2">{device.name}</h3>
                     {device.price_inr && (
-                      <p className="text-white font-bold text-xl mb-4">₹{device.price_inr.toLocaleString('en-IN')}</p>
+                      <p className="text-white font-bold text-lg sm:text-xl mb-3">₹{device.price_inr.toLocaleString('en-IN')}</p>
                     )}
                     <div className="flex flex-wrap gap-2 mb-5">
                       {specs.map(([, value]) => (
