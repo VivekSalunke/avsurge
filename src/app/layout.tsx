@@ -8,7 +8,12 @@ import Script from 'next/script'
 
 const geist = Geist({ subsets: ['latin'] })
 
+export const viewport = {
+  themeColor: '#2563eb',
+}
+
 export const metadata: Metadata = {
+  manifest: '/manifest.json',
   manifest: '/manifest.json',
   title: {
     default: 'AVSurge — Phone Specs, Reviews & Prices in India',

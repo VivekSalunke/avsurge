@@ -1,7 +1,7 @@
 {
-  "name": "AVSurge - Device Specs & Comparison",
+  "name": "AVSurge - Device Specs & Prices India",
   "short_name": "AVSurge",
-  "description": "Compare specs, prices and reviews for phones, tablets and laptops in India",
+  "description": "Compare phones, tablets and laptops specs and prices in India",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -21,12 +21,13 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["shopping", "technology", "utilities"],
+  "categories": ["shopping", "technology"],
+  "lang": "en-IN",
   "shortcuts": [
     {
       "name": "Search Devices",
       "url": "/search",
-      "description": "Search and filter devices"
+      "description": "Search phones, tablets and laptops"
     },
     {
       "name": "Compare Phones",
