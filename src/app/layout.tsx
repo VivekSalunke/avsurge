@@ -14,7 +14,6 @@ export const viewport = {
 
 export const metadata: Metadata = {
   manifest: '/manifest.json',
-  manifest: '/manifest.json',
   title: {
     default: 'AVSurge — Phone Specs, Reviews & Prices in India',
     template: '%s | AVSurge'
