@@ -31,7 +31,7 @@ export default function DeviceOfTheDay({ cards }: { cards: DeviceCard[] }) {
         <span className="text-xs text-gray-400">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
       </div>
 
-      <div className="relative h-52">
+      <div className="relative h-96">
         {cards.map(({ type, emoji, label, color, bgClass, device, specMap }, i) => {
           const specs = Object.entries(specMap).slice(0, 3)
           const total = cards.length
@@ -66,7 +66,7 @@ export default function DeviceOfTheDay({ cards }: { cards: DeviceCard[] }) {
               {isActive ? (
                 /* Active card - full content */
                 <div className="flex gap-5 items-center h-full px-6 py-5">
-                  <div className={`w-32 h-32 ${bgClass} rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden`}>
+                  <div className={`w-48 h-48 ${bgClass} rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden`}>
                     {device.image_url
                       ? <img src={device.image_url} alt={device.name} className="object-contain w-full h-full p-2" />
                       : <span className="text-6xl">{emoji}</span>}
