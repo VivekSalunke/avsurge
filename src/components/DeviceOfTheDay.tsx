@@ -7,7 +7,7 @@ interface DeviceCard {
   emoji: string
   label: string
   color: string
-  light: string
+  bgClass: string
   device: any
   specMap: Record<string, string>
 }
@@ -31,50 +31,73 @@ export default function DeviceOfTheDay({ cards }: { cards: DeviceCard[] }) {
         <span className="text-xs text-gray-400">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
       </div>
 
-      {/* Stacked card slider */}
-      <div className="relative h-48">
-        {cards.map(({ type, emoji, label, color, light, device, specMap }, i) => {
+      <div className="relative h-52">
+        {cards.map(({ type, emoji, label, color, bgClass, device, specMap }, i) => {
           const specs = Object.entries(specMap).slice(0, 3)
-          const isActive = i === active
-          const isPrev = i === (active - 1 + cards.length) % cards.length
-          const isNext = i === (active + 1) % cards.length
+          const total = cards.length
+          const offset = (i - active + total) % total
 
-          let transform = 'translateX(100%) scale(0.9)'
-          let opacity = '0'
+          // Stack positioning
+          let style: React.CSSProperties = {}
           let zIndex = 0
+          let isActive = offset === 0
 
-          if (isActive) { transform = 'translateX(0%) scale(1)'; opacity = '1'; zIndex = 30 }
-          else if (isPrev) { transform = 'translateX(-8%) scale(0.95)'; opacity = '0.5'; zIndex = 20 }
-          else if (isNext) { transform = 'translateX(8%) scale(0.95)'; opacity = '0.5'; zIndex = 20 }
+          if (offset === 0) {
+            // Active card - front
+            style = { transform: 'translateX(0) scale(1)', opacity: 1 }
+            zIndex = 30
+          } else if (offset === 1) {
+            // Next card - slightly behind right
+            style = { transform: 'translateX(12px) scale(0.97)', opacity: 0.85 }
+            zIndex = 20
+          } else {
+            // Further cards - more behind
+            style = { transform: 'translateX(22px) scale(0.94)', opacity: 0.6 }
+            zIndex = 10
+          }
 
           return (
-            <div key={type}
-              className={`absolute inset-0 bg-gradient-to-br ${color} rounded-2xl p-6 text-white transition-all duration-500`}
-              style={{ transform, opacity, zIndex }}>
-              <div className="flex gap-5 items-center h-full">
-                <div className={`w-32 h-32 ${light} rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden`}>
-                  {device.image_url
-                    ? <img src={device.image_url} alt={device.name} className="object-contain w-full h-full p-2" />
-                    : <span className="text-6xl">{emoji}</span>}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-white/60 text-xs font-medium uppercase tracking-widest mb-1">{emoji} {label} of the day</p>
-                  <p className="text-white/70 text-xs mb-0.5">{device.brand}</p>
-                  <p className="font-bold text-xl leading-tight mb-1">{device.name}</p>
-                  {device.price_inr && (
-                    <p className="text-white font-bold text-lg mb-3">₹{device.price_inr.toLocaleString('en-IN')}</p>
-                  )}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {specs.map(([, value]) => (
-                      <span key={value} className="text-xs bg-white/20 px-2.5 py-1 rounded-full">{value}</span>
-                    ))}
+            <div
+              key={type}
+              onClick={() => !isActive && setActive(i)}
+              className={`absolute inset-0 bg-gradient-to-br ${color} rounded-2xl text-white transition-all duration-500 ${!isActive ? 'cursor-pointer' : ''}`}
+              style={{ ...style, zIndex }}
+            >
+              {isActive ? (
+                /* Active card - full content */
+                <div className="flex gap-5 items-center h-full px-6 py-5">
+                  <div className={`w-32 h-32 ${bgClass} rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden`}>
+                    {device.image_url
+                      ? <img src={device.image_url} alt={device.name} className="object-contain w-full h-full p-2" />
+                      : <span className="text-6xl">{emoji}</span>}
                   </div>
-                  <Link href={`/${type}/${device.slug}`}
-                    className="inline-block bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-5 py-2 rounded-xl transition">
-                    View specs →
-                  </Link>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white/60 text-xs font-medium uppercase tracking-widest mb-1">{emoji} {label} of the day</p>
+                    <p className="text-white/70 text-xs mb-0.5">{device.brand}</p>
+                    <p className="font-bold text-xl leading-tight mb-1">{device.name}</p>
+                    {device.price_inr && (
+                      <p className="text-white font-bold text-lg mb-3">₹{device.price_inr.toLocaleString('en-IN')}</p>
+                    )}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {specs.map(([, value]) => (
+                        <span key={value} className="text-xs bg-white/20 px-2.5 py-1 rounded-full">{value}</span>
+                      ))}
+                    </div>
+                    <Link href={`/${type}/${device.slug}`}
+                      className="inline-block bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-5 py-2 rounded-xl transition">
+                      View specs →
+                    </Link>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* Stacked card - show label and device name at bottom corner */
+                <div className="h-full w-full relative rounded-2xl overflow-hidden">
+                  <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-black/20">
+                    <p className="text-white/60 text-xs">{emoji} {label} of the day</p>
+                    <p className="text-white font-semibold text-sm truncate">{device.name}</p>
+                  </div>
+                </div>
+              )}
             </div>
           )
         })}
