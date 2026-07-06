@@ -1,5 +1,13 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+
+export const metadata = {
+  title: 'Device Brands | AVSurge',
+  description: 'Browse phones, tablets and laptops by brand. Find all Samsung, Apple, OnePlus, Dell, HP and more devices in India.',
+  alternates: { canonical: 'https://avsurge.com/brands' },
+}
+
+
 export const revalidate = 60
 
 const BrandCard = ({ brand, count, label, href, logoUrl }: {

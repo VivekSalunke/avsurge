@@ -1,5 +1,13 @@
 export const revalidate = 0
 
+export const metadata = {
+  title: 'Tech News & Reviews | AVSurge',
+  description: 'Latest smartphone, tablet and laptop news, reviews and updates from India and around the world.',
+  alternates: { canonical: 'https://avsurge.com/news' },
+}
+
+
+
 interface Post {
   title: string
   link: string

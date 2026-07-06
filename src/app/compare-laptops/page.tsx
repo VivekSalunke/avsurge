@@ -4,6 +4,9 @@ import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 
+
+
+
 const ICONS: Record<string, string> = {
   Display: '🖥️', Performance: '⚡', Memory: '🧠',
   Battery: '🔋', Connectivity: '📡', Build: '🏗️',
