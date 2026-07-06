@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import BackToTop from '@/components/BackToTop'
 import { Geist } from 'next/font/google'
 import './globals.css'
 import Link from 'next/link'
@@ -72,6 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <Navbar />
           {children}
+        <BackToTop />
           <footer className="border-t border-gray-200 bg-white mt-16 py-8">
             <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2">
