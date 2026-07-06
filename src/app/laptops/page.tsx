@@ -56,6 +56,26 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
         </div>
       </div>
 
+      {/* Browse by use case */}
+      <div className="mb-8">
+        <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-3">Browse by use case</h2>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { label: '🎮 Gaming', href: '/best-laptops-for/gaming' },
+            { label: '🎬 Video Editing', href: '/best-laptops-for/video-editing' },
+            { label: '🎓 Students', href: '/best-laptops-for/students' },
+            { label: '💼 Business', href: '/best-laptops-for/business' },
+            { label: '💻 Programming', href: '/best-laptops-for/programming' },
+            { label: '✈️ Lightweight', href: '/best-laptops-for/lightweight' },
+          ].map(item => (
+            <Link key={item.href} href={item.href}
+              className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* Brand filter */}
       <div className="flex flex-wrap gap-2 mb-8">
         <Link href="/laptops"
