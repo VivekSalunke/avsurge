@@ -28,6 +28,26 @@ export default async function PhonesPage({ searchParams }: { searchParams: Promi
         <span className="text-sm text-gray-400">{phones?.length || 0} devices</span>
       </div>
 
+      {/* Browse by use case */}
+      <div className="mb-8">
+        <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-3">Browse by use case</h2>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { label: '🎮 Gaming', href: '/best-phones-for/gaming' },
+            { label: '📷 Camera', href: '/best-phones-for/camera' },
+            { label: '🔋 Battery', href: '/best-phones-for/battery' },
+            { label: '🎓 Students', href: '/best-phones-for/students' },
+            { label: '📡 5G', href: '/best-phones-for/5g' },
+            { label: '💼 Business', href: '/best-phones-for/business' },
+          ].map(item => (
+            <Link key={item.href} href={item.href}
+              className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
       <div className="flex flex-wrap gap-2 mb-8">
         <Link href="/phones"
           className={`px-3 py-1.5 rounded-full text-sm border transition ${!brand ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'}`}>
