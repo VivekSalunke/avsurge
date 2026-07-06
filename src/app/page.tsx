@@ -320,6 +320,11 @@ export default async function HomePage() {
           <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Latest News</h3>
           <p className="text-xs text-gray-400">Reviews & tech news</p>
         </Link>
+        <Link href="/about" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
+          <div className="text-3xl mb-3">ℹ️</div>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">About Us</h3>
+          <p className="text-xs text-gray-400">Learn about AVSurge</p>
+        </Link>
       </div>
 
       {/* Brands */}
