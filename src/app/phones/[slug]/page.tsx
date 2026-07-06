@@ -57,7 +57,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
           <div className="bg-white rounded-2xl border border-gray-200 p-6 sticky top-20">
-            <div className="w-full aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-5 text-7xl overflow-hidden">
+            <div className="w-full aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-5 text-7xl overflow-hidden relative">
               {phone.image_url
                 ? <Image src={phone.image_url} alt={phone.name} fill className="object-contain p-2" sizes="(max-width: 768px) 100vw, 300px" />
                 : '📱'}
