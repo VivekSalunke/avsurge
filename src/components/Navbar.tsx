@@ -7,6 +7,7 @@ import NavAuth from './NavAuth'
 const phoneItems = [
   { href: '/phones', label: 'All Phones', desc: 'Browse all 250+ phones' },
   { href: '/compare', label: 'Compare Phones', desc: 'Side by side comparison' },
+  { href: '/best-phones/20000', label: 'Browse by Budget', desc: 'Filter by price range' },
   { href: '/search', label: 'Search & Discover', desc: 'Filter, find and AI search' },
 ]
 
@@ -160,6 +161,10 @@ export default function Navbar() {
           <Link href="/news" onClick={() => setMobileOpen(false)}
             className="block px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl">
             📰 News
+          </Link>
+          <Link href="/ai-recommend" onClick={() => setMobileOpen(false)}
+            className="block px-3 py-2.5 text-sm font-medium text-purple-600 hover:bg-purple-50 rounded-xl">
+            🤖 AI Recommender
           </Link>
 
           <Link href="/ai-recommend" onClick={() => setMobileOpen(false)}
