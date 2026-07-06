@@ -37,6 +37,26 @@ export default async function TabletsPage({ searchParams }: { searchParams: Prom
           </div>
       </div>
 
+      {/* Browse by use case */}
+      <div className="mb-8">
+        <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-3">Browse by use case</h2>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { label: '✏️ Drawing', href: '/best-tablets-for/drawing' },
+            { label: '🎓 Students', href: '/best-tablets-for/students' },
+            { label: '🎮 Gaming', href: '/best-tablets-for/gaming' },
+            { label: '👶 Kids', href: '/best-tablets-for/kids' },
+            { label: '🎬 Entertainment', href: '/best-tablets-for/entertainment' },
+            { label: '💼 Work', href: '/best-tablets-for/work' },
+          ].map(item => (
+            <Link key={item.href} href={item.href}
+              className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* Brand filter */}
       {/* Browse by Budget */}
       <div className="mb-8">
