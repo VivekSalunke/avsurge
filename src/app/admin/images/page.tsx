@@ -62,7 +62,7 @@ export default function AdminImagesPage() {
   }
 
   const applyGithubUrl = async (device: any) => {
-    const url = getJsDelivrUrl(mode, device.slug, ext)
+    const url = getRawUrl(mode, device.slug, ext)
     setSaving(device.id)
     const { error } = await supabase.from(mode).update({ image_url: url }).eq('id', device.id)
     if (!error) {
