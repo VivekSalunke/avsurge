@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Sitemap',
+  alternates: { canonical: 'https://avsurge.com/site-map' },
   description: 'Browse all pages on AVSurge — phones, tablets, laptops, comparisons and more.',
 }
 

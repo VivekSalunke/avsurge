@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Terms and Conditions | AVSurge',
+  alternates: { canonical: 'https://avsurge.com/terms' },
   description: 'Terms and Conditions for using AVSurge - India\'s device comparison platform.',
 }
 

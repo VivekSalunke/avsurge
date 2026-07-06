@@ -3,6 +3,7 @@ import Link from 'next/link'
 export const revalidate = 60
 export const metadata = {
   title: 'Laptops Price List in India 2025',
+  alternates: { canonical: 'https://avsurge.com/laptops' },
   description: 'Browse all laptops available in India. Compare laptop specs, prices and reviews. Find the best laptop for your budget.',
 }
 export default async function LaptopsPage({ searchParams }: { searchParams: Promise<{ brand?: string }> }) {

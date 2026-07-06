@@ -5,6 +5,7 @@ export const revalidate = 60
 
 export const metadata = {
   title: 'Tablets Price List in India',
+  alternates: { canonical: 'https://avsurge.com/tablets' },
   description: 'Browse all tablets available in India. Compare tablet specs, prices and reviews. Find the best tablet for your budget.',
 }
 
