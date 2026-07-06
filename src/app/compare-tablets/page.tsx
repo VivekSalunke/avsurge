@@ -109,6 +109,68 @@ function TabletSelector({ side, tablet, tablets, onSelect, onRemove }: TabletSel
   )
 }
 
+
+function AICompareSummary({ deviceA, deviceB, specsA, specsB }: { deviceA: any, deviceB: any, specsA: any[], specsB: any[] }) {
+  const [loading, setLoading] = useState(false)
+  const [summary, setSummary] = useState<any>(null)
+  const [error, setError] = useState('')
+  const getSummary = async () => {
+    setLoading(true); setError(''); setSummary(null)
+    try {
+      const res = await fetch('/api/ai-compare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneA: deviceA, phoneB: deviceB, specsA, specsB }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setSummary(data)
+    } catch { setError('Failed to get AI summary.') }
+    finally { setLoading(false) }
+  }
+  return (
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">🤖</span>
+          <h3 className="font-bold text-gray-900">AI Verdict</h3>
+        </div>
+        {!summary && (
+          <button onClick={getSummary} disabled={loading}
+            className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-700 transition disabled:opacity-50 flex items-center gap-2">
+            {loading ? <><div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />Analyzing...</> : '✨ Get AI Summary'}
+          </button>
+        )}
+      </div>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {summary && (
+        <div className="space-y-4">
+          <div className="bg-white rounded-xl p-4 border border-blue-100">
+            <p className="text-sm font-semibold text-gray-900 mb-1">🏆 Overall Verdict</p>
+            <p className="text-sm text-gray-600">{summary.verdict}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-blue-600 rounded-xl p-4 text-white">
+              <p className="text-xs font-semibold opacity-80 mb-1">Buy {deviceA.name.split(' ').slice(-2).join(' ')} if...</p>
+              <p className="text-xs leading-relaxed">{summary.buy_a_if}</p>
+            </div>
+            <div className="bg-indigo-600 rounded-xl p-4 text-white">
+              <p className="text-xs font-semibold opacity-80 mb-1">Buy {deviceB.name.split(' ').slice(-2).join(' ')} if...</p>
+              <p className="text-xs leading-relaxed">{summary.buy_b_if}</p>
+            </div>
+          </div>
+          {summary.key_differences && (
+            <div className="bg-white rounded-xl p-4 border border-blue-100">
+              <p className="text-sm font-semibold text-gray-900 mb-2">Key differences</p>
+              <p className="text-sm text-gray-600">{summary.key_differences}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function CompareTabletsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -273,6 +335,10 @@ function CompareTabletsContent() {
             </Link>
           </div>
         </div>
+      )}
+
+      {tabletA && tabletB && specsA.length > 0 && specsB.length > 0 && (
+        <AICompareSummary deviceA={tabletA} deviceB={tabletB} specsA={specsA} specsB={specsB} />
       )}
 
       {(!tabletA || !tabletB) && (
