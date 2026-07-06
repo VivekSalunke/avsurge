@@ -38,9 +38,41 @@ export default async function UnderBudgetPage({ params }: { params: Promise<{ bu
   if (!phones || phones.length === 0) notFound()
 
   const budgetLabel = `₹${b.toLocaleString('en-IN')}`
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `What is the best phone under ${budgetLabel}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `The best phones under ${budgetLabel} in India include options from Samsung, Xiaomi, Realme, OnePlus and Apple. Compare specs, camera quality and battery life to find the right one for you.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `Which phone has the best camera under ${budgetLabel}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `For the best camera under ${budgetLabel}, look for phones with high megapixel counts, optical image stabilization and large aperture lenses. Use our comparison tool to compare cameras side by side.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `Is ${budgetLabel} enough to buy a good phone in India?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Yes, ${budgetLabel} is enough to get a good smartphone in India with decent performance, camera and battery life. Browse our list above to find the best options in this price range.`,
+        },
+      },
+    ],
+  }
+
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-blue-600">Home</Link>
         <span>&rsaquo;</span>

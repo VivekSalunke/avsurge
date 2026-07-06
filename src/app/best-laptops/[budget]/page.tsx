@@ -29,8 +29,40 @@ export default async function UnderBudgetLaptopsPage({ params }: { params: Promi
     .order('price_inr', { ascending: false })
   if (!laptops || laptops.length === 0) notFound()
   const budgetLabel = `₹${b.toLocaleString('en-IN')}`
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `What is the best laptop under ${budgetLabel}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `The best laptops under ${budgetLabel} in India include options from Apple, Dell, HP, Lenovo and ASUS. Compare processor, RAM, display and battery life to find the right one for you.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `Which laptop is best for students under ${budgetLabel}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `For students, look for a laptop under ${budgetLabel} with at least 8GB RAM, 512GB SSD, good battery life and a lightweight design. Use our comparison tool to compare laptops side by side.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `Should I buy a Windows or Mac laptop under ${budgetLabel}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Under ${budgetLabel}, Windows laptops generally offer more variety and better value for money. MacBooks start at higher price points but offer excellent performance and build quality.`,
+        },
+      },
+    ],
+  }
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-blue-600">Home</Link>
         <span>&rsaquo;</span>
