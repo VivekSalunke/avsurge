@@ -2,6 +2,11 @@ import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
 export const revalidate = 60
+export const metadata = {
+  title: 'Phones Price List in India 2025 | AVSurge',
+  description: 'Browse all smartphones available in India. Compare phone specs, prices and reviews. Find the best phone for your budget.',
+  alternates: { canonical: 'https://avsurge.com/phones' },
+}
 
 export default async function PhonesPage({ searchParams }: { searchParams: Promise<{ brand?: string }> }) {
   const params = await searchParams
