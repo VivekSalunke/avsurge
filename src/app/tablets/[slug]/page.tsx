@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import TabletReviews from '@/components/TabletReviews'
 import TabletWishlistButton from '@/components/TabletWishlistButton'
 import SpecExplainer from '@/components/SpecExplainer'
@@ -60,7 +59,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
           <div className="bg-white rounded-2xl border border-gray-200 p-6 sticky top-20">
             <div className="w-full aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-5 overflow-hidden">
               {tablet.image_url
-                ? <Image src={tablet.image_url} alt={tablet.name} fill className="object-contain p-2" sizes="(max-width: 768px) 100vw, 300px" />
+                ? <img src={tablet.image_url} alt={tablet.name} className="object-contain w-full h-full p-2" />
                 : <span className="text-7xl">📟</span>}
             </div>
             <h1 className="text-xl font-bold text-gray-900 mb-1">{tablet.name}</h1>

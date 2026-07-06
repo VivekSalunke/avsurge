@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import SpecExplainer from '@/components/SpecExplainer'
 import LaptopJsonLd from '@/components/LaptopJsonLd'
 import LaptopViewTracker from '@/components/LaptopViewTracker'
@@ -52,7 +51,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
           <div className="bg-white rounded-2xl border border-gray-200 p-6 sticky top-20">
             <div className="w-full aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-5 overflow-hidden">
               {laptop.image_url
-                ? <Image src={laptop.image_url} alt={laptop.name} fill className="object-contain p-2" sizes="(max-width: 768px) 100vw, 300px" />
+                ? <img src={laptop.image_url} alt={laptop.name} className="object-contain w-full h-full p-2" />
                 : <span className="text-7xl">💻</span>}
             </div>
             <h1 className="text-xl font-bold text-gray-900 mb-1">{laptop.name}</h1>

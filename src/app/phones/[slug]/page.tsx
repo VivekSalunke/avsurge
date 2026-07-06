@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import Reviews from '@/components/Reviews'
 import WishlistButton from '@/components/WishlistButton'
 import RelatedPhones from '@/components/RelatedPhones'
@@ -57,9 +56,9 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
           <div className="bg-white rounded-2xl border border-gray-200 p-6 sticky top-20">
-            <div className="w-full aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-5 text-7xl overflow-hidden relative">
+            <div className="w-full aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-5 text-7xl overflow-hidden">
               {phone.image_url
-                ? <Image src={phone.image_url} alt={phone.name} fill className="object-contain p-2" sizes="(max-width: 768px) 100vw, 300px" />
+                ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full p-2" />
                 : '📱'}
             </div>
             <h1 className="text-xl font-bold text-gray-900 mb-1">{phone.name}</h1>
