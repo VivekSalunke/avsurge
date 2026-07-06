@@ -61,10 +61,16 @@ export default function AdminImagesPage() {
     setSaving(null)
   }
 
-  const applyGithubUrl = (device: any) => {
+  const applyGithubUrl = async (device: any) => {
     const url = getJsDelivrUrl(mode, device.slug, ext)
-    setEditingId(device.id)
-    setEditUrl(url)
+    setSaving(device.id)
+    const { error } = await supabase.from(mode).update({ image_url: url }).eq('id', device.id)
+    if (!error) {
+      setDevices(prev => prev.map(d => d.id === device.id ? { ...d, image_url: url } : d))
+      setMsg('Saved!')
+      setTimeout(() => setMsg(''), 2000)
+    }
+    setSaving(null)
   }
 
   const applyAllGithubUrls = async () => {
