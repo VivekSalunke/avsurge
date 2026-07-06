@@ -79,7 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center text-white text-xs font-bold">AV</div>
                 <span className="text-sm font-semibold text-gray-700">AVSurge</span>
-                <span className="text-xs text-gray-400">Phone specs & reviews for India</span>
+                <span className="text-xs text-gray-400">Device specs & prices for India</span>
               </div>
               <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-gray-400">
                 <Link href="/phones" className="hover:text-blue-600">Phones</Link>
