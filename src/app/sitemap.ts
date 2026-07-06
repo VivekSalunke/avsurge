@@ -71,6 +71,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: 'https://avsurge.com/brands', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: 'https://avsurge.com/ai-recommend', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.6 },
     { url: 'https://avsurge.com/news', lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
+    ...['gaming', 'camera', 'battery', 'students', '5g', 'business'].map(uc => ({
+      url: `https://avsurge.com/best-phones-for/${uc}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    })),
     ...budgetUrls,
     ...TABLET_BUDGETS.map(budget => ({
       url: `https://avsurge.com/best-tablets/${budget}`,
