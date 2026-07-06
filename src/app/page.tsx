@@ -265,6 +265,29 @@ export default async function HomePage() {
         </div>
       )}
 
+      {/* Browse by use case */}
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-base font-bold text-gray-900">Browse by use case</h2>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+          {[
+            { label: '🎮 Gaming', phone: '/best-phones-for/gaming', laptop: '/best-laptops-for/gaming' },
+            { label: '📷 Camera', phone: '/best-phones-for/camera', laptop: null },
+            { label: '🎓 Students', phone: '/best-phones-for/students', laptop: '/best-laptops-for/students' },
+            { label: '🔋 Battery', phone: '/best-phones-for/battery', laptop: null },
+            { label: '💼 Business', phone: '/best-phones-for/business', laptop: '/best-laptops-for/business' },
+            { label: '✏️ Drawing', phone: null, laptop: '/best-tablets-for/drawing' },
+          ].map(item => (
+            <Link key={item.label} href={item.phone || item.laptop || '/search'}
+              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
+              <p className="text-2xl mb-1">{item.label.split(' ')[0]}</p>
+              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{item.label.split(' ').slice(1).join(' ')}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* Quick actions */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
         <Link href="/compare" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
