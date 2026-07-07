@@ -76,9 +76,33 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
       {article.content && (
         <div className="prose prose-gray max-w-none">
-          {article.content.split('\n').map((para: string, i: number) => (
-            para.trim() ? <p key={i} className="text-gray-700 leading-relaxed mb-4">{para}</p> : null
-          ))}
+          {article.content.split('\n').map((para: string, i: number) => {
+            if (!para.trim()) return null
+            // Image syntax: ![alt](url)
+            const imgMatch = para.match(/^!\[([^\]]*)\]\(([^)]+)\)$/)
+            if (imgMatch) {
+              return (
+                <div key={i} className="my-6">
+                  <img src={imgMatch[2]} alt={imgMatch[1]} className="w-full rounded-2xl object-cover" />
+                  {imgMatch[1] && <p className="text-xs text-gray-400 text-center mt-2">{imgMatch[1]}</p>}
+                </div>
+              )
+            }
+            // Heading syntax: ## Heading
+            if (para.startsWith('## ')) {
+              return <h2 key={i} className="text-xl font-bold text-gray-900 mt-8 mb-3">{para.slice(3)}</h2>
+            }
+            if (para.startsWith('# ')) {
+              return <h1 key={i} className="text-2xl font-bold text-gray-900 mt-8 mb-3">{para.slice(2)}</h1>
+            }
+            // Bold: **text**
+            const boldParts = para.split(/\*\*([^*]+)\*\*/g)
+            return (
+              <p key={i} className="text-gray-700 leading-relaxed mb-4">
+                {boldParts.map((part, j) => j % 2 === 1 ? <strong key={j}>{part}</strong> : part)}
+              </p>
+            )
+          })}
         </div>
       )}
 
