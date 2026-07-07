@@ -54,6 +54,13 @@ export default function AdminPage() {
       ]
     },
     {
+      title: '📰 News',
+      cards: [
+        { href: '/admin/news/new', title: 'New Article', desc: 'Write a new news article' },
+        { href: '/admin/news', title: 'Manage News', desc: 'Edit or delete articles' },
+      ]
+    },
+    {
       title: '🏷️ Brands',
       cards: [
         { href: '/admin/brands', title: 'Manage Brand Logos', desc: 'Add or edit brand logos' },

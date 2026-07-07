@@ -6,11 +6,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
-  const [{ data: phones }, { data: tablets }, { data: brands }, { data: laptops }] = await Promise.all([
+  const [{ data: phones }, { data: tablets }, { data: brands }, { data: laptops }, { data: newsArticles }] = await Promise.all([
     supabase.from('phones').select('slug'),
     supabase.from('tablets').select('slug'),
     supabase.from('phones').select('brand'),
     supabase.from('laptops').select('slug'),
+    supabase.from('news').select('slug, updated_at').eq('published', true),
   ])
 
   const seenBrands = new Map<string, string>()
@@ -107,6 +108,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...phoneUrls,
     ...tabletUrls,
     ...laptopUrls,
+    ...(newsArticles || []).map(a => ({
+      url: `https://avsurge.com/news/${a.slug}`,
+      lastModified: new Date(a.updated_at),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    })),
     ...brandUrls,
   ]
 }
