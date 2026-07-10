@@ -10,6 +10,7 @@ import LaptopReviews from '@/components/LaptopReviews'
 import LaptopPriceHistory from '@/components/LaptopPriceHistory'
 import LaptopWishlistButton from '@/components/LaptopWishlistButton'
 import LaptopPriceAlertButton from '@/components/LaptopPriceAlertButton'
+import LaptopTracker from '@/components/LaptopTracker'
 export const revalidate = 60
 const ICONS: Record<string, string> = {
   Display: '🖥️', Performance: '⚡', Storage: '💾',
@@ -35,8 +36,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
   const highlights = ['Performance', 'Display', 'Memory', 'Battery']
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
-      <LaptopJsonLd laptop={laptop} specs={specs} />
-      <LaptopViewTracker slug={laptop.slug} />
+      <LaptopTracker deviceId={laptop.id} />
       <LaptopJsonLd laptop={laptop} specs={specs} />
       <LaptopViewTracker slug={laptop.slug} />
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">

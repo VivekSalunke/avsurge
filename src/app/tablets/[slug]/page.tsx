@@ -10,6 +10,7 @@ import TabletPriceHistory from '@/components/TabletPriceHistory'
 import RecentlyViewedTablets from '@/components/RecentlyViewedTablets'
 import TabletViewTracker from '@/components/TabletViewTracker'
 import TabletPriceAlertButton from '@/components/TabletPriceAlertButton'
+import TabletTracker from '@/components/TabletTracker'
 
 export const revalidate = 60
 
@@ -42,6 +43,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
+      <TabletTracker deviceId={tablet.id} />
       <TabletJsonLd tablet={tablet} specs={specs} />
       <TabletViewTracker slug={tablet.slug} />
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">

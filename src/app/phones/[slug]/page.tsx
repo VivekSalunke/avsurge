@@ -10,6 +10,7 @@ import SpecExplainer from '@/components/SpecExplainer'
 import PriceHistory from '@/components/PriceHistory'
 import PhoneJsonLd from '@/components/PhoneJsonLd'
 import PriceAlertButton from '@/components/PriceAlertButton'
+import PhoneTracker from '@/components/PhoneTracker'
 
 export const revalidate = 60
 
@@ -42,6 +43,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
+      <PhoneTracker deviceId={phone.id} />
       <PhoneJsonLd phone={phone} specs={specs} />
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-blue-600">Home</Link>
