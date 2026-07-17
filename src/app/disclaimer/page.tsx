@@ -117,7 +117,7 @@ export default function DisclaimerPage() {
           </p>
           <div className="bg-gray-50 rounded-xl p-4 mt-4">
             <p className="font-semibold text-gray-900">Report an Issue:</p>
-            <p className="text-sm mt-2">Email: <a href="mailto:corrections@avsurge.com" className="text-blue-600 hover:underline">corrections@avsurge.com</a></p>
+            <p className="text-sm mt-2">Email: <a href="mailto:avector134@gmail.com" className="text-blue-600 hover:underline">avector134@gmail.com</a></p>
             <p className="text-sm">Website: <a href="https://avsurge.com/contact" className="text-blue-600 hover:underline">Contact Us</a></p>
           </div>
         </section>
