@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'AVSurge <alerts@avsurge.com>',
+          from: 'AVSurge <avector134@gmail.com>',
           to: alert.email,
           subject: `Price drop alert: ${phone.name}`,
           html: `

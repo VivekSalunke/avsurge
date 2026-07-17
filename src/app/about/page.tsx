@@ -73,6 +73,7 @@ export default function AboutPage() {
           <div className="bg-gray-50 rounded-xl p-4 text-sm text-gray-600">
             <p><strong>AVSurge</strong></p>
             <p>Website: <a href="https://avsurge.com" className="text-blue-600 hover:underline">avsurge.com</a></p>
+            <p>Email: <a href="mailto:avector134@gmail.com" className="text-blue-600 hover:underline">avector134@gmail.com</a></p>
             <p className="mt-2 text-xs text-gray-400">Based in India 🇮🇳</p>
           </div>
         </section>
