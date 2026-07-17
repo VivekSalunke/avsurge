@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+Allow: /phones
+Allow: /tablets
+Allow: /laptops
+Allow: /search
+Allow: /compare
+Allow: /about
+Allow: /privacy
+Allow: /terms
+Allow: /contact
+
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /*?*
+Allow: /?
+Allow: /*?sort=
+Allow: /*?filter=
+
+Sitemap: https://avsurge.com/sitemap.xml

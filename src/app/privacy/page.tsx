@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: 'Privacy Policy | AVSurge',
   alternates: { canonical: 'https://avsurge.com/privacy' },
   description: 'Privacy Policy for AVSurge - Learn how we collect, use and protect your data.',
+  robots: 'index, follow',
 }
 
 export default function PrivacyPage() {
@@ -17,7 +18,7 @@ export default function PrivacyPage() {
       </div>
 
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacy Policy</h1>
-      <p className="text-sm text-gray-400 mb-10">Last updated: June 2025</p>
+      <p className="text-sm text-gray-400 mb-10">Last updated: July 2026</p>
 
       <div className="prose prose-sm max-w-none space-y-8">
 
@@ -67,16 +68,19 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-bold text-gray-900 mb-3">5. Third-Party Services</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-3">5. Third-Party Services and Advertising</h2>
           <p className="text-gray-600 leading-relaxed mb-3">We use the following third-party services that may collect data:</p>
           <ul className="list-disc list-inside text-gray-600 space-y-2 ml-2">
-            <li><strong>Google AdSense</strong> — for displaying advertisements. Google may use cookies to serve ads based on your visits to our site and other sites.</li>
+            <li><strong>Google AdSense</strong> — for displaying personalized advertisements. Google may use cookies and other tracking technologies to serve ads based on your browsing history on our site and across the web. For more details, see Google's <a href="https://policies.google.com/privacy" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</li>
+            <li><strong>Google Analytics</strong> — for analyzing website traffic and user behavior to help us improve our service. Google Analytics may set cookies on your browser.</li>
             <li><strong>Supabase</strong> — our backend database provider, which stores your account data and preferences securely.</li>
             <li><strong>Resend</strong> — our email delivery service, used to send price alert notifications.</li>
             <li><strong>Cloudflare</strong> — for DNS, CDN, and security services.</li>
+            <li><strong>Amazon Associates</strong> — we include affiliate links to Amazon products. Amazon may track clicks and purchases for commission purposes.</li>
+            <li><strong>hCaptcha</strong> — for bot prevention and security validation on forms.</li>
           </ul>
           <p className="text-gray-600 leading-relaxed mt-3">
-            We are not responsible for the privacy practices of these third-party services. We encourage you to review their privacy policies.
+            We are not responsible for the privacy practices of these third-party services. We encourage you to review their privacy policies. You can opt out of personalized advertising through <a href="https://myaccount.google.com/u/0/data-and-privacy/ad-settings" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Google's Ad Settings</a>.
           </p>
         </section>
 
@@ -124,13 +128,36 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-bold text-gray-900 mb-3">11. Contact Us</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-3">12. Disclosure for Affiliate Links and Advertising</h2>
+          <p className="text-gray-600 leading-relaxed">
+            AVSurge includes affiliate links to Amazon products. When you purchase through these links, we earn a commission at no extra cost to you. This commission helps us maintain and improve our service. We disclose this to comply with FTC requirements.
+          </p>
+          <p className="text-gray-600 leading-relaxed mt-3">
+            We also display advertisements served by Google AdSense. We participate in the Google AdSense program to help support our operations. These ads are displayed based on your interests and browsing behavior.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-bold text-gray-900 mb-3">13. Your Opt-Out Options</h2>
+          <p className="text-gray-600 leading-relaxed mb-3">You have several options to control your data and ads:</p>
+          <ul className="list-disc list-inside text-gray-600 space-y-2 ml-2">
+            <li>Opt out of personalized ads: <a href="https://myaccount.google.com/u/0/data-and-privacy/ad-settings" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Google Ad Settings</a></li>
+            <li>Control cookies through your browser settings</li>
+            <li>Unsubscribe from email alerts by clicking the unsubscribe link in our emails</li>
+            <li>Use browser extensions like uBlock Origin or Privacy Badger to block tracking</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-bold text-gray-900 mb-3">14. Contact Us</h2>
           <p className="text-gray-600 leading-relaxed">
             If you have any questions about this Privacy Policy or how we handle your data, please contact us at:
           </p>
           <div className="mt-3 bg-gray-50 rounded-xl p-4 text-sm text-gray-600">
             <p><strong>AVSurge</strong></p>
             <p>Website: <a href="https://avsurge.com" className="text-blue-600 hover:underline">avsurge.com</a></p>
+            <p>Email: <a href="mailto:privacy@avsurge.com" className="text-blue-600 hover:underline">privacy@avsurge.com</a></p>
+            <p className="text-xs text-gray-400 mt-3">Based in India 🇮🇳</p>
           </div>
         </section>
 
