@@ -75,20 +75,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         <BackToTop />
           <footer className="border-t border-gray-200 bg-white mt-16 py-8">
-            <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center text-white text-xs font-bold">AV</div>
-                <span className="text-sm font-semibold text-gray-700">AVSurge</span>
-                <span className="text-xs text-gray-400">Device specs & prices for India</span>
+            <div className="max-w-6xl mx-auto px-4 flex flex-col gap-4">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center text-white text-xs font-bold">AV</div>
+                  <span className="text-sm font-semibold text-gray-700">AVSurge</span>
+                  <span className="text-xs text-gray-400">Device specs & prices for India</span>
+                </div>
+                <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-gray-400">
+                  <Link href="/phones" className="hover:text-blue-600">Phones</Link>
+                  <Link href="/tablets" className="hover:text-blue-600">Tablets</Link>
+                  <Link href="/laptops" className="hover:text-blue-600">Laptops</Link>
+                  <Link href="/search" className="hover:text-blue-600">Search</Link>
+                  <Link href="/brands" className="hover:text-blue-600">Brands</Link>
+                  <Link href="/news" className="hover:text-blue-600">News</Link>
+                  <Link href="/site-map" className="hover:text-blue-600">Sitemap</Link>
+                </div>
               </div>
-              <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-gray-400">
-                <Link href="/phones" className="hover:text-blue-600">Phones</Link>
-                <Link href="/tablets" className="hover:text-blue-600">Tablets</Link>
-                <Link href="/laptops" className="hover:text-blue-600">Laptops</Link>
-                <Link href="/search" className="hover:text-blue-600">Search</Link>
-                <Link href="/brands" className="hover:text-blue-600">Brands</Link>
-                <Link href="/news" className="hover:text-blue-600">News</Link>
-                <Link href="/site-map" className="hover:text-blue-600">Sitemap</Link>
+              <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-gray-400 border-t border-gray-100 pt-4">
+                <Link href="/about" className="hover:text-blue-600">About</Link>
+                <Link href="/contact" className="hover:text-blue-600">Contact</Link>
+                <Link href="/privacy" className="hover:text-blue-600">Privacy Policy</Link>
+                <Link href="/terms" className="hover:text-blue-600">Terms & Conditions</Link>
               </div>
             </div>
           </footer>
