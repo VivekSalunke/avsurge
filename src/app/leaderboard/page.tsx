@@ -1,10 +1,8 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Script from 'next/script';
 import { createClient } from '@supabase/supabase-js';
+
+export const revalidate = 300;
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -29,6 +27,7 @@ const TABLE_MAP: Record<DeviceType, string> = {
   laptop: 'laptops',
 };
 
+const VALID_TABS: DeviceType[] = ['phone', 'tablet', 'laptop'];
 const RANK_MEDALS = ['🥇', '🥈', '🥉'];
 
 function formatViews(n: number) {
@@ -36,34 +35,49 @@ function formatViews(n: number) {
   return `${n}`;
 }
 
-export default function LeaderboardPage() {
-  const [activeTab, setActiveTab] = useState<DeviceType>('phone');
-  const [devices, setDevices] = useState<Device[]>([]);
-  const [loading, setLoading] = useState(true);
+function getActiveTab(tab?: string): DeviceType {
+  return VALID_TABS.includes(tab as DeviceType) ? (tab as DeviceType) : 'phone';
+}
 
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from(TABLE_MAP[activeTab])
-        .select('id, name, slug, brand, image_url, view_count, price')
-        .order('view_count', { ascending: false, nullsFirst: false })
-        .limit(20);
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const { tab } = await searchParams;
+  const activeTab = getActiveTab(tab);
+  const label = activeTab.charAt(0).toUpperCase() + activeTab.slice(1);
+  return {
+    title: `Trending ${label}s in India | AVSurge Leaderboard`,
+    description: `See the most viewed ${activeTab}s on AVSurge right now, ranked by popularity.`,
+    alternates: {
+      canonical: activeTab === 'phone' ? '/leaderboard' : `/leaderboard?tab=${activeTab}`,
+    },
+  };
+}
 
-      if (!cancelled) {
-        if (error) {
-          console.error(error);
-          setDevices([]);
-        } else {
-          setDevices(data || []);
-        }
-        setLoading(false);
-      }
-    }
-    load();
-    return () => { cancelled = true; };
-  }, [activeTab]);
+async function getDevices(activeTab: DeviceType): Promise<Device[]> {
+  const { data, error } = await supabase
+    .from(TABLE_MAP[activeTab])
+    .select('id, name, slug, brand, image_url, view_count, price')
+    .order('view_count', { ascending: false, nullsFirst: false })
+    .limit(20);
+
+  if (error) {
+    console.error(error);
+    return [];
+  }
+  return data || [];
+}
+
+export default async function LeaderboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const { tab } = await searchParams;
+  const activeTab = getActiveTab(tab);
+  const devices = await getDevices(activeTab);
 
   const itemListSchema = {
     '@context': 'https://schema.org',
@@ -81,8 +95,7 @@ export default function LeaderboardPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
       {devices.length > 0 && (
-        <Script
-          id="leaderboard-itemlist-schema"
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
         />
@@ -92,24 +105,22 @@ export default function LeaderboardPage() {
       <p className="text-gray-500 mb-6">Most viewed devices on AVSurge right now</p>
 
       <div className="flex gap-2 mb-8 border-b border-gray-200">
-        {(['phone', 'tablet', 'laptop'] as DeviceType[]).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
+        {VALID_TABS.map((t) => (
+          <Link
+            key={t}
+            href={t === 'phone' ? '/leaderboard' : `/leaderboard?tab=${t}`}
             className={`px-4 py-2 font-medium capitalize transition-colors ${
-              activeTab === tab
+              activeTab === t
                 ? 'border-b-2 border-blue-600 text-blue-600'
                 : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            {tab}s
-          </button>
+            {t}s
+          </Link>
         ))}
       </div>
 
-      {loading ? (
-        <div className="text-center py-16 text-gray-400">Loading rankings...</div>
-      ) : devices.length === 0 ? (
+      {devices.length === 0 ? (
         <div className="text-center py-16 text-gray-400">No data yet for this category.</div>
       ) : (
         <div className="space-y-3">
