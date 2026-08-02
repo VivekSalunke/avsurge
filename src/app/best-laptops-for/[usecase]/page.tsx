@@ -93,8 +93,25 @@ export default async function BestLaptopsForPage({ params }: { params: Promise<{
     .order('price_inr', { ascending: true })
     .limit(20)
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `What is the ${uc.title.toLowerCase()} in India?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: uc.intro,
+        },
+      },
+    ],
+  }
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-blue-600">Home</Link>
         <span>&rsaquo;</span>
