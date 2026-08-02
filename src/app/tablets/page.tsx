@@ -25,8 +25,25 @@ export default async function TabletsPage({ searchParams }: { searchParams: Prom
     Lenovo: '🔷', OnePlus: '🔴', OPPO: '🟣', Honor: '🟡',
   }
 
+  const itemListSchema = tablets && tablets.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: brand ? `${brand} Tablets` : 'All Tablets',
+    description: 'Browse tablets available in India with specs, prices and reviews.',
+    itemListElement: tablets.slice(0, 50).map((tablet: any, idx: number) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      url: `https://avsurge.com/tablets/${tablet.slug}`,
+      name: tablet.name,
+    })),
+  } : null
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
+      {itemListSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
+      )}
+
       {/* Hero */}
       <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 text-white">
         <p className="text-blue-200 text-xs mb-2 uppercase tracking-widest font-medium">India's tablet database</p>
