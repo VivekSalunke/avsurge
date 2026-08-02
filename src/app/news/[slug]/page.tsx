@@ -43,8 +43,36 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     .neq('id', article.id)
     .limit(3)
 
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: article.excerpt || article.title,
+    image: article.image_url ? [article.image_url] : undefined,
+    datePublished: article.created_at,
+    dateModified: article.updated_at || article.created_at,
+    author: {
+      '@type': 'Organization',
+      name: 'AVSurge',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'AVSurge',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://avsurge.com/icon-512.png',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://avsurge.com/news/${slug}`,
+    },
+  }
+
   return (
     <main className="max-w-3xl mx-auto px-4 py-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-blue-600">Home</Link>
         <span>&rsaquo;</span>
