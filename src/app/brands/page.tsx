@@ -51,8 +51,31 @@ export default async function BrandsPage() {
   const tabletBrands = Object.entries(tabletBrandCount).sort((a, b) => b[1] - a[1])
   const laptopBrands = Object.entries(laptopBrandCount).sort((a, b) => b[1] - a[1])
 
+  const allBrandNames = [...new Set([
+    ...phoneBrands.map(([b]) => b),
+    ...tabletBrands.map(([b]) => b),
+    ...laptopBrands.map(([b]) => b),
+  ])].sort()
+
+  const itemListSchema = allBrandNames.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Device Brands on AVSurge',
+    description: 'Browse phones, tablets and laptops by brand.',
+    itemListElement: allBrandNames.map((brand, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      url: `https://avsurge.com/brands/${encodeURIComponent(brand)}`,
+      name: brand,
+    })),
+  } : null
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
+      {itemListSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
+      )}
+
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Brands</h1>
         <p className="text-sm text-gray-400">Browse phones, tablets and laptops by brand</p>
