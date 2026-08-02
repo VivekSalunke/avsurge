@@ -18,7 +18,7 @@ interface Device {
   brand: string;
   image_url: string;
   view_count: number;
-  price?: number;
+  price_inr?: number;
 }
 
 const TABLE_MAP: Record<DeviceType, string> = {
@@ -59,7 +59,7 @@ export async function generateMetadata({
 async function getDevices(activeTab: DeviceType): Promise<Device[]> {
   const { data, error } = await supabase
     .from(TABLE_MAP[activeTab])
-    .select('id, name, slug, brand, image_url, view_count, price')
+    .select('id, name, slug, brand, image_url, view_count, price_inr')
     .order('view_count', { ascending: false, nullsFirst: false })
     .limit(20);
 
@@ -158,8 +158,8 @@ export default async function LeaderboardPage({
                 <div className="text-sm font-medium text-gray-700">
                   {formatViews(device.view_count || 0)} views
                 </div>
-                {device.price && (
-                  <div className="text-xs text-gray-400">₹{device.price.toLocaleString('en-IN')}</div>
+                {device.price_inr && (
+                  <div className="text-xs text-gray-400">₹{device.price_inr.toLocaleString('en-IN')}</div>
                 )}
               </div>
             </div>
