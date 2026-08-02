@@ -38,9 +38,40 @@ export default async function UnderBudgetTabletsPage({ params }: { params: Promi
   if (!tablets || tablets.length === 0) notFound()
 
   const budgetLabel = `₹${b.toLocaleString('en-IN')}`
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `What is the best tablet under ${budgetLabel}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `The best tablets under ${budgetLabel} in India include options from Samsung, Xiaomi, Lenovo, Realme and Apple. Compare specs, display and battery life to find the right one for you.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `Which tablet has the best display under ${budgetLabel}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `For the best display under ${budgetLabel}, look for tablets with high resolution screens, good brightness and accurate colors. Use our comparison tool to compare displays side by side.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `Is ${budgetLabel} enough to buy a good tablet in India?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Yes, ${budgetLabel} is enough to get a good tablet in India with decent performance, display and battery life. Browse our list above to find the best options in this price range.`,
+        },
+      },
+    ],
+  }
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-blue-600">Home</Link>
         <span>&rsaquo;</span>
