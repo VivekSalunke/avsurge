@@ -19,8 +19,25 @@ export default async function PhonesPage({ searchParams }: { searchParams: Promi
   const { data: brandsRaw } = await supabase.from('phones').select('brand')
   const brands = [...new Set((brandsRaw || []).map((b: any) => b.brand))].sort()
 
+  const itemListSchema = phones && phones.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: brand ? `${brand} Phones` : 'All Phones',
+    description: 'Browse smartphones available in India with specs, prices and reviews.',
+    itemListElement: phones.slice(0, 50).map((phone: any, idx: number) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      url: `https://avsurge.com/phones/${phone.slug}`,
+      name: phone.name,
+    })),
+  } : null
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
+      {itemListSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
+      )}
+
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">
           {brand ? `${brand} phones` : 'All phones'}
