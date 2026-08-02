@@ -32,8 +32,29 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
   const maxPrice = allPrices.length ? Math.max(...allPrices) : null
   const totalDevices = (phones?.length || 0) + (tablets?.length || 0) + (laptops?.length || 0)
 
+  const itemListSchema = totalDevices > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${brandName} Devices on AVSurge`,
+    description: `Browse all ${brandName} phones, tablets and laptops available in India.`,
+    itemListElement: [
+      ...(phones || []).map((p: any) => ({ url: `https://avsurge.com/phones/${p.slug}`, name: p.name })),
+      ...(tablets || []).map((t: any) => ({ url: `https://avsurge.com/tablets/${t.slug}`, name: t.name })),
+      ...(laptops || []).map((l: any) => ({ url: `https://avsurge.com/laptops/${l.slug}`, name: l.name })),
+    ].slice(0, 50).map((item, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      url: item.url,
+      name: item.name,
+    })),
+  } : null
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
+      {itemListSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
+      )}
+
       {/* Breadcrumb */}
       <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-blue-600">Home</Link>
