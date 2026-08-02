@@ -19,8 +19,26 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
     ASUS: '🟥', Acer: '🟢', Microsoft: '🪟', Samsung: '🔵',
     MSI: '🔴', Razer: '🟢', LG: '🟣',
   }
+
+  const itemListSchema = laptops && laptops.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: brand ? `${brand} Laptops` : 'All Laptops',
+    description: 'Browse laptops available in India with specs, prices and reviews.',
+    itemListElement: laptops.slice(0, 50).map((laptop: any, idx: number) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      url: `https://avsurge.com/laptops/${laptop.slug}`,
+      name: laptop.name,
+    })),
+  } : null
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
+      {itemListSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
+      )}
+
       <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 text-white">
         <p className="text-blue-200 text-xs mb-2 uppercase tracking-widest font-medium">India's laptop database</p>
         <h1 className="text-3xl font-bold mb-2">Find your perfect laptop</h1>
