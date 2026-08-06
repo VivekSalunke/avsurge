@@ -27,11 +27,27 @@ async function getPhone(slug: string) {
   return { phone, specs: specs || [] }
 }
 
+async function getComparisonCandidates(phone: any) {
+  if (!phone.price_inr) return []
+  const minPrice = phone.price_inr / 1.6
+  const maxPrice = phone.price_inr * 1.6
+  const { data } = await supabase
+    .from('phones')
+    .select('slug, name, brand, price_inr')
+    .neq('id', phone.id)
+    .gte('price_inr', minPrice)
+    .lte('price_inr', maxPrice)
+    .not('price_inr', 'is', null)
+    .limit(3)
+  return data || []
+}
+
 export default async function PhonePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const data = await getPhone(slug)
   if (!data) notFound()
   const { phone, specs } = data
+  const comparisonCandidates = await getComparisonCandidates(phone)
 
   const grouped = specs.reduce((acc: Record<string, any[]>, s: any) => {
     if (!acc[s.category]) acc[s.category] = []
@@ -112,6 +128,23 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
                   </div>
                 )
               })}
+            </div>
+          )}
+
+          {comparisonCandidates.length > 0 && (
+            <div className="bg-white rounded-2xl border border-gray-200 p-5">
+              <h2 className="text-sm font-semibold text-gray-700 mb-3">Popular comparisons</h2>
+              <div className="flex flex-wrap gap-2">
+                {comparisonCandidates.map((c: any) => (
+                  <Link
+                    key={c.slug}
+                    href={`/compare/${[phone.slug, c.slug].sort().join('-vs-')}`}
+                    className="text-xs px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white"
+                  >
+                    vs {c.name} →
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
 
