@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { AuthProvider } from '@/context/AuthContext'
 import Navbar from '@/components/Navbar'
 import Script from 'next/script'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const geist = Geist({ subsets: ['latin'] })
 
@@ -103,6 +104,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </footer>
         </AuthProvider>
       </body>
+      {process.env.NEXT_PUBLIC_GA_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+      )}
     </html>
   )
 }
