@@ -23,11 +23,28 @@ async function getLaptop(slug: string) {
   const { data: specs } = await supabase.from('laptop_specs').select('*').eq('laptop_id', laptop.id).order('id')
   return { laptop, specs: specs || [] }
 }
+
+async function getComparisonCandidates(laptop: any) {
+  if (!laptop.price_inr) return []
+  const minPrice = laptop.price_inr / 1.6
+  const maxPrice = laptop.price_inr * 1.6
+  const { data } = await supabase
+    .from('laptops')
+    .select('slug, name, brand, price_inr')
+    .neq('id', laptop.id)
+    .gte('price_inr', minPrice)
+    .lte('price_inr', maxPrice)
+    .not('price_inr', 'is', null)
+    .limit(3)
+  return data || []
+}
+
 export default async function LaptopPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const data = await getLaptop(slug)
   if (!data) notFound()
   const { laptop, specs } = data
+  const comparisonCandidates = await getComparisonCandidates(laptop)
   const grouped = specs.reduce((acc: Record<string, any[]>, s: any) => {
     if (!acc[s.category]) acc[s.category] = []
     acc[s.category].push(s)
@@ -99,6 +116,22 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
                   </div>
                 )
               })}
+            </div>
+          )}
+          {comparisonCandidates.length > 0 && (
+            <div className="bg-white rounded-2xl border border-gray-200 p-5">
+              <h2 className="text-sm font-semibold text-gray-700 mb-3">Popular comparisons</h2>
+              <div className="flex flex-wrap gap-2">
+                {comparisonCandidates.map((c: any) => (
+                  <Link
+                    key={c.slug}
+                    href={`/compare-laptops/${[laptop.slug, c.slug].sort().join('-vs-')}`}
+                    className="text-xs px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white"
+                  >
+                    vs {c.name} →
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
           {Object.entries(grouped).map(([category, catSpecs]: [string, any]) => (
