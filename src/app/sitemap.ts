@@ -1,17 +1,48 @@
 import { createClient } from '@supabase/supabase-js'
 import { MetadataRoute } from 'next'
 export const revalidate = 3600
+
+function buildPairs(list: { slug: string; price_inr: number | null }[]) {
+  const pairs: string[] = []
+  const seen = new Set<string>()
+  for (let i = 0; i < list.length; i++) {
+    for (let j = i + 1; j < list.length; j++) {
+      const a = list[i], b = list[j]
+      if (!a.price_inr || !b.price_inr) continue
+      const ratio = a.price_inr > b.price_inr ? a.price_inr / b.price_inr : b.price_inr / a.price_inr
+      if (ratio > 1.6) continue
+      const key = [a.slug, b.slug].sort().join('-vs-')
+      if (seen.has(key)) continue
+      seen.add(key)
+      pairs.push(`${a.slug}-vs-${b.slug}`)
+    }
+  }
+  return pairs.slice(0, 150)
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
-  const [{ data: phones }, { data: tablets }, { data: brands }, { data: laptops }, { data: newsArticles }] = await Promise.all([
+  const [
+    { data: phones },
+    { data: tablets },
+    { data: brands },
+    { data: laptops },
+    { data: newsArticles },
+    { data: topPhones },
+    { data: topTablets },
+    { data: topLaptops },
+  ] = await Promise.all([
     supabase.from('phones').select('slug'),
     supabase.from('tablets').select('slug'),
     supabase.from('phones').select('brand'),
     supabase.from('laptops').select('slug'),
     supabase.from('news').select('slug, updated_at').eq('published', true),
+    supabase.from('phones').select('slug, price_inr, view_count').not('price_inr', 'is', null).order('view_count', { ascending: false, nullsFirst: false }).limit(30),
+    supabase.from('tablets').select('slug, price_inr, view_count').not('price_inr', 'is', null).order('view_count', { ascending: false, nullsFirst: false }).limit(30),
+    supabase.from('laptops').select('slug, price_inr, view_count').not('price_inr', 'is', null).order('view_count', { ascending: false, nullsFirst: false }).limit(30),
   ])
 
   const seenBrands = new Map<string, string>()
@@ -58,6 +89,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
+  }))
+
+  const phoneComparePairUrls = buildPairs(topPhones || []).map(pairSlug => ({
+    url: `https://avsurge.com/compare/${pairSlug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }))
+
+  const tabletComparePairUrls = buildPairs(topTablets || []).map(pairSlug => ({
+    url: `https://avsurge.com/compare-tablets/${pairSlug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.65,
+  }))
+
+  const laptopComparePairUrls = buildPairs(topLaptops || []).map(pairSlug => ({
+    url: `https://avsurge.com/compare-laptops/${pairSlug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.65,
   }))
 
   return [
@@ -118,5 +170,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     })),
     ...brandUrls,
+    ...phoneComparePairUrls,
+    ...tabletComparePairUrls,
+    ...laptopComparePairUrls,
   ]
 }
