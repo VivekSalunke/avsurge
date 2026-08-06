@@ -27,11 +27,27 @@ async function getTablet(slug: string) {
   return { tablet, specs: specs || [] }
 }
 
+async function getComparisonCandidates(tablet: any) {
+  if (!tablet.price_inr) return []
+  const minPrice = tablet.price_inr / 1.6
+  const maxPrice = tablet.price_inr * 1.6
+  const { data } = await supabase
+    .from('tablets')
+    .select('slug, name, brand, price_inr')
+    .neq('id', tablet.id)
+    .gte('price_inr', minPrice)
+    .lte('price_inr', maxPrice)
+    .not('price_inr', 'is', null)
+    .limit(3)
+  return data || []
+}
+
 export default async function TabletPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const data = await getTablet(slug)
   if (!data) notFound()
   const { tablet, specs } = data
+  const comparisonCandidates = await getComparisonCandidates(tablet)
 
   const grouped = specs.reduce((acc: Record<string, any[]>, s: any) => {
     if (!acc[s.category]) acc[s.category] = []
@@ -113,6 +129,23 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
                   </div>
                 )
               })}
+            </div>
+          )}
+
+          {comparisonCandidates.length > 0 && (
+            <div className="bg-white rounded-2xl border border-gray-200 p-5">
+              <h2 className="text-sm font-semibold text-gray-700 mb-3">Popular comparisons</h2>
+              <div className="flex flex-wrap gap-2">
+                {comparisonCandidates.map((c: any) => (
+                  <Link
+                    key={c.slug}
+                    href={`/compare-tablets/${[tablet.slug, c.slug].sort().join('-vs-')}`}
+                    className="text-xs px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white"
+                  >
+                    vs {c.name} →
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
 
