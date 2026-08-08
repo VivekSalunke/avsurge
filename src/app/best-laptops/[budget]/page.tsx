@@ -74,13 +74,27 @@ export default async function UnderBudgetLaptopsPage({ params }: { params: Promi
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Best Laptops Under {budgetLabel} in India</h1>
         <p className="text-sm text-gray-500">{laptops.length} laptops found — sorted by price (high to low)</p>
       </div>
-      <div className="flex flex-wrap gap-2 mb-8">
+      <div className="flex flex-wrap gap-2 mb-4">
         {VALID_BUDGETS.map(budget => (
           <Link key={budget} href={`/best-laptops/${budget}`}
             className={`px-3 py-1.5 rounded-full text-sm border transition ${budget === b ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'}`}>
             Under ₹{budget.toLocaleString('en-IN')}
           </Link>
         ))}
+      </div>
+      <div className="flex flex-wrap gap-2 mb-8">
+        <Link href="/leaderboard" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🔥 Trending laptops
+        </Link>
+        <Link href="/brands" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🏷️ Browse by brand
+        </Link>
+        <Link href="/best-laptops-for/gaming" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🎮 Best for gaming
+        </Link>
+        <Link href="/best-laptops-for/students" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🎓 Best for students
+        </Link>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {laptops.map((laptop: any) => (
