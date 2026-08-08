@@ -1,59 +1,86 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { createClient } from '@supabase/supabase-js';
+import Link from 'next/link'
+import Image from 'next/image'
+import { createClient } from '@supabase/supabase-js'
 
-export const revalidate = 300;
+export const revalidate = 300
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+)
 
-type DeviceType = 'phone' | 'tablet' | 'laptop';
+type DeviceType = 'phone' | 'tablet' | 'laptop'
 
 interface Device {
-  id: string;
-  name: string;
-  slug: string;
-  brand: string;
-  image_url: string;
-  view_count: number;
-  price_inr?: number;
+  id: string
+  name: string
+  slug: string
+  brand: string
+  image_url: string
+  view_count: number
+  price_inr?: number
 }
 
 const TABLE_MAP: Record<DeviceType, string> = {
   phone: 'phones',
   tablet: 'tablets',
   laptop: 'laptops',
-};
+}
 
-const VALID_TABS: DeviceType[] = ['phone', 'tablet', 'laptop'];
-const RANK_MEDALS = ['🥇', '🥈', '🥉'];
+const CATEGORY_PATH: Record<DeviceType, string> = {
+  phone: '/phones',
+  tablet: '/tablets',
+  laptop: '/laptops',
+}
+
+const COMPARE_PATH: Record<DeviceType, string> = {
+  phone: '/compare',
+  tablet: '/compare-tablets',
+  laptop: '/compare-laptops',
+}
+
+const BUDGET_LINKS: Record<DeviceType, { label: string; href: string }[]> = {
+  phone: [
+    { label: 'Under ₹20K', href: '/best-phones/20000' },
+    { label: 'Under ₹50K', href: '/best-phones/50000' },
+  ],
+  tablet: [
+    { label: 'Under ₹20K', href: '/best-tablets/20000' },
+    { label: 'Under ₹50K', href: '/best-tablets/50000' },
+  ],
+  laptop: [
+    { label: 'Under ₹50K', href: '/best-laptops/50000' },
+    { label: 'Under ₹1L', href: '/best-laptops/100000' },
+  ],
+}
+
+const VALID_TABS: DeviceType[] = ['phone', 'tablet', 'laptop']
+const RANK_MEDALS = ['🥇', '🥈', '🥉']
 
 function formatViews(n: number) {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
-  return `${n}`;
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`
+  return `${n}`
 }
 
 function getActiveTab(tab?: string): DeviceType {
-  return VALID_TABS.includes(tab as DeviceType) ? (tab as DeviceType) : 'phone';
+  return VALID_TABS.includes(tab as DeviceType) ? (tab as DeviceType) : 'phone'
 }
 
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string }>
 }) {
-  const { tab } = await searchParams;
-  const activeTab = getActiveTab(tab);
-  const label = activeTab.charAt(0).toUpperCase() + activeTab.slice(1);
+  const { tab } = await searchParams
+  const activeTab = getActiveTab(tab)
+  const label = activeTab.charAt(0).toUpperCase() + activeTab.slice(1)
   return {
     title: `Trending ${label}s in India | AVSurge Leaderboard`,
     description: `See the most viewed ${activeTab}s on AVSurge right now, ranked by popularity.`,
     alternates: {
       canonical: activeTab === 'phone' ? '/leaderboard' : `/leaderboard?tab=${activeTab}`,
     },
-  };
+  }
 }
 
 async function getDevices(activeTab: DeviceType): Promise<Device[]> {
@@ -61,23 +88,23 @@ async function getDevices(activeTab: DeviceType): Promise<Device[]> {
     .from(TABLE_MAP[activeTab])
     .select('id, name, slug, brand, image_url, view_count, price_inr')
     .order('view_count', { ascending: false, nullsFirst: false })
-    .limit(20);
+    .limit(20)
 
   if (error) {
-    console.error(error);
-    return [];
+    console.error(error)
+    return []
   }
-  return data || [];
+  return data || []
 }
 
 export default async function LeaderboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string }>
 }) {
-  const { tab } = await searchParams;
-  const activeTab = getActiveTab(tab);
-  const devices = await getDevices(activeTab);
+  const { tab } = await searchParams
+  const activeTab = getActiveTab(tab)
+  const devices = await getDevices(activeTab)
 
   const itemListSchema = {
     '@context': 'https://schema.org',
@@ -90,7 +117,7 @@ export default async function LeaderboardPage({
       url: `https://avsurge.com/${activeTab}s/${device.slug}`,
       name: device.name,
     })),
-  };
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
@@ -116,6 +143,23 @@ export default async function LeaderboardPage({
             }`}
           >
             {t}s
+          </Link>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-8">
+        <Link href={CATEGORY_PATH[activeTab]}
+          className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          View all {activeTab}s
+        </Link>
+        <Link href={COMPARE_PATH[activeTab]}
+          className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          ⚖️ Compare {activeTab}s
+        </Link>
+        {BUDGET_LINKS[activeTab].map(b => (
+          <Link key={b.href} href={b.href}
+            className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+            💰 {b.label}
           </Link>
         ))}
       </div>
@@ -167,5 +211,5 @@ export default async function LeaderboardPage({
         </div>
       )}
     </div>
-  );
+  )
 }
