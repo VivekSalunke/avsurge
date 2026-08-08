@@ -90,7 +90,7 @@ export default async function UnderBudgetPage({ params }: { params: Promise<{ bu
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-8">
+      <div className="flex flex-wrap gap-2 mb-4">
         {VALID_BUDGETS.map(budget => (
           <Link
             key={budget}
@@ -104,6 +104,21 @@ export default async function UnderBudgetPage({ params }: { params: Promise<{ bu
             Under ₹{budget.toLocaleString('en-IN')}
           </Link>
         ))}
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-8">
+        <Link href="/leaderboard" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🔥 Trending phones
+        </Link>
+        <Link href="/brands" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🏷️ Browse by brand
+        </Link>
+        <Link href="/best-phones-for/gaming" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🎮 Best for gaming
+        </Link>
+        <Link href="/best-phones-for/camera" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          📷 Best for camera
+        </Link>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
