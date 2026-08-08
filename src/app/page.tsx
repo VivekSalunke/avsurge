@@ -146,6 +146,9 @@ export default async function HomePage() {
             <Link href="/compare" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
               Compare →
             </Link>
+            <Link href="/leaderboard" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
+              🔥 Trending →
+            </Link>
           </div>
         </div>
       </div>
@@ -171,10 +174,10 @@ export default async function HomePage() {
 
       <RecentlyViewedHome />
 
-      {/* Browse by Budget */}
+      {/* Browse by Budget - Phones */}
       <div className="mb-10">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-bold text-gray-900">Browse by budget</h2>
+          <h2 className="text-base font-bold text-gray-900">Browse phones by budget</h2>
         </div>
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
           {[
@@ -194,6 +197,29 @@ export default async function HomePage() {
         </div>
       </div>
 
+      {/* Browse by Budget - Tablets */}
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-base font-bold text-gray-900">Browse tablets by budget</h2>
+          <Link href="/tablets" className="text-sm text-blue-600 hover:underline">All tablets →</Link>
+        </div>
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+          {[
+            { label: 'Under ₹10K', budget: 10000 },
+            { label: 'Under ₹20K', budget: 20000 },
+            { label: 'Under ₹30K', budget: 30000 },
+            { label: 'Under ₹50K', budget: 50000 },
+            { label: 'Under ₹1L', budget: 100000 },
+            { label: 'Under ₹1.5L', budget: 150000 },
+          ].map(({ label, budget }) => (
+            <Link key={budget} href={`/best-tablets/${budget}`}
+              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
+              <div className="text-2xl mb-1">📟</div>
+              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{label}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
 
       {/* Browse by Budget - Laptops */}
       <div className="mb-10">
@@ -265,21 +291,67 @@ export default async function HomePage() {
         </div>
       )}
 
-      {/* Browse by use case */}
+      {/* Browse by use case - Phones */}
       <div className="mb-10">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-bold text-gray-900">Browse by use case</h2>
+          <h2 className="text-base font-bold text-gray-900">Browse phones by use case</h2>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
           {[
-            { label: '🎮 Gaming', phone: '/best-phones-for/gaming', laptop: '/best-laptops-for/gaming' },
-            { label: '📷 Camera', phone: '/best-phones-for/camera', laptop: null },
-            { label: '🎓 Students', phone: '/best-phones-for/students', laptop: '/best-laptops-for/students' },
-            { label: '🔋 Battery', phone: '/best-phones-for/battery', laptop: null },
-            { label: '💼 Business', phone: '/best-phones-for/business', laptop: '/best-laptops-for/business' },
-            { label: '✏️ Drawing', phone: null, laptop: '/best-tablets-for/drawing' },
+            { label: '🎮 Gaming', href: '/best-phones-for/gaming' },
+            { label: '📷 Camera', href: '/best-phones-for/camera' },
+            { label: '🔋 Battery', href: '/best-phones-for/battery' },
+            { label: '🎓 Students', href: '/best-phones-for/students' },
+            { label: '📡 5G', href: '/best-phones-for/5g' },
+            { label: '💼 Business', href: '/best-phones-for/business' },
           ].map(item => (
-            <Link key={item.label} href={item.phone || item.laptop || '/search'}
+            <Link key={item.href} href={item.href}
+              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
+              <p className="text-2xl mb-1">{item.label.split(' ')[0]}</p>
+              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{item.label.split(' ').slice(1).join(' ')}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Browse by use case - Tablets */}
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-base font-bold text-gray-900">Browse tablets by use case</h2>
+        </div>
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+          {[
+            { label: '✏️ Drawing', href: '/best-tablets-for/drawing' },
+            { label: '🎓 Students', href: '/best-tablets-for/students' },
+            { label: '🎮 Gaming', href: '/best-tablets-for/gaming' },
+            { label: '👶 Kids', href: '/best-tablets-for/kids' },
+            { label: '🎬 Entertainment', href: '/best-tablets-for/entertainment' },
+            { label: '💼 Work', href: '/best-tablets-for/work' },
+          ].map(item => (
+            <Link key={item.href} href={item.href}
+              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
+              <p className="text-2xl mb-1">{item.label.split(' ')[0]}</p>
+              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{item.label.split(' ').slice(1).join(' ')}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Browse by use case - Laptops */}
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-base font-bold text-gray-900">Browse laptops by use case</h2>
+        </div>
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+          {[
+            { label: '🎮 Gaming', href: '/best-laptops-for/gaming' },
+            { label: '🎬 Video Editing', href: '/best-laptops-for/video-editing' },
+            { label: '🎓 Students', href: '/best-laptops-for/students' },
+            { label: '💼 Business', href: '/best-laptops-for/business' },
+            { label: '💻 Programming', href: '/best-laptops-for/programming' },
+            { label: '✈️ Lightweight', href: '/best-laptops-for/lightweight' },
+          ].map(item => (
+            <Link key={item.href} href={item.href}
               className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
               <p className="text-2xl mb-1">{item.label.split(' ')[0]}</p>
               <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{item.label.split(' ').slice(1).join(' ')}</p>
@@ -289,7 +361,7 @@ export default async function HomePage() {
       </div>
 
       {/* Quick actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4 mb-10">
         <Link href="/compare" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
           <div className="text-3xl mb-3">📱</div>
           <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Compare Phones</h3>
@@ -315,15 +387,15 @@ export default async function HomePage() {
           <h3 className="font-bold text-gray-900 mb-1 group-hover:text-purple-600 text-sm">AI Recommender</h3>
           <p className="text-xs text-gray-400">Get AI suggestions</p>
         </Link>
+        <Link href="/leaderboard" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
+          <div className="text-3xl mb-3">🔥</div>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Trending Devices</h3>
+          <p className="text-xs text-gray-400">Most viewed right now</p>
+        </Link>
         <Link href="/news" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
           <div className="text-3xl mb-3">📰</div>
           <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Latest News</h3>
           <p className="text-xs text-gray-400">Reviews & tech news</p>
-        </Link>
-        <Link href="/about" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
-          <div className="text-3xl mb-3">ℹ️</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">About Us</h3>
-          <p className="text-xs text-gray-400">Learn about AVSurge</p>
         </Link>
       </div>
 
@@ -336,7 +408,7 @@ export default async function HomePage() {
           </div>
           <div className="flex flex-wrap gap-2">
             {brands.map((brand: any) => (
-              <Link key={brand} href={`/phones?brand=${brand}`}
+              <Link key={brand} href={`/brands/${encodeURIComponent(brand)}`}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-600 hover:border-blue-400 hover:text-blue-600 transition">
                 <span>{brandIcons[brand] || '📱'}</span>
                 {brand}
