@@ -54,6 +54,17 @@ export default async function TabletsPage({ searchParams }: { searchParams: Prom
           </div>
       </div>
 
+      <div className="flex flex-wrap gap-2 mb-6">
+        <Link href="/leaderboard"
+          className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🔥 Trending tablets
+        </Link>
+        <Link href="/brands"
+          className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🏷️ Browse by brand
+        </Link>
+      </div>
+
       {/* Browse by use case */}
       <div className="mb-8">
         <h2 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-3">Browse by use case</h2>
