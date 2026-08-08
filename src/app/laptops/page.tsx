@@ -53,6 +53,17 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-2 mb-6">
+        <Link href="/leaderboard"
+          className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🔥 Trending laptops
+        </Link>
+        <Link href="/brands"
+          className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🏷️ Browse by brand
+        </Link>
+      </div>
+
       {/* Browse by budget */}
       <div className="mb-8">
         <h2 className="text-base font-bold text-gray-900 mb-4">Browse by budget</h2>
