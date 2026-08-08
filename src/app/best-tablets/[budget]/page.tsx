@@ -89,7 +89,7 @@ export default async function UnderBudgetTabletsPage({ params }: { params: Promi
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-8">
+      <div className="flex flex-wrap gap-2 mb-4">
         {VALID_BUDGETS.map(budget => (
           <Link
             key={budget}
@@ -103,6 +103,21 @@ export default async function UnderBudgetTabletsPage({ params }: { params: Promi
             Under ₹{budget.toLocaleString('en-IN')}
           </Link>
         ))}
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-8">
+        <Link href="/leaderboard" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🔥 Trending tablets
+        </Link>
+        <Link href="/brands" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🏷️ Browse by brand
+        </Link>
+        <Link href="/best-tablets-for/drawing" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          ✏️ Best for drawing
+        </Link>
+        <Link href="/best-tablets-for/students" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          🎓 Best for students
+        </Link>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
