@@ -51,7 +51,7 @@ export default function SpecExplainer({ label, value, phoneName }: {
       <button
         onClick={explain}
         className="text-xs text-blue-500 hover:text-blue-700 hover:underline ml-1 transition"
-        title="Explain this spec">
+        title="Get an AI-generated explanation of this spec">
         🤖
       </button>
 
@@ -66,6 +66,7 @@ export default function SpecExplainer({ label, value, phoneName }: {
           {error && <p className="text-xs text-red-500">{error}</p>}
           {data && (
             <div className="space-y-2">
+              <p className="text-[10px] uppercase tracking-wide text-blue-400 font-medium">AI-generated explanation</p>
               {data.rating && (
                 <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border font-medium ${RATING_COLORS[data.rating] || RATING_COLORS.average}`}>
                   {RATING_EMOJI[data.rating]} {data.rating}
