@@ -12,6 +12,7 @@ import LaptopWishlistButton from '@/components/LaptopWishlistButton'
 import LaptopPriceAlertButton from '@/components/LaptopPriceAlertButton'
 import LaptopTracker from '@/components/LaptopTracker'
 import { formatPriceINR } from '@/lib/format'
+import { buildAmazonSearchUrl } from '@/lib/affiliate'
 export const revalidate = 60
 const ICONS: Record<string, string> = {
   Display: '🖥️', Performance: '⚡', Storage: '💾',
@@ -94,7 +95,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
                 className="w-full text-center border border-dashed border-gray-300 text-gray-500 rounded-xl py-2.5 text-sm hover:border-blue-400 hover:text-blue-600 transition">
                 + Add to compare
               </Link>
-              <a href={`https://www.amazon.in/s?k=${encodeURIComponent(laptop.name)}&tag=avsurge-21`} target="_blank"
+              <a href={buildAmazonSearchUrl(laptop.name)} target="_blank"
                 className="w-full bg-white border border-gray-200 text-gray-700 rounded-xl py-2.5 text-sm font-medium hover:bg-gray-50 transition text-center">
                 Check on Amazon →
               </a>
