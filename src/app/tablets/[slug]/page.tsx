@@ -11,6 +11,7 @@ import RecentlyViewedTablets from '@/components/RecentlyViewedTablets'
 import TabletViewTracker from '@/components/TabletViewTracker'
 import TabletPriceAlertButton from '@/components/TabletPriceAlertButton'
 import TabletTracker from '@/components/TabletTracker'
+import { formatPriceINR } from '@/lib/format'
 
 export const revalidate = 60
 
@@ -86,7 +87,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
             {tablet.price_inr && (
               <div className="bg-blue-50 rounded-xl px-4 py-3 mb-4 text-center">
                 <div className="text-xs text-blue-400 mb-0.5">Starting price in India</div>
-                <div className="text-2xl font-bold text-blue-700">₹{tablet.price_inr.toLocaleString('en-IN')}</div>
+                <div className="text-2xl font-bold text-blue-700">{formatPriceINR(tablet.price_inr)}</div>
               </div>
             )}
 
@@ -195,7 +196,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!tablet) return { title: 'Tablet not found' }
   return {
     title: `${tablet.name} Specs & Price in India`,
-    description: `${tablet.name} full specifications, price in India (₹${tablet.price_inr?.toLocaleString('en-IN') || 'N/A'}), display, battery, performance and more.`,
+    description: `${tablet.name} full specifications, price in India (${formatPriceINR(tablet.price_inr)}), display, battery, performance and more.`,
     alternates: { canonical: `https://avsurge.com/tablets/${slug}` },
     openGraph: {
       title: `${tablet.name} — Full Specs & Price`,

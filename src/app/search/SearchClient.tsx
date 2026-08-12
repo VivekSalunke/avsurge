@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Suspense } from 'react'
+import { formatPriceINR } from '@/lib/format'
 
 const BUDGET_PRESETS = {
   phones: [
@@ -278,7 +279,7 @@ function SearchContent() {
                         <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-medium mr-2">#{i + 1}</span>
                         <span className="text-xs text-gray-400">{rec.item.brand}</span>
                       </div>
-                      {rec.item.price_inr && <span className="text-sm font-bold text-blue-600">₹{rec.item.price_inr.toLocaleString('en-IN')}</span>}
+                      {rec.item.price_inr && <span className="text-sm font-bold text-blue-600">{formatPriceINR(rec.item.price_inr)}</span>}
                     </div>
                     <p className="font-semibold text-gray-900 group-hover:text-purple-600 transition mb-1">{rec.item.name}</p>
                     <p className="text-xs text-gray-500 leading-relaxed">{rec.reason}</p>

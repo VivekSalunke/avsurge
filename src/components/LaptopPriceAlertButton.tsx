@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { formatPriceINR } from '@/lib/format'
 export default function LaptopPriceAlertButton({ laptopId, laptopName, currentPrice }: {
   laptopId: number
   laptopName: string
@@ -57,7 +58,7 @@ export default function LaptopPriceAlertButton({ laptopId, laptopName, currentPr
             <div>
               <label className="text-xs text-gray-500 mb-1 block">
                 Notify me when price drops to (₹)
-                {currentPrice && <span className="text-gray-400 ml-1">· Current: ₹{currentPrice.toLocaleString('en-IN')}</span>}
+                {currentPrice && <span className="text-gray-400 ml-1">· Current: {formatPriceINR(currentPrice)}</span>}
               </label>
               <input type="number" placeholder="e.g. 80000" value={targetPrice}
                 onChange={e => setTargetPrice(e.target.value)}

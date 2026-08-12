@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { formatPriceINR } from '@/lib/format'
 
 interface Device {
   id: number
@@ -76,7 +77,7 @@ export default function RecentlyViewedHome() {
             <p className="text-xs text-gray-400 mb-0.5">{device.brand}</p>
             <p className="text-xs font-semibold text-gray-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight">{device.name}</p>
             {device.price_inr && (
-              <p className="text-xs text-blue-600 font-medium mt-1">₹{device.price_inr.toLocaleString('en-IN')}</p>
+              <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(device.price_inr)}</p>
             )}
           </Link>
         ))}

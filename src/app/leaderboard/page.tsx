@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@supabase/supabase-js'
+import { formatPriceINR } from '@/lib/format'
 
 export const revalidate = 300
 
@@ -203,7 +204,7 @@ export default async function LeaderboardPage({
                   {formatViews(device.view_count || 0)} views
                 </div>
                 {device.price_inr && (
-                  <div className="text-xs text-gray-400">₹{device.price_inr.toLocaleString('en-IN')}</div>
+                  <div className="text-xs text-gray-400">{formatPriceINR(device.price_inr)}</div>
                 )}
               </div>
             </div>

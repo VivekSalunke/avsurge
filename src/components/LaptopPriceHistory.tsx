@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import { formatPriceINR } from '@/lib/format'
 
 interface PriceEntry {
   id: number
@@ -39,7 +40,7 @@ export default function LaptopPriceHistory({ laptopId, currentPrice }: { laptopI
         <span className="text-sm font-semibold text-gray-700">Price History</span>
         {priceChange !== 0 && (
           <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${priceDrop ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-            {priceDrop ? 'Down' : 'Up'} ₹{Math.abs(priceChange).toLocaleString('en-IN')} since launch
+            {priceDrop ? 'Down' : 'Up'} {formatPriceINR(Math.abs(priceChange))} since launch
           </span>
         )}
       </div>
@@ -47,15 +48,15 @@ export default function LaptopPriceHistory({ laptopId, currentPrice }: { laptopI
         <div className="grid grid-cols-3 gap-3 mb-5">
           <div className="bg-gray-50 rounded-xl p-3 text-center">
             <p className="text-xs text-gray-400 mb-1">Lowest</p>
-            <p className="text-sm font-bold text-green-600">₹{minPrice.toLocaleString('en-IN')}</p>
+            <p className="text-sm font-bold text-green-600">{formatPriceINR(minPrice)}</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-3 text-center">
             <p className="text-xs text-gray-400 mb-1">Current</p>
-            <p className="text-sm font-bold text-blue-600">₹{(currentPrice || latestPrice).toLocaleString('en-IN')}</p>
+            <p className="text-sm font-bold text-blue-600">{formatPriceINR((currentPrice || latestPrice))}</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-3 text-center">
             <p className="text-xs text-gray-400 mb-1">Highest</p>
-            <p className="text-sm font-bold text-red-500">₹{maxPrice.toLocaleString('en-IN')}</p>
+            <p className="text-sm font-bold text-red-500">{formatPriceINR(maxPrice)}</p>
           </div>
         </div>
         <div className="flex items-end gap-1.5 h-24 mb-2">
@@ -68,7 +69,7 @@ export default function LaptopPriceHistory({ laptopId, currentPrice }: { laptopI
                 <div className={`w-full rounded-t-md ${isLatest ? 'bg-blue-500' : 'bg-blue-200 group-hover:bg-blue-300'} transition-all`}
                   style={{ height: `${Math.max(heightPct, 8)}%` }} />
                 <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none z-10">
-                  ₹{entry.price_inr.toLocaleString('en-IN')}<br />
+                  {formatPriceINR(entry.price_inr)}<br />
                   <span className="text-gray-400">{new Date(entry.tracked_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</span>
                 </div>
               </div>

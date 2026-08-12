@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import { formatPriceINR } from '@/lib/format'
 
 export const revalidate = 60
 export const metadata = {
@@ -106,7 +107,7 @@ export default async function PhonesPage({ searchParams }: { searchParams: Promi
               <p className="text-xs text-gray-400 mb-0.5">{phone.brand}</p>
               <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{phone.name}</p>
               {phone.price_inr && (
-                <p className="text-xs text-blue-600 font-medium mt-1">₹{phone.price_inr.toLocaleString('en-IN')}</p>
+                <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(phone.price_inr)}</p>
               )}
               </Link>
               <Link href={`/compare?a=${phone.slug}`}

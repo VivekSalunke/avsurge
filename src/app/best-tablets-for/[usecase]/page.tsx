@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { formatPriceINR } from '@/lib/format'
 
 const USE_CASES: Record<string, {
   title: string
@@ -151,7 +152,7 @@ export default async function BestTabletsForPage({ params }: { params: Promise<{
               <p className="text-xs text-gray-400 mb-0.5">{tablet.brand}</p>
               <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight mb-2">{tablet.name}</p>
               {tablet.price_inr && (
-                <p className="text-sm font-bold text-blue-600">₹{tablet.price_inr.toLocaleString('en-IN')}</p>
+                <p className="text-sm font-bold text-blue-600">{formatPriceINR(tablet.price_inr)}</p>
               )}
             </Link>
           ))}

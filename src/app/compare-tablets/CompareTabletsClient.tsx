@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { formatPriceINR } from '@/lib/format'
 
 
 
@@ -76,7 +77,7 @@ function TabletSelector({ side, tablet, tablets, onSelect, onRemove }: TabletSel
                 </div>
                 {t.price_inr && (
                   <p className="text-xs text-blue-600 flex-shrink-0">
-                    ₹{t.price_inr.toLocaleString('en-IN')}
+                    {formatPriceINR(t.price_inr)}
                   </p>
                 )}
               </button>
@@ -95,7 +96,7 @@ function TabletSelector({ side, tablet, tablets, onSelect, onRemove }: TabletSel
           <p className="font-semibold text-gray-900 text-sm">{tablet.name}</p>
           <p className="text-xs text-gray-400 mb-1">{tablet.brand}</p>
           {tablet.price_inr && (
-            <p className="text-blue-600 text-sm font-bold">₹{tablet.price_inr.toLocaleString('en-IN')}</p>
+            <p className="text-blue-600 text-sm font-bold">{formatPriceINR(tablet.price_inr)}</p>
           )}
           <button onClick={() => onRemove(side)}
             className="text-xs text-gray-400 hover:text-red-500 mt-2 transition">

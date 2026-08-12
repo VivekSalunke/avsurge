@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { formatPriceINR } from '@/lib/format'
 
 export default function PriceAlertButton({ phoneId, phoneName, currentPrice }: {
   phoneId: number
@@ -69,7 +70,7 @@ export default function PriceAlertButton({ phoneId, phoneName, currentPrice }: {
             <div>
               <label className="text-xs text-gray-500 mb-1 block">
                 Notify me when price drops to (₹)
-                {currentPrice && <span className="text-gray-400 ml-1">· Current: ₹{currentPrice.toLocaleString('en-IN')}</span>}
+                {currentPrice && <span className="text-gray-400 ml-1">· Current: {formatPriceINR(currentPrice)}</span>}
               </label>
               <input
                 type="number"

@@ -11,6 +11,7 @@ import PriceHistory from '@/components/PriceHistory'
 import PhoneJsonLd from '@/components/PhoneJsonLd'
 import PriceAlertButton from '@/components/PriceAlertButton'
 import PhoneTracker from '@/components/PhoneTracker'
+import { formatPriceINR } from '@/lib/format'
 
 export const revalidate = 60
 
@@ -85,7 +86,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
             {phone.price_inr && (
               <div className="bg-blue-50 rounded-xl px-4 py-3 mb-4 text-center">
                 <div className="text-xs text-blue-400 mb-0.5">Starting price in India</div>
-                <div className="text-2xl font-bold text-blue-700">₹{phone.price_inr.toLocaleString('en-IN')}</div>
+                <div className="text-2xl font-bold text-blue-700">{formatPriceINR(phone.price_inr)}</div>
               </div>
             )}
 
@@ -193,7 +194,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!phone) return { title: 'Phone not found' }
   return {
     title: `${phone.name} Specs & Price in India`,
-    description: `${phone.name} full specifications, price in India (₹${phone.price_inr?.toLocaleString('en-IN') || 'N/A'}), camera, battery, display and more.`,
+    description: `${phone.name} full specifications, price in India (${formatPriceINR(phone.price_inr)}), camera, battery, display and more.`,
     keywords: [phone.name, phone.brand, 'specs', 'price India', 'review'],
     openGraph: {
       title: `${phone.name} — Full Specs & Price`,

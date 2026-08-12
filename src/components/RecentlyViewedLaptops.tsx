@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { formatPriceINR } from '@/lib/format'
 export default function RecentlyViewedLaptops({ currentSlug }: { currentSlug: string }) {
   const [laptops, setLaptops] = useState<any[]>([])
   useEffect(() => { loadLaptops() }, [currentSlug])
@@ -32,7 +33,7 @@ export default function RecentlyViewedLaptops({ currentSlug }: { currentSlug: st
             <p className="text-xs text-gray-400 mb-0.5">{laptop.brand}</p>
             <p className="text-xs font-semibold text-gray-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight mb-1">{laptop.name}</p>
             {laptop.price_inr && (
-              <p className="text-xs text-blue-600 font-medium">₹{laptop.price_inr.toLocaleString('en-IN')}</p>
+              <p className="text-xs text-blue-600 font-medium">{formatPriceINR(laptop.price_inr)}</p>
             )}
           </Link>
         ))}

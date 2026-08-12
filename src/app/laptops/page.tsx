@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import { formatPriceINR } from '@/lib/format'
 export const revalidate = 60
 export const metadata = {
   title: 'Laptops Price List in India 2025',
@@ -142,7 +143,7 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
               <p className="text-xs text-gray-400 mb-0.5">{laptop.brand}</p>
               <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{laptop.name}</p>
               {laptop.price_inr && (
-                <p className="text-xs text-blue-600 font-medium mt-1">₹{laptop.price_inr.toLocaleString('en-IN')}</p>
+                <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(laptop.price_inr)}</p>
               )}
               </Link>
               <Link href={`/compare-laptops?a=${laptop.slug}`}

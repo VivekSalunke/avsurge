@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { formatPriceINR } from '@/lib/format'
 
 export const dynamicParams = true
 export const revalidate = 3600
@@ -147,7 +148,7 @@ export default async function CompareLaptopPairPage({ params }: { params: Promis
             <p className="font-semibold text-gray-900 text-sm">{laptop.name}</p>
             <p className="text-xs text-gray-400 mb-1">{laptop.brand}</p>
             {laptop.price_inr && (
-              <p className="text-blue-600 text-sm font-bold">₹{laptop.price_inr.toLocaleString('en-IN')}</p>
+              <p className="text-blue-600 text-sm font-bold">{formatPriceINR(laptop.price_inr)}</p>
             )}
             <Link href={`/laptops/${laptop.slug}`} className="inline-block mt-2 text-xs text-blue-500 hover:underline">
               Full specs →

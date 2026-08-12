@@ -3,6 +3,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { formatPriceINR } from '@/lib/format'
 
 
 
@@ -47,7 +48,7 @@ function LaptopSelector({ side, laptop, laptops, onSelect, onRemove }: {
           </div>
           <p className="text-xs text-gray-400 mb-0.5">{laptop.brand}</p>
           <p className="text-sm font-semibold text-gray-900 mb-1">{laptop.name}</p>
-          {laptop.price_inr && <p className="text-sm font-bold text-blue-600 mb-3">₹{laptop.price_inr.toLocaleString('en-IN')}</p>}
+          {laptop.price_inr && <p className="text-sm font-bold text-blue-600 mb-3">{formatPriceINR(laptop.price_inr)}</p>}
           <button onClick={() => onRemove(side)} className="text-xs text-red-400 hover:text-red-600 transition">Remove</button>
         </div>
       ) : (

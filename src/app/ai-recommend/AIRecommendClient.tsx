@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import { formatPriceINR } from '@/lib/format'
 
 
 
@@ -212,7 +213,7 @@ export default function AIRecommendClient() {
                     </div>
                     {rec.item.price_inr && (
                       <span className="text-sm font-bold text-blue-600 flex-shrink-0">
-                        ₹{rec.item.price_inr.toLocaleString('en-IN')}
+                        {formatPriceINR(rec.item.price_inr)}
                       </span>
                     )}
                   </div>

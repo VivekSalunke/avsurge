@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import { formatPriceINR } from '@/lib/format'
 
 type Tab = 'phones' | 'tablets' | 'laptops'
 
@@ -111,7 +112,7 @@ export default function WishlistPage() {
                   <p className="text-xs text-gray-400 mb-0.5">{item.brand}</p>
                   <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition mb-1">{item.name}</p>
                   {item.price_inr && (
-                    <p className="text-blue-600 font-bold">₹{item.price_inr.toLocaleString('en-IN')}</p>
+                    <p className="text-blue-600 font-bold">{formatPriceINR(item.price_inr)}</p>
                   )}
                 </div>
               </Link>

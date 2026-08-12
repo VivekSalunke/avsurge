@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { formatPriceINR } from '@/lib/format'
 
 const TYPE_ICON: Record<string, string> = {
   phone: '📱',
@@ -126,7 +127,7 @@ export default function SearchBar() {
               </div>
               {item.price_inr && (
                 <p className="text-xs text-blue-600 font-medium flex-shrink-0">
-                  ₹{item.price_inr.toLocaleString('en-IN')}
+                  {formatPriceINR(item.price_inr)}
                 </p>
               )}
             </button>

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { formatPriceINR } from '@/lib/format'
 
 interface DeviceCard {
   type: string
@@ -73,7 +74,7 @@ export default function DeviceOfTheDay({ cards }: { cards: DeviceCard[] }) {
                     <p className="text-white/70 text-sm mb-0.5">{device.brand}</p>
                     <h3 className="font-bold text-lg sm:text-2xl leading-tight mb-2">{device.name}</h3>
                     {device.price_inr && (
-                      <p className="text-white font-bold text-lg sm:text-xl mb-3">₹{device.price_inr.toLocaleString('en-IN')}</p>
+                      <p className="text-white font-bold text-lg sm:text-xl mb-3">{formatPriceINR(device.price_inr)}</p>
                     )}
                     <div className="flex flex-wrap gap-2 mb-5">
                       {specs.map(([, value]) => (

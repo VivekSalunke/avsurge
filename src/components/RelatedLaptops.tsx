@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import { formatPriceINR } from '@/lib/format'
 
 function getCategory(price: number): string {
   if (price < 40000) return 'budget'
@@ -63,7 +64,7 @@ export default async function RelatedLaptops({ laptopId, brand, priceInr }: {
             <p className="text-xs text-gray-400 mb-0.5">{laptop.brand}</p>
             <p className="text-xs font-semibold text-gray-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight mb-1">{laptop.name}</p>
             {laptop.price_inr && (
-              <p className="text-xs text-blue-600 font-medium">₹{laptop.price_inr.toLocaleString('en-IN')}</p>
+              <p className="text-xs text-blue-600 font-medium">{formatPriceINR(laptop.price_inr)}</p>
             )}
           </Link>
         ))}

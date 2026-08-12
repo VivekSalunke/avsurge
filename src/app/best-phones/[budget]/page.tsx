@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { formatPriceINR } from '@/lib/format'
 
 const VALID_BUDGETS = [10000, 15000, 20000, 30000, 50000, 100000]
 
@@ -101,7 +102,7 @@ export default async function UnderBudgetPage({ params }: { params: Promise<{ bu
                 : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'
             }`}
           >
-            Under ₹{budget.toLocaleString('en-IN')}
+            Under {formatPriceINR(budget)}
           </Link>
         ))}
       </div>
@@ -139,7 +140,7 @@ export default async function UnderBudgetPage({ params }: { params: Promise<{ bu
             </p>
             {phone.price_inr && (
               <p className="text-sm font-bold text-blue-600">
-                ₹{phone.price_inr.toLocaleString('en-IN')}
+                {formatPriceINR(phone.price_inr)}
               </p>
             )}
           </Link>

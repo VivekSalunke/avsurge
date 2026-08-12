@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { formatPriceINR } from '@/lib/format'
 
 export const revalidate = 60
 
@@ -103,7 +104,7 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
                 </div>
                 <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{phone.name}</p>
                 {phone.price_inr && (
-                  <p className="text-xs text-blue-600 font-medium mt-1">₹{phone.price_inr.toLocaleString('en-IN')}</p>
+                  <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(phone.price_inr)}</p>
                 )}
               </Link>
             ))}
@@ -129,7 +130,7 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
                 </div>
                 <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{tablet.name}</p>
                 {tablet.price_inr && (
-                  <p className="text-xs text-blue-600 font-medium mt-1">₹{tablet.price_inr.toLocaleString('en-IN')}</p>
+                  <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(tablet.price_inr)}</p>
                 )}
               </Link>
             ))}
@@ -154,7 +155,7 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
                 </div>
                 <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{laptop.name}</p>
                 {laptop.price_inr && (
-                  <p className="text-xs text-blue-600 font-medium mt-1">₹{laptop.price_inr.toLocaleString('en-IN')}</p>
+                  <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(laptop.price_inr)}</p>
                 )}
               </Link>
             ))}

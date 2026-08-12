@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { formatPriceINR } from '@/lib/format'
 const VALID_BUDGETS = [30000, 50000, 70000, 100000, 150000, 200000]
 export const dynamicParams = true
 export const revalidate = 3600
@@ -78,7 +79,7 @@ export default async function UnderBudgetLaptopsPage({ params }: { params: Promi
         {VALID_BUDGETS.map(budget => (
           <Link key={budget} href={`/best-laptops/${budget}`}
             className={`px-3 py-1.5 rounded-full text-sm border transition ${budget === b ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'}`}>
-            Under ₹{budget.toLocaleString('en-IN')}
+            Under {formatPriceINR(budget)}
           </Link>
         ))}
       </div>
@@ -108,7 +109,7 @@ export default async function UnderBudgetLaptopsPage({ params }: { params: Promi
             <p className="text-xs text-gray-400 mb-0.5">{laptop.brand}</p>
             <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight mb-2">{laptop.name}</p>
             {laptop.price_inr && (
-              <p className="text-sm font-bold text-blue-600">₹{laptop.price_inr.toLocaleString('en-IN')}</p>
+              <p className="text-sm font-bold text-blue-600">{formatPriceINR(laptop.price_inr)}</p>
             )}
           </Link>
         ))}
