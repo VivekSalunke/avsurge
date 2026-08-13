@@ -102,6 +102,28 @@ export const CHIPSET_TIERS: Record<string, number> = {
   'helio g91 ultra': 28,
   'helio g99 ultra': 32,
   'helio g99 ultimate': 33,
+
+  // Additional chipsets found in tablet data
+  'unisoc t610': 18,
+  'unisoc t612': 19,
+  'unisoc t616': 22,
+  'unisoc t618': 24,
+  'helio g80': 28,
+  'helio g90t': 34,
+  'helio p22t': 15,
+  'snapdragon 680': 30,
+  'snapdragon 860': 48,
+  'snapdragon 870': 62,
+
+  // Apple M-series (tablets and laptops)
+  'm1': 75,
+  'apple m1': 75,
+  'm2': 82,
+  'apple m2': 82,
+  'm3': 87,
+  'apple m3': 87,
+  'm4': 91,
+  'apple m4': 91,
 }
 
 /** Fallback score for chipsets not in the table above. Deliberately mid-low

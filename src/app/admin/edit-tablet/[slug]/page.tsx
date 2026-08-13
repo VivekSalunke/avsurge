@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
+import { computeSpecScore } from '@/lib/specScore'
 
 const CATEGORIES = ['General', 'Display', 'Performance', 'Camera', 'Battery', 'Connectivity', 'Storage', 'Audio', 'Build']
 
@@ -17,6 +18,7 @@ export default function EditTabletPage() {
   const [price, setPrice] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [releasedAt, setReleasedAt] = useState('')
+  const [specScoreOverride, setSpecScoreOverride] = useState('')
   const [specs, setSpecs] = useState<any[]>([])
   const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
   const [error, setError] = useState('')
@@ -38,6 +40,7 @@ export default function EditTabletPage() {
       setPrice(t.price_inr?.toString() || '')
       setImageUrl(t.image_url || '')
       setReleasedAt(t.released_at || '')
+      setSpecScoreOverride(t.spec_score_override?.toString() ?? '')
       const { data: s } = await supabase.from('tablet_specs').select('*').eq('tablet_id', t.id).order('id')
       setSpecs(s || [])
       setLoading(false)
@@ -62,6 +65,7 @@ export default function EditTabletPage() {
       price_inr: price ? parseInt(price) : null,
       image_url: imageUrl || null,
       released_at: releasedAt || null,
+      spec_score_override: specScoreOverride ? parseInt(specScoreOverride) : null,
     }).eq('id', tablet.id)
 
     if (updateError) { setStatus('error'); setError(updateError.message); return }
@@ -115,6 +119,7 @@ export default function EditTabletPage() {
             { label: 'Brand', value: brand, set: setBrand },
             { label: 'Price (₹)', value: price, set: setPrice },
             { label: 'Release Date', value: releasedAt, set: setReleasedAt },
+            { label: 'Spec Score Override', value: specScoreOverride, set: setSpecScoreOverride },
           ].map(({ label, value, set }) => (
             <div key={label}>
               <label className="block text-xs text-gray-500 mb-1">{label}</label>

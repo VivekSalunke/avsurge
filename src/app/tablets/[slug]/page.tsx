@@ -11,6 +11,7 @@ import RecentlyViewedTablets from '@/components/RecentlyViewedTablets'
 import TabletViewTracker from '@/components/TabletViewTracker'
 import TabletPriceAlertButton from '@/components/TabletPriceAlertButton'
 import TabletTracker from '@/components/TabletTracker'
+import SpecScoreBadge from '@/components/SpecScoreBadge'
 import { formatPriceINR } from '@/lib/format'
 import { buildAmazonSearchUrl } from '@/lib/affiliate'
 
@@ -84,6 +85,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
             </div>
             <h1 className="text-xl font-bold text-gray-900 mb-1">{tablet.name}</h1>
             <p className="text-sm text-gray-400 mb-4">{tablet.brand}</p>
+            <SpecScoreBadge specs={specs} overrideScore={tablet.spec_score_override} />
 
             {tablet.price_inr && (
               <div className="bg-blue-50 rounded-xl px-4 py-3 mb-4 text-center">
