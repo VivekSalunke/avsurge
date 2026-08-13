@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { formatPriceINR } from '@/lib/format'
+import SortableDeviceGrid from '@/components/SortableDeviceGrid'
 
 export const revalidate = 60
 
@@ -93,73 +93,29 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
             <h2 className="text-base font-bold text-gray-900">📱 {brandName} Phones</h2>
             <span className="text-xs text-gray-400">{phones?.length} phones</span>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {(phones || []).map((phone: any) => (
-              <Link key={phone.id} href={`/phones/${phone.slug}`}
-                className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 transition group">
-                <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
-                  {phone.image_url
-                    ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full" />
-                    : <span className="text-4xl">📱</span>}
-                </div>
-                <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{phone.name}</p>
-                {phone.price_inr && (
-                  <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(phone.price_inr)}</p>
-                )}
-              </Link>
-            ))}
-          </div>
+          <SortableDeviceGrid devices={phones || []} basePath="phones" fallbackIcon="📱" />
         </div>
       )}
 
       {/* Tablets section */}
       {(tablets?.length || 0) > 0 && (
-        <div>
+        <div className="mb-10">
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-base font-bold text-gray-900">📟 {brandName} Tablets</h2>
             <span className="text-xs text-gray-400">{tablets?.length} tablets</span>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {(tablets || []).map((tablet: any) => (
-              <Link key={tablet.id} href={`/tablets/${tablet.slug}`}
-                className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 transition group">
-                <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
-                  {tablet.image_url
-                    ? <img src={tablet.image_url} alt={tablet.name} className="object-contain w-full h-full" />
-                    : <span className="text-4xl">📟</span>}
-                </div>
-                <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{tablet.name}</p>
-                {tablet.price_inr && (
-                  <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(tablet.price_inr)}</p>
-                )}
-              </Link>
-            ))}
-          </div>
+          <SortableDeviceGrid devices={tablets || []} basePath="tablets" fallbackIcon="📟" />
         </div>
       )}
+
       {/* Laptops section */}
       {(laptops?.length || 0) > 0 && (
-        <div className="mt-10">
+        <div>
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-base font-bold text-gray-900">💻 {brandName} Laptops</h2>
             <span className="text-xs text-gray-400">{laptops?.length} laptops</span>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {(laptops || []).map((laptop: any) => (
-              <Link key={laptop.id} href={`/laptops/${laptop.slug}`}
-                className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 transition group">
-                <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
-                  {laptop.image_url
-                    ? <img src={laptop.image_url} alt={laptop.name} className="object-contain w-full h-full" />
-                    : <span className="text-4xl">💻</span>}
-                </div>
-                <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{laptop.name}</p>
-                {laptop.price_inr && (
-                  <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(laptop.price_inr)}</p>
-                )}
-              </Link>
-            ))}
-          </div>
+          <SortableDeviceGrid devices={laptops || []} basePath="laptops" fallbackIcon="💻" />
         </div>
       )}
     </main>
