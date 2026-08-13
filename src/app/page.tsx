@@ -162,7 +162,6 @@ export default async function HomePage() {
           { label: 'Phones', value: (allPhones?.length || 0) + '+', icon: '📱' },
           { label: 'Tablets', value: (allTablets?.length || 0) + '+', icon: '📟' },
           { label: 'Brands', value: brands.length + '+', icon: '🏷️' },
-          { label: 'Reviews', value: (reviews?.length || 0) + '+', icon: '⭐' },
           { label: 'Laptops', value: (allLaptops?.length || 0) + '+', icon: '💻' },
         ].map(stat => (
           <div key={stat.label} className="bg-white border border-gray-200 rounded-xl p-3 text-center">
