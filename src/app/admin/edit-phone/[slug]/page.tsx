@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { computeSpecScore } from '@/lib/specScore'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
@@ -17,6 +18,7 @@ export default function EditPhonePage() {
   const [price, setPrice] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [releasedAt, setReleasedAt] = useState('')
+  const [specScoreOverride, setSpecScoreOverride] = useState('')
   const [specs, setSpecs] = useState<any[]>([])
   const [status, setStatus] = useState<'idle'|'saving'|'success'|'error'>('idle')
   const [error, setError] = useState('')
@@ -38,6 +40,7 @@ export default function EditPhonePage() {
       setPrice(p.price_inr?.toString() || '')
       setImageUrl(p.image_url || '')
       setReleasedAt(p.released_at || '')
+      setSpecScoreOverride(p.spec_score_override?.toString() ?? '')
       const { data: s } = await supabase.from('phone_specs').select('*').eq('phone_id', p.id).order('id')
       setSpecs(s || [])
       setLoading(false)
@@ -68,6 +71,7 @@ export default function EditPhonePage() {
       price_inr: newPrice,
       image_url: imageUrl || null,
       released_at: releasedAt || null,
+      spec_score_override: specScoreOverride ? parseInt(specScoreOverride) : null,
     }).eq('id', phone.id)
 
     if (e1) { setError(e1.message); setStatus('error'); return }
@@ -136,6 +140,12 @@ export default function EditPhonePage() {
             <label className="block text-xs font-medium text-gray-500 mb-1">Release date</label>
             <input type="date" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
               value={releasedAt} onChange={e => setReleasedAt(e.target.value)} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Spec Score Override</label>
+            <input type="number" min="0" max="100" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+              value={specScoreOverride} onChange={e => setSpecScoreOverride(e.target.value)} placeholder="Auto-computed" />
+            <p className="text-xs text-gray-400 mt-1">Computed: {computeSpecScore(specs)}/100 · Leave blank to use computed score</p>
           </div>
           <div className="col-span-2">
             <label className="block text-xs font-medium text-gray-500 mb-1">Image URL</label>
