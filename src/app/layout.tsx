@@ -90,6 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <Link href="/search" className="hover:text-blue-600">Search</Link>
                   <Link href="/brands" className="hover:text-blue-600">Brands</Link>
                   <Link href="/news" className="hover:text-blue-600">News</Link>
+                  <Link href="/glossary" className="hover:text-blue-600">Glossary</Link>
                   <Link href="/site-map" className="hover:text-blue-600">Sitemap</Link>
                 </div>
               </div>

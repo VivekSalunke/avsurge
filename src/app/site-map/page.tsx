@@ -38,6 +38,7 @@ export default async function SitemapPage() {
               { href: '/ai-recommend', label: 'AI Recommender' },
               { href: '/brands', label: 'All Brands' },
               { href: '/news', label: 'News & Reviews' },
+              { href: '/glossary', label: 'Glossary' },
               { href: '/wishlist', label: 'My Wishlist' },
               { href: '/profile', label: 'My Profile' },
             ].map(item => (

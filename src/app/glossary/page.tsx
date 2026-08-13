@@ -171,8 +171,9 @@ export default function GlossaryPage() {
 
       <div className="flex flex-wrap gap-2 mb-10 pb-6 border-b border-gray-100">
         {GLOSSARY.map(section => (
-          <a
-            key={section.letter}
+          
+            <a
+              key={section.letter}
             href={`#${section.letter}`}
             className="w-8 h-8 flex items-center justify-center text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition"
           >
