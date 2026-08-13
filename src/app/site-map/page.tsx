@@ -89,6 +89,7 @@ export default async function SitemapPage() {
               { href: '/privacy', label: 'Privacy Policy' },
               { href: '/terms', label: 'Terms & Conditions' },
               { href: '/editorial-policy', label: 'Editorial Policy' },
+              { href: '/glossary', label: 'Glossary' },
             ].map(item => (
               <Link key={item.href} href={item.href}
                 className="text-sm text-blue-600 hover:underline flex items-center gap-1.5">

@@ -100,6 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Link href="/privacy" className="hover:text-blue-600">Privacy Policy</Link>
                 <Link href="/disclaimer" className="hover:text-blue-600">Disclaimer</Link>
                 <Link href="/editorial-policy" className="hover:text-blue-600">Editorial Policy</Link>
+                <Link href="/glossary" className="hover:text-blue-600">Glossary</Link>
                 <Link href="/terms" className="hover:text-blue-600">Terms & Conditions</Link>
               </div>
             </div>
