@@ -11,6 +11,7 @@ import PriceHistory from '@/components/PriceHistory'
 import PhoneJsonLd from '@/components/PhoneJsonLd'
 import PriceAlertButton from '@/components/PriceAlertButton'
 import PhoneTracker from '@/components/PhoneTracker'
+import SpecScoreBadge from '@/components/SpecScoreBadge'
 import { formatPriceINR } from '@/lib/format'
 import { buildAmazonSearchUrl } from '@/lib/affiliate'
 
@@ -83,6 +84,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
             </div>
             <h1 className="text-xl font-bold text-gray-900 mb-1">{phone.name}</h1>
             <p className="text-sm text-gray-400 mb-4">{phone.brand}</p>
+            <SpecScoreBadge specs={specs} overrideScore={phone.spec_score_override} />
 
             {phone.price_inr && (
               <div className="bg-blue-50 rounded-xl px-4 py-3 mb-4 text-center">
