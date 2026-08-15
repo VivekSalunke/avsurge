@@ -65,7 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       <meta name="apple-mobile-web-app-title" content="AVSurge" />
       <link rel="apple-touch-icon" href="/icon-192.png" />
-      <body className={`${geist.className} bg-gray-50 text-gray-900`}>
+      <body className={`${geist.className} bg-[#0a0a0c] text-[#e6eef8]`}>
         <AuthProvider>
           <Navbar />
           {children}
