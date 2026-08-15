@@ -15,7 +15,8 @@ html {
 :root {
   --bg: #0a0a0c;
   --panel: #0f1720;
-  --muted: #1f2937;
+  --card-bg: rgba(255,255,255,0.02);
+  --muted: rgba(230,238,248,0.6);
   --text: #e6eef8;
   --accent-v: #8b5cf6; /* neon violet */
   --accent-c: #06b6d4; /* neon cyan */

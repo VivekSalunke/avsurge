@@ -27,19 +27,19 @@ const NavDropdown = ({ label, items }: { label: string, items: { href: string, l
   const [open, setOpen] = useState(false)
   return (
     <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-      <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-blue-600 transition py-1">
+      <button className="flex items-center gap-1 text-sm text-[rgba(255,255,255,0.8)] hover:text-neon-cyan transition py-1">
         {label}
         <svg className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
       {open && (
-        <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-50 overflow-hidden min-w-48">
+        <div className="absolute top-full left-0 mt-1 bg-[var(--card-bg)] border border-[rgba(255,255,255,0.04)] rounded-2xl shadow-lg z-50 overflow-hidden min-w-48 neon-border">
           {items.map(item => (
             <Link key={item.href} href={item.href}
-              className="flex flex-col px-4 py-3 hover:bg-blue-50 transition border-b border-gray-50 last:border-0">
-              <span className="text-sm font-medium text-gray-800">{item.label}</span>
-              <span className="text-xs text-gray-400">{item.desc}</span>
+              className="flex flex-col px-4 py-3 hover:bg-[rgba(255,255,255,0.02)] transition border-b border-[rgba(255,255,255,0.02)] last:border-0">
+              <span className="text-sm font-medium text-white">{item.label}</span>
+              <span className="text-xs text-[rgba(255,255,255,0.6)]">{item.desc}</span>
             </Link>
           ))}
         </div>
@@ -55,22 +55,22 @@ export default function Navbar() {
   const [mobileLaptopOpen, setMobileLaptopOpen] = useState(false)
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <nav className="bg-[var(--bg)] border-b border-[rgba(255,255,255,0.04)] sticky top-0 z-50 neon-border">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm font-bold">AV</div>
-            <span className="font-bold text-gray-900 text-lg">AVSurge</span>
+            <div className="w-8 h-8 bg-gradient-to-r from-neon-cyan to-neon-violet rounded-lg flex items-center justify-center text-black text-sm font-bold">AV</div>
+            <span className="font-bold text-white text-lg">AVSurge</span>
           </Link>
           {/* Desktop nav */}
-          <div className="hidden md:flex gap-5 text-sm text-gray-500 items-center">
+          <div className="hidden md:flex gap-5 text-sm text-[rgba(255,255,255,0.75)] items-center">
             <NavDropdown label="Phones" items={phoneItems} />
             <NavDropdown label="Tablets" items={tabletItems} />
             <NavDropdown label="Laptops" items={laptopItems} />
-            <Link href="/brands" className="hover:text-blue-600 transition">Brands</Link>
-            <Link href="/leaderboard" className="hover:text-blue-600 transition">Leaderboard</Link>
-            <Link href="/news" className="hover:text-blue-600 transition">News</Link>
-            <Link href="/ai-recommend" className="flex items-center gap-1 text-sm text-purple-600 hover:text-purple-700 font-medium transition bg-purple-50 px-3 py-1 rounded-full">🤖 AI</Link>
+            <Link href="/brands" className="hover:text-neon-cyan transition">Brands</Link>
+            <Link href="/leaderboard" className="hover:text-neon-cyan transition">Leaderboard</Link>
+            <Link href="/news" className="hover:text-neon-cyan transition">News</Link>
+            <Link href="/ai-recommend" className="flex items-center gap-1 text-sm text-neon-violet hover:text-neon-violet/90 font-medium transition bg-[rgba(139,92,246,0.06)] px-3 py-1 rounded-full">🤖 AI</Link>
           </div>
         </div>
 
@@ -80,21 +80,21 @@ export default function Navbar() {
           {/* Hamburger button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-gray-100 transition">
-            <span className={`block w-5 h-0.5 bg-gray-600 transition-transform ${mobileOpen ? 'rotate-45 translate-y-2' : ''}`} />
-            <span className={`block w-5 h-0.5 bg-gray-600 transition-opacity ${mobileOpen ? 'opacity-0' : ''}`} />
-            <span className={`block w-5 h-0.5 bg-gray-600 transition-transform ${mobileOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+            className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-[rgba(255,255,255,0.02)] transition">
+            <span className={`block w-5 h-0.5 bg-[rgba(255,255,255,0.75)] transition-transform ${mobileOpen ? 'rotate-45 translate-y-2' : ''}`} />
+            <span className={`block w-5 h-0.5 bg-[rgba(255,255,255,0.75)] transition-opacity ${mobileOpen ? 'opacity-0' : ''}`} />
+            <span className={`block w-5 h-0.5 bg-[rgba(255,255,255,0.75)] transition-transform ${mobileOpen ? '-rotate-45 -translate-y-2' : ''}`} />
           </button>
         </div>
       </div>
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1">
+        <div className="md:hidden border-t border-[rgba(255,255,255,0.03)] bg-[var(--card-bg)] px-4 py-3 space-y-1">
           {/* Phones section */}
           <button
             onClick={() => setMobilePhoneOpen(!mobilePhoneOpen)}
-            className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl">
+            className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.02)] rounded-xl">
             📱 Phones
             <svg className={`w-4 h-4 transition-transform ${mobilePhoneOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
