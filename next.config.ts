@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
+
 const nextConfig: NextConfig = {
   images: {
+    // Allowlist remote host patterns (kept existing)
+    dangerouslyAllowLocalIP: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -22,7 +25,24 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '**.githubusercontent.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'm.media-amazon.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'rukminim2.flixcart.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'exstatic-in.vivo.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'static.realme.net',
+      },
     ],
   },
 };
+
 export default nextConfig;

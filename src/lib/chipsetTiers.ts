@@ -1,12 +1,18 @@
 /**
- * Manually curated chipset performance tiers (0-100), based on general
- * real-world performance positioning (CPU/GPU/AI benchmarks + market tier).
- * Scores are relative, not derived from a single benchmark suite.
+ * AVSurge chipset performance tiers.
  *
- * Lookup is normalized: lowercase, trimmed, with "qualcomm "/"mediatek "
- * prefixes stripped, since raw data has some inconsistent naming
- * (e.g. "Qualcomm Snapdragon 7 Gen 3" vs "Snapdragon 7 Gen 3").
+ * Scores are manually curated from general real-world performance
+ * positioning, CPU/GPU/AI capability and market tier.
+ *
+ * The lookup is intentionally tolerant because database values may contain:
+ * - Qualcomm / MediaTek / Google prefixes
+ * - process-node information such as "(4 nm)"
+ * - "Mobile Platform"
+ * - "5G"
+ * - trademark symbols
+ * - minor naming variations
  */
+
 export const CHIPSET_TIERS: Record<string, number> = {
   // Apple
   'a13 bionic': 70,
@@ -28,7 +34,7 @@ export const CHIPSET_TIERS: Record<string, number> = {
   'snapdragon 8 elite': 92,
   'snapdragon 8 elite gen 2': 95,
 
-  // Snapdragon upper-mid (7 series)
+  // Snapdragon upper-mid
   'snapdragon 7 gen 1': 58,
   'snapdragon 7+ gen 2': 62,
   'snapdragon 7 gen 3': 64,
@@ -39,13 +45,13 @@ export const CHIPSET_TIERS: Record<string, number> = {
   'snapdragon 778g+': 54,
   'snapdragon 782g': 53,
 
-  // Snapdragon mid (6 series)
+  // Snapdragon mid
   'snapdragon 6 gen 1': 45,
   'snapdragon 6s gen 3': 42,
   'snapdragon 695': 40,
   'snapdragon 685': 35,
 
-  // Snapdragon budget (4 series)
+  // Snapdragon budget
   'snapdragon 4 gen 1': 28,
   'snapdragon 4 gen 2': 30,
   'snapdragon 4s gen 2': 27,
@@ -96,14 +102,14 @@ export const CHIPSET_TIERS: Record<string, number> = {
   'tensor g3': 66,
   'tensor g4': 70,
 
-  // Helio (budget)
+  // Helio
   'helio g85': 25,
   'helio g88': 26,
   'helio g91 ultra': 28,
   'helio g99 ultra': 32,
   'helio g99 ultimate': 33,
 
-  // Additional chipsets found in tablet data
+  // Unisoc / older
   'unisoc t610': 18,
   'unisoc t612': 19,
   'unisoc t616': 22,
@@ -115,7 +121,7 @@ export const CHIPSET_TIERS: Record<string, number> = {
   'snapdragon 860': 48,
   'snapdragon 870': 62,
 
-  // Apple M-series (tablets and laptops)
+  // Apple M-series
   'm1': 75,
   'apple m1': 75,
   'm2': 82,
@@ -126,16 +132,80 @@ export const CHIPSET_TIERS: Record<string, number> = {
   'apple m4': 91,
 }
 
-/** Fallback score for chipsets not in the table above. Deliberately mid-low
- * to avoid overrating unknown/rare chipsets, while not tanking the overall score. */
 export const UNKNOWN_CHIPSET_SCORE = 40
 
-export function getChipsetScore(rawChipsetName: string | null | undefined): number {
-  if (!rawChipsetName) return UNKNOWN_CHIPSET_SCORE
-  const normalized = rawChipsetName
+/**
+ * Normalize chipset names so equivalent database values resolve
+ * to the same curated tier.
+ */
+function normalizeChipsetName(value: string): string {
+  return value
     .toLowerCase()
     .trim()
+    .replace(/[®™©]/g, '')
+    .replace(/\([^)]*\)/g, ' ')
+    .replace(/\[[^\]]*\]/g, ' ')
+    .replace(/\b\d+\s*nm\b/g, ' ')
+    .replace(/\bmobile platform\b/g, ' ')
+    .replace(/\bmobile platform for\b/g, ' ')
+    .replace(/\b5g\b/g, ' ')
+    .replace(/\b4g\b/g, ' ')
     .replace(/^qualcomm\s+/, '')
-    .replace(/^mediatek\s+/, '').replace(/^google\s+/, '')
-  return CHIPSET_TIERS[normalized] ?? UNKNOWN_CHIPSET_SCORE
+    .replace(/^mediatek\s+/, '')
+    .replace(/^google\s+/, '')
+    .replace(/^apple\s+/, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+/**
+ * Finds the closest curated chipset tier.
+ *
+ * Exact match is preferred.
+ * If an exact match does not exist, the function checks whether the
+ * normalized database value starts with a known chipset name.
+ *
+ * This handles values such as:
+ *
+ * "Qualcomm Snapdragon 8 Gen 3 (4 nm)"
+ * "Snapdragon 8 Gen 3 Mobile Platform"
+ * "MediaTek Dimensity 9300+ (4 nm)"
+ */
+export function getChipsetScore(
+  rawChipsetName: string | null | undefined
+): number {
+  if (!rawChipsetName) {
+    return UNKNOWN_CHIPSET_SCORE
+  }
+
+  const normalized = normalizeChipsetName(rawChipsetName)
+
+  if (!normalized) {
+    return UNKNOWN_CHIPSET_SCORE
+  }
+
+  // 1. Exact match
+  if (CHIPSET_TIERS[normalized] !== undefined) {
+    return CHIPSET_TIERS[normalized]
+  }
+
+  // 2. Prefer the longest matching chipset name.
+  // This prevents "snapdragon 8 elite" from incorrectly matching
+  // "snapdragon 8 elite gen 2".
+  const matches = Object.keys(CHIPSET_TIERS)
+    .filter(key => {
+      if (normalized === key) return true
+
+      return (
+        normalized.startsWith(`${key} `) ||
+        normalized.startsWith(`${key}-`)
+      )
+    })
+    .sort((a, b) => b.length - a.length)
+
+  if (matches.length > 0) {
+    return CHIPSET_TIERS[matches[0]]
+  }
+
+  return UNKNOWN_CHIPSET_SCORE
 }

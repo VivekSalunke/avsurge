@@ -105,13 +105,13 @@ export default async function HomePage() {
 
   const Section = ({ title, href, phones, badge }: { title: string, href: string, phones: any[], badge?: string }) => (
     phones.length > 0 ? (
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-gray-900">{title}</h2>
-            {badge && <span className="text-xs bg-blue-100 text-blue-600 px-2.5 py-1 rounded-full font-medium">{badge}</span>}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3 flex-wrap">
+            <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+            {badge && <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1.5 rounded-full font-semibold">{badge}</span>}
           </div>
-          <Link href={href} className="text-sm text-blue-600 hover:underline">See all →</Link>
+          <Link href={href} className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">See all →</Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {phones.map((phone: any) => <PhoneCard key={phone.id} phone={phone} />)}
@@ -121,34 +121,31 @@ export default async function HomePage() {
   )
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8">
+    <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
 
       {/* Hero */}
-      <div className="relative bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-8 mb-10 text-white overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-        <div className="relative">
-          <p className="text-blue-200 text-xs mb-2 uppercase tracking-widest font-medium">India's device database</p>
-          <h1 className="text-3xl font-bold mb-2">Find your perfect device</h1>
-          <p className="text-blue-100 mb-6 max-w-md">Specs, prices, comparisons and reviews for every phone, tablet and laptop in India.</p>
+      <div className="relative bg-gradient-to-br from-blue-600 via-blue-600 to-blue-700 rounded-2xl overflow-hidden p-10 mb-12 text-white shadow-xl">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4" />
+        <div className="relative z-10">
+          <p className="text-blue-200 text-xs mb-3 uppercase tracking-widest font-semibold">India's Device Database</p>
+          <h1 className="text-5xl font-extrabold mb-4 leading-tight">Find your perfect device</h1>
+          <p className="text-blue-100 mb-8 max-w-2xl text-lg leading-relaxed">Comprehensive specs, live prices, detailed comparisons and genuine reviews for every phone, tablet and laptop available in India.</p>
           <div className="flex flex-wrap gap-3">
-            <Link href="/phones" className="bg-white text-blue-600 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-50 transition">
-              Browse phones
+            <Link href="/phones" className="bg-white text-blue-600 px-6 py-3 rounded-lg text-sm font-semibold hover:bg-blue-50 transition shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+              📱 Browse phones
             </Link>
-            <Link href="/tablets" className="bg-white/20 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/30 transition">
-              Browse tablets
+            <Link href="/tablets" className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-white/30 transition border border-white/30">
+              📟 Browse tablets
             </Link>
-            <Link href="/laptops" className="bg-white/20 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/30 transition">
-              Browse laptops
+            <Link href="/laptops" className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-white/30 transition border border-white/30">
+              💻 Browse laptops
             </Link>
-            <Link href="/search" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
-              Search & Discover →
+            <Link href="/compare" className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-white/30 transition border border-white/30">
+              ⚖️ Compare
             </Link>
-            <Link href="/compare" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
-              Compare →
-            </Link>
-            <Link href="/leaderboard" className="border border-white/40 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-white/10 transition">
-              🔥 Trending →
+            <Link href="/leaderboard" className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-white/30 transition border border-white/30">
+              🔥 Trending
             </Link>
           </div>
         </div>
@@ -157,17 +154,17 @@ export default async function HomePage() {
       <DeviceOfTheDayWrapper />
 
       {/* Stats bar */}
-      <div className="grid grid-cols-4 gap-3 mb-10">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-12">
         {[
           { label: 'Phones', value: (allPhones?.length || 0) + '+', icon: '📱' },
           { label: 'Tablets', value: (allTablets?.length || 0) + '+', icon: '📟' },
           { label: 'Brands', value: brands.length + '+', icon: '🏷️' },
           { label: 'Laptops', value: (allLaptops?.length || 0) + '+', icon: '💻' },
         ].map(stat => (
-          <div key={stat.label} className="bg-white border border-gray-200 rounded-xl p-3 text-center">
-            <div className="text-xl mb-0.5">{stat.icon}</div>
-            <div className="text-base font-bold text-gray-900">{stat.value}</div>
-            <div className="text-xs text-gray-400">{stat.label}</div>
+          <div key={stat.label} className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-lg p-4 text-center shadow-sm hover:shadow-md transition hover:border-blue-300">
+            <div className="text-3xl mb-2">{stat.icon}</div>
+            <div className="text-2xl font-extrabold text-gray-900">{stat.value}</div>
+            <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 mt-1">{stat.label}</div>
           </div>
         ))}
       </div>
@@ -175,11 +172,11 @@ export default async function HomePage() {
       <RecentlyViewedHome />
 
       {/* Browse by Budget - Phones */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-bold text-gray-900">Browse phones by budget</h2>
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-gray-900">Browse phones by budget</h2>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
           {[
             { label: 'Under ₹10K', budget: 10000 },
             { label: 'Under ₹15K', budget: 15000 },
@@ -189,8 +186,8 @@ export default async function HomePage() {
             { label: 'Under ₹1L', budget: 100000 },
           ].map(({ label, budget }) => (
             <Link key={budget} href={`/best-phones/${budget}`}
-              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
-              <div className="text-2xl mb-1">💰</div>
+              className="group bg-white border border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition">
+              <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">💰</div>
               <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{label}</p>
             </Link>
           ))}
@@ -198,12 +195,12 @@ export default async function HomePage() {
       </div>
 
       {/* Browse by Budget - Tablets */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-bold text-gray-900">Browse tablets by budget</h2>
-          <Link href="/tablets" className="text-sm text-blue-600 hover:underline">All tablets →</Link>
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-gray-900">Browse tablets by budget</h2>
+          <Link href="/tablets" className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">All tablets →</Link>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
           {[
             { label: 'Under ₹10K', budget: 10000 },
             { label: 'Under ₹20K', budget: 20000 },
@@ -213,8 +210,8 @@ export default async function HomePage() {
             { label: 'Under ₹1.5L', budget: 150000 },
           ].map(({ label, budget }) => (
             <Link key={budget} href={`/best-tablets/${budget}`}
-              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
-              <div className="text-2xl mb-1">📟</div>
+              className="group bg-white border border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition">
+              <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">📟</div>
               <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{label}</p>
             </Link>
           ))}
@@ -222,12 +219,12 @@ export default async function HomePage() {
       </div>
 
       {/* Browse by Budget - Laptops */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-bold text-gray-900">Browse laptops by budget</h2>
-          <Link href="/laptops" className="text-sm text-blue-600 hover:underline">All laptops →</Link>
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-gray-900">Browse laptops by budget</h2>
+          <Link href="/laptops" className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">All laptops →</Link>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
           {[
             { label: 'Under ₹30K', budget: 30000 },
             { label: 'Under ₹50K', budget: 50000 },
@@ -237,8 +234,8 @@ export default async function HomePage() {
             { label: 'Under ₹2L', budget: 200000 },
           ].map(({ label, budget }) => (
             <Link key={budget} href={`/best-laptops/${budget}`}
-              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
-              <div className="text-2xl mb-1">💻</div>
+              className="group bg-white border border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition">
+              <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">💻</div>
               <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{label}</p>
             </Link>
           ))}
@@ -292,11 +289,11 @@ export default async function HomePage() {
       )}
 
       {/* Browse by use case - Phones */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-bold text-gray-900">Browse phones by use case</h2>
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-gray-900">Browse phones by use case</h2>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
           {[
             { label: '🎮 Gaming', href: '/best-phones-for/gaming' },
             { label: '📷 Camera', href: '/best-phones-for/camera' },
@@ -306,8 +303,8 @@ export default async function HomePage() {
             { label: '💼 Business', href: '/best-phones-for/business' },
           ].map(item => (
             <Link key={item.href} href={item.href}
-              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
-              <p className="text-2xl mb-1">{item.label.split(' ')[0]}</p>
+              className="group bg-white border border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition">
+              <p className="text-3xl mb-2 group-hover:scale-110 transition-transform">{item.label.split(' ')[0]}</p>
               <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{item.label.split(' ').slice(1).join(' ')}</p>
             </Link>
           ))}
@@ -315,11 +312,11 @@ export default async function HomePage() {
       </div>
 
       {/* Browse by use case - Tablets */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-bold text-gray-900">Browse tablets by use case</h2>
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-gray-900">Browse tablets by use case</h2>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
           {[
             { label: '✏️ Drawing', href: '/best-tablets-for/drawing' },
             { label: '🎓 Students', href: '/best-tablets-for/students' },
@@ -329,8 +326,8 @@ export default async function HomePage() {
             { label: '💼 Work', href: '/best-tablets-for/work' },
           ].map(item => (
             <Link key={item.href} href={item.href}
-              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
-              <p className="text-2xl mb-1">{item.label.split(' ')[0]}</p>
+              className="group bg-white border border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition">
+              <p className="text-3xl mb-2 group-hover:scale-110 transition-transform">{item.label.split(' ')[0]}</p>
               <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{item.label.split(' ').slice(1).join(' ')}</p>
             </Link>
           ))}
@@ -338,11 +335,11 @@ export default async function HomePage() {
       </div>
 
       {/* Browse by use case - Laptops */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-bold text-gray-900">Browse laptops by use case</h2>
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-gray-900">Browse laptops by use case</h2>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
           {[
             { label: '🎮 Gaming', href: '/best-laptops-for/gaming' },
             { label: '🎬 Video Editing', href: '/best-laptops-for/video-editing' },
@@ -352,8 +349,8 @@ export default async function HomePage() {
             { label: '✈️ Lightweight', href: '/best-laptops-for/lightweight' },
           ].map(item => (
             <Link key={item.href} href={item.href}
-              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
-              <p className="text-2xl mb-1">{item.label.split(' ')[0]}</p>
+              className="group bg-white border border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition">
+              <p className="text-3xl mb-2 group-hover:scale-110 transition-transform">{item.label.split(' ')[0]}</p>
               <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{item.label.split(' ').slice(1).join(' ')}</p>
             </Link>
           ))}
@@ -361,56 +358,56 @@ export default async function HomePage() {
       </div>
 
       {/* Quick actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4 mb-10">
-        <Link href="/compare" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
-          <div className="text-3xl mb-3">📱</div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 mb-12">
+        <Link href="/compare" className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition">
+          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">⚖️</div>
           <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Compare Phones</h3>
-          <p className="text-xs text-gray-400">Side by side</p>
+          <p className="text-xs text-gray-500">Side by side</p>
         </Link>
-        <Link href="/compare-tablets" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
-          <div className="text-3xl mb-3">📟</div>
+        <Link href="/compare-tablets" className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition">
+          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">📊</div>
           <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Compare Tablets</h3>
-          <p className="text-xs text-gray-400">Side by side</p>
+          <p className="text-xs text-gray-500">Side by side</p>
         </Link>
-        <Link href="/compare-laptops" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
-          <div className="text-3xl mb-3">💻</div>
+        <Link href="/compare-laptops" className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition">
+          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">🖥️</div>
           <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Compare Laptops</h3>
-          <p className="text-xs text-gray-400">Side by side</p>
+          <p className="text-xs text-gray-500">Side by side</p>
         </Link>
-        <Link href="/search" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
-          <div className="text-3xl mb-3">🔍</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Search & Filter</h3>
-          <p className="text-xs text-gray-400">Find by budget & specs</p>
+        <Link href="/search" className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition">
+          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">🔍</div>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Search</h3>
+          <p className="text-xs text-gray-500">By specs & budget</p>
         </Link>
-        <Link href="/ai-recommend" className="bg-white border border-purple-200 rounded-2xl p-5 hover:border-purple-300 hover:shadow-sm transition group">
-          <div className="text-3xl mb-3">🤖</div>
+        <Link href="/leaderboard" className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-orange-300 hover:shadow-md transition">
+          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">🔥</div>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-orange-600 text-sm">Trending</h3>
+          <p className="text-xs text-gray-500">Most viewed</p>
+        </Link>
+        <Link href="/ai-recommend" className="group bg-white border border-purple-200 rounded-xl p-5 hover:border-purple-300 hover:shadow-md transition">
+          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">🤖</div>
           <h3 className="font-bold text-gray-900 mb-1 group-hover:text-purple-600 text-sm">AI Recommender</h3>
-          <p className="text-xs text-gray-400">Get AI suggestions</p>
+          <p className="text-xs text-gray-500">Get suggestions</p>
         </Link>
-        <Link href="/leaderboard" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
-          <div className="text-3xl mb-3">🔥</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Trending Devices</h3>
-          <p className="text-xs text-gray-400">Most viewed right now</p>
-        </Link>
-        <Link href="/news" className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
-          <div className="text-3xl mb-3">📰</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Latest News</h3>
-          <p className="text-xs text-gray-400">Reviews & tech news</p>
+        <Link href="/brands" className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition">
+          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">🏷️</div>
+          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">All Brands</h3>
+          <p className="text-xs text-gray-500">Browse by brand</p>
         </Link>
       </div>
 
       {/* Brands */}
       {brands.length > 0 && (
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-base font-bold text-gray-900">Browse by brand</h2>
-            <Link href="/brands" className="text-sm text-blue-600 hover:underline">All brands →</Link>
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-900">Browse by brand</h2>
+            <Link href="/brands" className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">All brands →</Link>
           </div>
           <div className="flex flex-wrap gap-2">
             {brands.map((brand: any) => (
               <Link key={brand} href={`/brands/${encodeURIComponent(brand)}`}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-600 hover:border-blue-400 hover:text-blue-600 transition">
-                <span>{brandIcons[brand] || '📱'}</span>
+                className="group flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:border-blue-400 hover:text-blue-600 transition hover:shadow-sm">
+                <span className="text-lg">{brandIcons[brand] || '📱'}</span>
                 {brand}
               </Link>
             ))}

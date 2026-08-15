@@ -184,6 +184,7 @@ export default async function LeaderboardPage({
                     src={device.image_url}
                     alt={device.name}
                     fill
+                    sizes="56px"
                     className="object-contain"
                   />
                 )}

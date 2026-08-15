@@ -15,99 +15,249 @@ interface ParsedSpecs {
   chipsetScore: number
 }
 
-/** Finds a spec by label, checking multiple possible categories since
- * raw data has inconsistent categorization (e.g. Chipset/RAM appear
- * under both "General" and "Performance" depending on device). */
-function findSpecValue(specs: SpecRow[], label: string): string | null {
-  const match = specs.find(s => s.label.toLowerCase() === label.toLowerCase())
-  return match?.value ?? null
+/**
+ * Normalize labels so small database differences don't break scoring.
+ */
+function normalizeLabel(value: string): string {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
 }
 
-/** Extracts the largest number from a string like "8GB / 12GB LPDDR4X" -> 12 */
+/**
+ * Find a specification using exact or partial label matching.
+ */
+function findSpecValue(
+  specs: SpecRow[],
+  labels: string[]
+): string | null {
+  const normalizedLabels = labels.map(normalizeLabel)
+
+  // First try exact matches
+  for (const spec of specs) {
+    const label = normalizeLabel(spec.label)
+
+    if (normalizedLabels.includes(label)) {
+      return spec.value
+    }
+  }
+
+  // Then try partial matches
+  for (const spec of specs) {
+    const label = normalizeLabel(spec.label)
+
+    if (
+      normalizedLabels.some(
+        candidate =>
+          label.includes(candidate) ||
+          candidate.includes(label)
+      )
+    ) {
+      return spec.value
+    }
+  }
+
+  return null
+}
+
+/**
+ * Extract the largest number from a value.
+ *
+ * Examples:
+ * "8GB / 12GB LPDDR4X" -> 12
+ * "6000 mAh" -> 6000
+ * "120Hz" -> 120
+ * "80W" -> 80
+ */
 function extractMaxNumber(value: string | null): number | null {
   if (!value) return null
-  const matches = value.match(/\d+(\.\d+)?/g)
+
+  const matches = value.match(/\d+(?:\.\d+)?/g)
+
   if (!matches) return null
+
   const nums = matches.map(Number)
+
   return Math.max(...nums)
 }
 
-/** Extracts the largest MP figure from a string like "50MP + 5MP + 2MP" -> 50 */
+/**
+ * Extract the largest camera megapixel value.
+ *
+ * Example:
+ * "50MP + 8MP + 2MP" -> 50
+ */
 function extractMaxMP(value: string | null): number | null {
   if (!value) return null
-  const matches = value.match(/(\d+(\.\d+)?)\s*MP/gi)
+
+  const matches = value.match(
+    /(\d+(?:\.\d+)?)\s*MP/gi
+  )
+
   if (!matches) return null
-  const nums = matches.map(m => parseFloat(m))
+
+  const nums = matches.map(match =>
+    parseFloat(match)
+  )
+
   return Math.max(...nums)
 }
 
-export function parseSpecs(specs: SpecRow[]): ParsedSpecs {
-  const ramRaw = findSpecValue(specs, 'RAM')
-  const batteryRaw = findSpecValue(specs, 'Capacity')
-  const refreshRaw = findSpecValue(specs, 'Refresh rate') ?? findSpecValue(specs, 'Display type')
-  const chargingRaw = findSpecValue(specs, 'Charging speed')
-  const cameraRaw = findSpecValue(specs, 'Main camera')
-  const chipsetRaw = findSpecValue(specs, 'Chipset')
+export function parseSpecs(
+  specs: SpecRow[]
+): ParsedSpecs {
+  const ramRaw = findSpecValue(specs, [
+    'RAM',
+    'Memory',
+    'RAM Type',
+  ])
+
+  const batteryRaw = findSpecValue(specs, [
+    'Capacity',
+    'Battery',
+    'Battery Capacity',
+  ])
+
+  const chargingRaw = findSpecValue(specs, [
+    'Charging speed',
+    'Charging Speed',
+    'Charging',
+    'Fast Charging',
+    'Wired Charging',
+  ])
+
+  const chipsetRaw = findSpecValue(specs, [
+    'Chipset',
+    'Processor',
+    'SoC',
+  ])
 
   return {
     ramGB: extractMaxNumber(ramRaw),
     batteryMah: extractMaxNumber(batteryRaw),
-    refreshRateHz: extractMaxNumber(refreshRaw),
+    refreshRateHz: null,
     chargingWatts: extractMaxNumber(chargingRaw),
-    mainCameraMP: extractMaxMP(cameraRaw),
+    mainCameraMP: null,
     chipsetScore: getChipsetScore(chipsetRaw),
   }
 }
 
 /**
- * Normalizes a raw value against a realistic max for its category,
- * capped at 100. Maxes are chosen based on current (2026) flagship-tier
- * ranges, not theoretical limits.
+ * Normalize a raw value against a realistic maximum.
  */
-function normalize(value: number | null, realisticMax: number): number {
-  if (value === null) return 50 // neutral score when data is missing, avoids unfairly tanking the total
-  return Math.min(100, (value / realisticMax) * 100)
+function normalize(
+  value: number | null,
+  realisticMax: number
+): number {
+  if (value === null) return 50
+
+  return Math.min(
+    100,
+    (value / realisticMax) * 100
+  )
 }
 
+/**
+ * AVSurge Spec Score weights.
+ *
+ * These weights reflect the fields currently available
+ * consistently in the phone_specs database:
+ *
+ * - Chipset: 55%
+ * - Battery capacity: 30%
+ * - Charging speed: 15%
+ *
+ * Camera, RAM, display and brightness are intentionally
+ * excluded because those fields are not consistently
+ * available across the current phone database.
+ */
 const WEIGHTS = {
-  chipset: 0.35,
-  camera: 0.25,
-  battery: 0.20,
-  display: 0.15,
-  charging: 0.05,
+  chipset: 0.55,
+  battery: 0.30,
+  charging: 0.15,
 }
 
-export function computeSpecScore(specs: SpecRow[]): number {
+export function computeSpecScore(
+  specs: SpecRow[]
+): number {
   const parsed = parseSpecs(specs)
 
-  const chipsetComponent = parsed.chipsetScore
-  const cameraComponent = normalize(parsed.mainCameraMP, 108) // 108MP+ sensors are a common flagship reference point
-  const batteryComponent = normalize(parsed.batteryMah, 6000) // 6000mAh+ treated as top-tier
-  const displayComponent = normalize(parsed.refreshRateHz, 144) // 144Hz+ as top-tier refresh
-  const chargingComponent = normalize(parsed.chargingWatts, 100) // 100W+ as top-tier fast charging
+  const components: Array<{
+    value: number | null
+    weight: number
+    max: number
+  }> = [
+    {
+      value: parsed.chipsetScore,
+      weight: WEIGHTS.chipset,
+      max: 100,
+    },
+    {
+      value: parsed.batteryMah,
+      weight: WEIGHTS.battery,
+      max: 6000,
+    },
+    {
+      value: parsed.chargingWatts,
+      weight: WEIGHTS.charging,
+      max: 100,
+    },
+  ]
 
-  const score =
-    chipsetComponent * WEIGHTS.chipset +
-    cameraComponent * WEIGHTS.camera +
-    batteryComponent * WEIGHTS.battery +
-    displayComponent * WEIGHTS.display +
-    chargingComponent * WEIGHTS.charging
+  // Only use available components and re-normalize their weights.
+  const available = components.filter(
+    component => component.value !== null
+  )
+
+  const totalWeight = available.reduce(
+    (sum, component) => sum + component.weight,
+    0
+  )
+
+  if (totalWeight === 0) {
+    return 0
+  }
+
+  const score = available.reduce(
+    (sum, component) => {
+      const normalizedValue =
+        component.max === 100
+          ? Math.min(100, component.value as number)
+          : normalize(
+              component.value,
+              component.max
+            )
+
+      return (
+        sum +
+        normalizedValue *
+          (component.weight / totalWeight)
+      )
+    },
+    0
+  )
 
   return Math.round(score)
 }
 
 /**
- * Returns the final Spec Score for a device: the manual override if set,
- * otherwise the computed score from parsed specs. Use this everywhere a
- * score is displayed — never call computeSpecScore() directly for display,
- * since that skips the override check.
+ * Returns the final AVSurge Spec Score.
+ *
+ * A manually entered score always takes priority.
+ * Otherwise the score is calculated automatically.
  */
 export function getFinalSpecScore(
   specs: SpecRow[],
   overrideScore: number | null | undefined
 ): number {
-  if (overrideScore !== null && overrideScore !== undefined) {
+  if (
+    overrideScore !== null &&
+    overrideScore !== undefined
+  ) {
     return overrideScore
   }
+
   return computeSpecScore(specs)
 }
