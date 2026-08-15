@@ -330,7 +330,7 @@ export default function PhoneFilters({
               setSearch(e.target.value)
             }
             placeholder="Search by phone name or brand..."
-            className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-12 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+            className="h-12 w-full rounded-xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] pl-12 pr-4 text-sm text-[var(--muted)] outline-none transition placeholder:text-[rgba(255,255,255,0.35)] focus:border-neon-cyan focus:ring-2 focus:ring-[rgba(6,182,212,0.2)]"
           />
         </div>
 
@@ -338,7 +338,7 @@ export default function PhoneFilters({
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {/* PRICE */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
+            <label className="text-xs font-semibold uppercase tracking-wider text-[rgba(255,255,255,0.65)]">
               💰 Price
             </label>
             <select
@@ -348,7 +348,7 @@ export default function PhoneFilters({
                   e.target.value as PriceFilter
                 )
               }
-              className="w-full h-10 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              className="w-full h-10 rounded-lg border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] px-3 text-sm text-[var(--muted)] outline-none transition focus:border-neon-cyan focus:ring-2 focus:ring-[rgba(6,182,212,0.2)]"
             >
               {PRICE_OPTIONS.map((option) => (
                 <option
@@ -363,7 +363,7 @@ export default function PhoneFilters({
 
           {/* RAM */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
+            <label className="text-xs font-semibold uppercase tracking-wider text-[rgba(255,255,255,0.65)]">
               🧠 RAM
             </label>
             <select
@@ -373,7 +373,7 @@ export default function PhoneFilters({
                   e.target.value as RamFilter
                 )
               }
-              className="w-full h-10 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              className="w-full h-10 rounded-lg border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] px-3 text-sm text-[var(--muted)] outline-none transition focus:border-neon-cyan focus:ring-2 focus:ring-[rgba(6,182,212,0.2)]"
             >
               {RAM_OPTIONS.map((option) => (
                 <option
@@ -388,7 +388,7 @@ export default function PhoneFilters({
 
           {/* STORAGE */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
+            <label className="text-xs font-semibold uppercase tracking-wider text-[rgba(255,255,255,0.65)]">
               💾 Storage
             </label>
             <select
@@ -398,7 +398,7 @@ export default function PhoneFilters({
                   e.target.value as StorageFilter
                 )
               }
-              className="w-full h-10 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              className="w-full h-10 rounded-lg border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] px-3 text-sm text-[var(--muted)] outline-none transition focus:border-neon-cyan focus:ring-2 focus:ring-[rgba(6,182,212,0.2)]"
             >
               {STORAGE_OPTIONS.map((option) => (
                 <option
@@ -413,7 +413,7 @@ export default function PhoneFilters({
 
           {/* NETWORK */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
+            <label className="text-xs font-semibold uppercase tracking-wider text-[rgba(255,255,255,0.65)]">
               📡 Network
             </label>
             <select
@@ -423,7 +423,7 @@ export default function PhoneFilters({
                   e.target.value as NetworkFilter
                 )
               }
-              className="w-full h-10 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              className="w-full h-10 rounded-lg border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] px-3 text-sm text-[var(--muted)] outline-none transition focus:border-neon-cyan focus:ring-2 focus:ring-[rgba(6,182,212,0.2)]"
             >
               <option value="all">
                 All networks
@@ -439,7 +439,7 @@ export default function PhoneFilters({
 
           {/* SORT */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase tracking-wider text-gray-600">
+            <label className="text-xs font-semibold uppercase tracking-wider text-[rgba(255,255,255,0.65)]">
               🔢 Sort by
             </label>
             <select
@@ -449,7 +449,7 @@ export default function PhoneFilters({
                   e.target.value as SortKey
                 )
               }
-              className="w-full h-10 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              className="w-full h-10 rounded-lg border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] px-3 text-sm text-[var(--muted)] outline-none transition focus:border-neon-cyan focus:ring-2 focus:ring-[rgba(6,182,212,0.2)]"
             >
               {SORT_OPTIONS.map((option) => (
                 <option
@@ -465,13 +465,13 @@ export default function PhoneFilters({
 
         {/* RESULTS INFO & ACTIONS */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-[rgba(255,255,255,0.6)]">
             Showing{' '}
-            <span className="font-bold text-gray-900">
+            <span className="font-bold text-white">
               {filteredDevices.length}
             </span>{' '}
             of{' '}
-            <span className="font-bold text-gray-900">
+            <span className="font-bold text-white">
               {devices.length}
             </span>{' '}
             phones
@@ -481,7 +481,7 @@ export default function PhoneFilters({
             <button
               type="button"
               onClick={clearFilters}
-              className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 transition hover:text-blue-700 hover:underline"
+              className="inline-flex items-center gap-2 text-sm font-medium text-neon-cyan transition hover:text-neon-cyan/80 hover:underline"
             >
               <svg
                 className="h-4 w-4"
@@ -518,23 +518,23 @@ export default function PhoneFilters({
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-gray-300 bg-gradient-to-br from-gray-50 to-white py-24 text-center">
+        <div className="rounded-2xl border border-dashed border-[rgba(255,255,255,0.04)] bg-[rgba(255,255,255,0.01)] py-24 text-center">
           <div className="text-6xl">
             🔎
           </div>
 
-          <p className="mt-6 text-lg font-semibold text-gray-700">
+          <p className="mt-6 text-lg font-semibold text-white">
             No phones found
           </p>
 
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-[rgba(255,255,255,0.55)]">
             Try adjusting your filters or search term
           </p>
 
           <button
             type="button"
             onClick={clearFilters}
-            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 active:scale-95"
+            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-neon-cyan to-neon-violet px-6 py-2.5 text-sm font-medium text-black transition hover:opacity-95 active:scale-95 shadow-glow"
           >
             <svg
               className="h-4 w-4"
