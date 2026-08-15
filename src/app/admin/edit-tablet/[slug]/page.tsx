@@ -92,27 +92,27 @@ export default function EditTabletPage() {
   const inputStyle = { color: '#111827', backgroundColor: '#ffffff' }
 
   if (authLoading || profileLoading) return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+    <main className="min-h-screen flex items-center justify-center text-[var(--text)]">
+      <div className="w-8 h-8 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin" />
     </main>
   )
 
   if (!tablet) return (
-    <main className="max-w-3xl mx-auto px-4 py-8">
-      <p className="text-gray-400">Tablet not found.</p>
+    <main className="max-w-3xl mx-auto px-4 py-8 text-[var(--text)]">
+      <p className="text-[rgba(255,255,255,0.4)]">Tablet not found.</p>
     </main>
   )
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-8">
+    <main className="max-w-3xl mx-auto px-4 py-8 text-[var(--text)]">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/admin/tablets" className="text-sm text-gray-400 hover:text-blue-600">← Manage Tablets</Link>
-        <h1 className="text-2xl font-bold text-gray-900">Edit Tablet</h1>
+        <Link href="/admin/tablets" className="text-sm text-[rgba(255,255,255,0.4)] hover:text-neon-cyan">← Manage Tablets</Link>
+        <h1 className="text-2xl font-bold text-white">Edit Tablet</h1>
       </div>
 
       {/* Basic info */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-        <h2 className="font-semibold text-gray-700 mb-4">Basic Info</h2>
+      <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
+        <h2 className="font-semibold text-white mb-4">Basic Info</h2>
         <div className="grid grid-cols-2 gap-4">
           {[
             { label: 'Tablet Name', value: name, set: setName },
@@ -122,37 +122,37 @@ export default function EditTabletPage() {
             { label: 'Spec Score Override', value: specScoreOverride, set: setSpecScoreOverride },
           ].map(({ label, value, set }) => (
             <div key={label}>
-              <label className="block text-xs text-gray-500 mb-1">{label}</label>
+              <label className="block text-xs text-dim mb-1">{label}</label>
               <input
                 value={value}
                 onChange={e => set(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+                className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
                 style={inputStyle}
               />
             </div>
           ))}
           <div className="col-span-2">
-            <label className="block text-xs text-gray-500 mb-1">Image URL</label>
+            <label className="block text-xs text-dim mb-1">Image URL</label>
             <input
               value={imageUrl}
               onChange={e => setImageUrl(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
               style={inputStyle}
             />
           </div>
         </div>
         {imageUrl && (
           <div className="mt-4 flex justify-center">
-            <img src={imageUrl} alt={name} className="h-32 object-contain rounded-xl border border-gray-100" />
+            <img src={imageUrl} alt={name} className="h-32 object-contain rounded-xl border border-[rgba(255,255,255,0.04)]" />
           </div>
         )}
       </div>
 
       {/* Specs */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
+      <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-gray-700">Specs ({specs.length})</h2>
-          <button onClick={addSpec} className="text-xs text-blue-600 font-medium hover:underline">+ Add spec</button>
+          <h2 className="font-semibold text-white">Specs ({specs.length})</h2>
+          <button onClick={addSpec} className="text-xs text-neon-cyan font-medium hover:underline">+ Add spec</button>
         </div>
         <div className="space-y-2">
           {specs.map((spec, i) => (
@@ -160,7 +160,7 @@ export default function EditTabletPage() {
               <select
                 value={spec.category}
                 onChange={e => updateSpec(i, 'category', e.target.value)}
-                className="col-span-2 border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-400"
+                className="col-span-2 border border-[rgba(255,255,255,0.06)] rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-neon-cyan"
                 style={inputStyle}>
                 {CATEGORIES.map(c => <option key={c}>{c}</option>)}
               </select>
@@ -168,14 +168,14 @@ export default function EditTabletPage() {
                 value={spec.label}
                 onChange={e => updateSpec(i, 'label', e.target.value)}
                 placeholder="Label"
-                className="col-span-2 border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-400"
+                className="col-span-2 border border-[rgba(255,255,255,0.06)] rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-neon-cyan"
                 style={inputStyle}
               />
               <input
                 value={spec.value}
                 onChange={e => updateSpec(i, 'value', e.target.value)}
                 placeholder="Value"
-                className="col-span-2 border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-400"
+                className="col-span-2 border border-[rgba(255,255,255,0.06)] rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-neon-cyan"
                 style={inputStyle}
               />
               <button onClick={() => removeSpec(i)} className="text-red-400 hover:text-red-600 text-lg">×</button>
@@ -184,10 +184,10 @@ export default function EditTabletPage() {
         </div>
       </div>
 
-      {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+      {error && <p className="text-[#f87171] text-sm mb-4">{error}</p>}
 
       {status === 'success' && (
-        <div className="bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm mb-4">
+        <div className="bg-[rgba(16,185,129,0.06)] border border-[rgba(16,185,129,0.2)] text-[#34d399] rounded-xl px-4 py-3 text-sm mb-4">
           ✅ Tablet updated! Redirecting...
         </div>
       )}
@@ -195,7 +195,7 @@ export default function EditTabletPage() {
       <button
         onClick={handleSave}
         disabled={status === 'saving'}
-        className="w-full bg-blue-600 text-white rounded-xl py-3 font-semibold hover:bg-blue-700 transition disabled:opacity-50">
+        className="w-full bg-gradient-to-r from-neon-violet to-neon-cyan text-black font-semibold rounded-xl py-3 transition disabled:opacity-50">
         {status === 'saving' ? 'Saving...' : 'Save Changes'}
       </button>
     </main>

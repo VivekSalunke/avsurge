@@ -9,33 +9,33 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="max-w-3xl mx-auto px-4 py-12">
-      <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
-        <Link href="/" className="hover:text-blue-600">Home</Link>
+    <main className="max-w-3xl mx-auto px-4 py-12 text-[var(--text)]">
+      <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
+        <Link href="/" className="hover:text-neon-cyan">Home</Link>
         <span>&rsaquo;</span>
-        <span className="text-gray-600">About</span>
+        <span className="text-[rgba(255,255,255,0.65)]">About</span>
       </div>
 
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">About AVSurge</h1>
-      <p className="text-gray-400 text-sm mb-10">India's device comparison platform</p>
+      <h1 className="text-3xl font-bold text-white mb-2">About AVSurge</h1>
+      <p className="text-[rgba(255,255,255,0.4)] text-sm mb-10">India's device comparison platform</p>
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-lg font-bold text-gray-900 mb-3">What is AVSurge?</h2>
-          <p className="text-gray-600 leading-relaxed">
+          <h2 className="text-lg font-bold text-white mb-3">What is AVSurge?</h2>
+          <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
             AVSurge is India's comprehensive device comparison and discovery platform. We help Indian consumers make informed decisions when buying smartphones, tablets and laptops by providing detailed specifications, price comparisons, user reviews and AI-powered recommendations.
           </p>
         </section>
 
         <section>
-          <h2 className="text-lg font-bold text-gray-900 mb-3">Our Mission</h2>
-          <p className="text-gray-600 leading-relaxed">
+          <h2 className="text-lg font-bold text-white mb-3">Our Mission</h2>
+          <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
             We believe every Indian consumer deserves access to accurate, unbiased device information. Our mission is to simplify the device buying process by providing all the information you need in one place — from detailed specs to price history to AI recommendations.
           </p>
         </section>
 
         <section>
-          <h2 className="text-lg font-bold text-gray-900 mb-3">What We Offer</h2>
+          <h2 className="text-lg font-bold text-white mb-3">What We Offer</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
               { icon: '📱', title: '250+ Phones', desc: 'Comprehensive database of smartphones available in India' },
@@ -47,11 +47,11 @@ export default function AboutPage() {
               { icon: '📊', title: 'Price History', desc: 'Track price changes over time for any device' },
               { icon: '⭐', title: 'User Reviews', desc: 'Read and write reviews for any device' },
             ].map(item => (
-              <div key={item.title} className="bg-white border border-gray-200 rounded-xl p-4 flex gap-3">
+              <div key={item.title} className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 flex gap-3">
                 <span className="text-2xl">{item.icon}</span>
                 <div>
-                  <p className="font-semibold text-gray-900 text-sm">{item.title}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                  <p className="font-semibold text-white text-sm">{item.title}</p>
+                  <p className="text-xs text-[rgba(255,255,255,0.4)] mt-0.5">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -59,33 +59,33 @@ export default function AboutPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-bold text-gray-900 mb-3">How We Make Money</h2>
-          <p className="text-gray-600 leading-relaxed">
+          <h2 className="text-lg font-bold text-white mb-3">How We Make Money</h2>
+          <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
             AVSurge is free to use. We earn revenue through affiliate commissions when you purchase a device through our Amazon links, and through display advertising. These commercial relationships do not influence our device data or comparisons — all specs and prices are independently sourced and verified.
           </p>
         </section>
 
         <section>
-          <h2 className="text-lg font-bold text-gray-900 mb-3">Contact Us</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
+          <h2 className="text-lg font-bold text-white mb-3">Contact Us</h2>
+          <p className="text-[rgba(255,255,255,0.65)] leading-relaxed mb-4">
             Have feedback, suggestions or want to report incorrect data? We'd love to hear from you.
           </p>
-          <div className="bg-gray-50 rounded-xl p-4 text-sm text-gray-600">
+          <div className="bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 text-sm text-[rgba(255,255,255,0.65)] neon-border">
             <p><strong>AVSurge</strong></p>
-            <p>Website: <a href="https://avsurge.com" className="text-blue-600 hover:underline">avsurge.com</a></p>
-            <p>Email: <a href="mailto:avector134@gmail.com" className="text-blue-600 hover:underline">avector134@gmail.com</a></p>
-            <p className="mt-2 text-xs text-gray-400">Based in India 🇮🇳</p>
+            <p>Website: <a href="https://avsurge.com" className="text-neon-cyan hover:underline">avsurge.com</a></p>
+            <p>Email: <a href="mailto:avector134@gmail.com" className="text-neon-cyan hover:underline">avector134@gmail.com</a></p>
+            <p className="mt-2 text-xs text-[rgba(255,255,255,0.4)]">Based in India 🇮🇳</p>
           </div>
         </section>
 
-        <section className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
-          <h2 className="text-base font-bold text-gray-900 mb-2">Start Exploring</h2>
-          <p className="text-sm text-gray-600 mb-4">Find your perfect device today.</p>
+        <section className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 neon-border">
+          <h2 className="text-base font-bold text-white mb-2">Start Exploring</h2>
+          <p className="text-sm text-[rgba(255,255,255,0.65)] mb-4">Find your perfect device today.</p>
           <div className="flex flex-wrap gap-3">
-            <Link href="/phones" className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-700 transition">Browse Phones</Link>
-            <Link href="/tablets" className="bg-white text-blue-600 border border-blue-200 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-50 transition">Browse Tablets</Link>
-            <Link href="/laptops" className="bg-white text-blue-600 border border-blue-200 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-50 transition">Browse Laptops</Link>
-            <Link href="/ai-recommend" className="bg-white text-purple-600 border border-purple-200 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-purple-50 transition">🤖 AI Recommender</Link>
+            <Link href="/phones" className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black px-4 py-2 rounded-xl text-sm font-semibold hover:opacity-90 transition">Browse Phones</Link>
+            <Link href="/tablets" className="border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] px-4 py-2 rounded-xl text-sm font-semibold hover:border-neon-violet hover:text-white hover:glow transition">Browse Tablets</Link>
+            <Link href="/laptops" className="border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] px-4 py-2 rounded-xl text-sm font-semibold hover:border-neon-violet hover:text-white hover:glow transition">Browse Laptops</Link>
+            <Link href="/ai-recommend" className="border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-neon-violet px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[rgba(139,92,246,0.06)] hover:text-white transition">🤖 AI Recommender</Link>
           </div>
         </section>
       </div>

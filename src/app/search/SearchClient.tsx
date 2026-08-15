@@ -203,14 +203,14 @@ function SearchContent() {
   const fmt = (n: number) => '₹' + n.toLocaleString('en-IN')
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Search & Discover</h1>
+    <main className="max-w-6xl mx-auto px-4 py-8 text-[var(--text)]">
+      <h1 className="text-2xl font-bold text-white mb-6">Search & Discover</h1>
 
       {/* Mode toggle */}
-      <div className="flex gap-2 mb-5 bg-white border border-gray-200 rounded-xl p-1 w-fit">
+      <div className="flex gap-2 mb-5 bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl p-1 w-fit">
         {(['phones', 'tablets', 'laptops'] as Mode[]).map(m => (
           <button key={m} onClick={() => setMode(m)}
-            className={`px-5 py-2 rounded-lg text-sm font-medium transition ${mode === m ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+            className={`px-5 py-2 rounded-lg text-sm font-medium transition ${mode === m ? 'bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm' : 'text-dim hover:text-[rgba(255,255,255,0.85)]'}`}>
             {m === 'phones' ? '📱 Phones' : m === 'tablets' ? '📟 Tablets' : '💻 Laptops'}
           </button>
         ))}
@@ -219,11 +219,11 @@ function SearchContent() {
       {/* Search mode toggle */}
       <div className="flex gap-2 mb-5">
         <button onClick={() => setAiMode(false)}
-          className={`px-4 py-2 rounded-xl text-sm font-medium border transition ${!aiMode ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-500 border-gray-200 hover:border-blue-400'}`}>
+          className={`px-4 py-2 rounded-xl text-sm font-medium border transition ${!aiMode ? 'bg-gradient-to-r from-neon-cyan to-neon-violet text-black border-transparent shadow-sm' : 'bg-[var(--panel)] text-dim border-[rgba(255,255,255,0.06)] hover:border-neon-cyan'}`}>
           🔍 Search & Filter
         </button>
         <button onClick={() => setAiMode(true)}
-          className={`px-4 py-2 rounded-xl text-sm font-medium border transition ${aiMode ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-gray-500 border-gray-200 hover:border-purple-400'}`}>
+          className={`px-4 py-2 rounded-xl text-sm font-medium border transition ${aiMode ? 'bg-gradient-to-r from-neon-violet to-neon-cyan text-black border-transparent shadow-sm' : 'bg-[var(--panel)] text-dim border-[rgba(255,255,255,0.06)] hover:border-neon-violet'}`}>
           🤖 AI Search
         </button>
       </div>
@@ -231,16 +231,16 @@ function SearchContent() {
       {aiMode ? (
         /* AI Search */
         <div>
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-            <p className="text-sm text-gray-500 mb-3">Describe what you're looking for in plain English</p>
+          <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
+            <p className="text-sm text-dim mb-3">Describe what you're looking for in plain English</p>
             <div className="flex gap-3 mb-4">
               <textarea value={aiQuery} onChange={e => setAiQuery(e.target.value)} rows={2}
                 placeholder={`e.g. ${AI_EXAMPLES[mode][0]}`}
-                className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-400 resize-none"
+                className="flex-1 border border-[rgba(255,255,255,0.06)] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-neon-violet resize-none"
                 style={{ color: '#111827', backgroundColor: '#ffffff' }}
                 onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleAISearch())} />
               <button onClick={handleAISearch} disabled={aiLoading || !aiQuery.trim()}
-                className="bg-purple-600 text-white px-5 rounded-xl text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-50 flex items-center gap-2">
+                className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black px-5 rounded-xl text-sm font-semibold hover:brightness-110 transition disabled:opacity-50 flex items-center gap-2">
                 {aiLoading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : '🤖'}
                 {aiLoading ? '' : 'Ask AI'}
               </button>
@@ -248,18 +248,18 @@ function SearchContent() {
             <div className="flex flex-wrap gap-2">
               {AI_EXAMPLES[mode].map(ex => (
                 <button key={ex} onClick={() => setAiQuery(ex)}
-                  className="text-xs px-3 py-1.5 bg-purple-50 text-purple-600 border border-purple-200 rounded-full hover:bg-purple-100 transition">
+                  className="text-xs px-3 py-1.5 neon-badge border border-[rgba(139,92,246,0.2)] rounded-full hover:border-neon-violet transition">
                   {ex}
                 </button>
               ))}
             </div>
           </div>
 
-          {aiError && <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 text-red-600 text-sm">{aiError}</div>}
+          {aiError && <div className="bg-[rgba(239,68,68,0.06)] border border-[rgba(239,68,68,0.2)] rounded-xl p-4 mb-4 text-red-400 text-sm">{aiError}</div>}
 
           {aiExplanation && (
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-6">
-              <p className="text-sm text-purple-700"><span className="font-semibold">🤖 AI:</span> {aiExplanation}</p>
+            <div className="bg-[rgba(139,92,246,0.08)] border border-[rgba(139,92,246,0.2)] rounded-xl p-4 mb-6">
+              <p className="text-sm text-[#a78bfa]"><span className="font-semibold">🤖 AI:</span> {aiExplanation}</p>
             </div>
           )}
 
@@ -267,8 +267,8 @@ function SearchContent() {
             <div className="flex flex-col gap-4">
               {aiResults.map((rec: any, i: number) => (
                 <Link key={i} href={`${itemBase}/${rec.item.slug}`}
-                  className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-purple-300 hover:shadow-sm transition group flex gap-4">
-                  <div className="w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
+                  className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-5 hover:border-neon-violet hover:glow transition group flex gap-4">
+                  <div className="w-20 h-20 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
                     {rec.item.image_url
                       ? <img src={rec.item.image_url} alt={rec.item.name} className="object-contain w-full h-full p-1" />
                       : <span className="text-3xl">{itemEmoji}</span>}
@@ -276,13 +276,13 @@ function SearchContent() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <div>
-                        <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-medium mr-2">#{i + 1}</span>
-                        <span className="text-xs text-gray-400">{rec.item.brand}</span>
+                        <span className="text-xs neon-badge px-2 py-0.5 rounded-full font-medium mr-2">#{i + 1}</span>
+                        <span className="text-xs text-[rgba(255,255,255,0.4)]">{rec.item.brand}</span>
                       </div>
-                      {rec.item.price_inr && <span className="text-sm font-bold text-blue-600">{formatPriceINR(rec.item.price_inr)}</span>}
+                      {rec.item.price_inr && <span className="text-sm font-bold text-neon-cyan">{formatPriceINR(rec.item.price_inr)}</span>}
                     </div>
-                    <p className="font-semibold text-gray-900 group-hover:text-purple-600 transition mb-1">{rec.item.name}</p>
-                    <p className="text-xs text-gray-500 leading-relaxed">{rec.reason}</p>
+                    <p className="font-semibold text-white group-hover:text-neon-violet transition mb-1">{rec.item.name}</p>
+                    <p className="text-xs text-dim leading-relaxed">{rec.reason}</p>
                   </div>
                 </Link>
               ))}
@@ -294,35 +294,35 @@ function SearchContent() {
         <div>
           <div className="flex gap-3 mb-4">
             <input type="text"
-              className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400"
+              className="flex-1 border border-[rgba(255,255,255,0.06)] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-neon-cyan"
               style={{ color: '#111827', backgroundColor: '#ffffff' }}
               placeholder={`Search ${itemLabel} by name or brand...`}
               value={query}
               onChange={e => setQuery(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSearch()} />
             <button onClick={handleSearch}
-              className="bg-blue-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
+              className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black px-6 py-3 rounded-xl text-sm font-semibold hover:brightness-110 transition">
               Search
             </button>
             <button onClick={() => setShowFilters(!showFilters)}
-              className={`px-4 py-3 rounded-xl text-sm font-medium border transition ${showFilters ? 'bg-blue-50 border-blue-400 text-blue-600' : 'bg-white border-gray-200 text-gray-500 hover:border-blue-400'}`}>
+              className={`px-4 py-3 rounded-xl text-sm font-medium border transition ${showFilters ? 'bg-[rgba(6,182,212,0.06)] border-neon-cyan text-neon-cyan' : 'bg-[var(--panel)] border-[rgba(255,255,255,0.06)] text-dim hover:border-neon-cyan'}`}>
               ⚙️ Filters
             </button>
           </div>
 
           {showFilters && (
-            <div className="bg-white border border-gray-200 rounded-2xl p-5 mb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-5 mb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Budget presets */}
               <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Budget</p>
+                <p className="text-xs font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-widest mb-2">Budget</p>
                 <div className="flex flex-wrap gap-1.5">
                   <button onClick={() => { setMinBudget(0); setMaxBudget(300000) }}
-                    className={`text-xs px-2.5 py-1 rounded-full border transition ${minBudget === 0 && maxBudget === 300000 ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-500 hover:border-blue-400'}`}>
+                    className={`text-xs px-2.5 py-1 rounded-full border transition ${minBudget === 0 && maxBudget === 300000 ? 'bg-gradient-to-r from-neon-cyan to-neon-violet text-black border-transparent shadow-sm' : 'border-[rgba(255,255,255,0.06)] text-dim hover:border-neon-cyan'}`}>
                     All
                   </button>
                   {BUDGET_PRESETS[mode].map(p => (
                     <button key={p.label} onClick={() => { setMinBudget(p.min); setMaxBudget(p.max) }}
-                      className={`text-xs px-2.5 py-1 rounded-full border transition ${minBudget === p.min && maxBudget === p.max ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-500 hover:border-blue-400'}`}>
+                      className={`text-xs px-2.5 py-1 rounded-full border transition ${minBudget === p.min && maxBudget === p.max ? 'bg-gradient-to-r from-neon-cyan to-neon-violet text-black border-transparent shadow-sm' : 'border-[rgba(255,255,255,0.06)] text-dim hover:border-neon-cyan'}`}>
                       {p.label}
                     </button>
                   ))}
@@ -331,9 +331,9 @@ function SearchContent() {
 
               {/* Brand */}
               <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Brand</p>
+                <p className="text-xs font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-widest mb-2">Brand</p>
                 <select value={selectedBrand} onChange={e => setSelectedBrand(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+                  className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
                   style={{ color: '#111827', backgroundColor: '#ffffff' }}>
                   <option value="">All brands</option>
                   {brands.map(b => <option key={b} value={b}>{b}</option>)}
@@ -342,11 +342,11 @@ function SearchContent() {
 
               {/* RAM */}
               <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Min RAM</p>
+                <p className="text-xs font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-widest mb-2">Min RAM</p>
                 <div className="flex flex-wrap gap-1.5">
                   {RAM_OPTIONS.map(r => (
                     <button key={r} onClick={() => setMinRAM(minRAM === r ? '' : r)}
-                      className={`text-xs px-2.5 py-1 rounded-full border transition ${minRAM === r ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-500 hover:border-blue-400'}`}>
+                      className={`text-xs px-2.5 py-1 rounded-full border transition ${minRAM === r ? 'bg-gradient-to-r from-neon-cyan to-neon-violet text-black border-transparent shadow-sm' : 'border-[rgba(255,255,255,0.06)] text-dim hover:border-neon-cyan'}`}>
                       {r}
                     </button>
                   ))}
@@ -355,27 +355,27 @@ function SearchContent() {
 
               {/* Sort + 5G */}
               <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Sort by</p>
+                <p className="text-xs font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-widest mb-2">Sort by</p>
                 <select value={sort} onChange={e => setSort(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400 mb-2"
+                  className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan mb-2"
                   style={{ color: '#111827', backgroundColor: '#ffffff' }}>
                   {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
                 {mode !== 'laptops' && (
                   <button onClick={() => setOnly5G(!only5G)}
-                    className={`w-full flex items-center gap-2 text-xs px-3 py-2 rounded-lg transition border ${only5G ? 'bg-blue-600 text-white border-blue-600' : 'text-gray-600 border-gray-200 hover:border-blue-300'}`}>
+                    className={`w-full flex items-center gap-2 text-xs px-3 py-2 rounded-lg transition border ${only5G ? 'bg-gradient-to-r from-neon-cyan to-neon-violet text-black border-transparent shadow-sm' : 'text-[rgba(255,255,255,0.65)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan'}`}>
                     📡 5G only
                   </button>
                 )}
               </div>
 
-              <div className="sm:col-span-2 lg:col-span-4 flex justify-between items-center pt-2 border-t border-gray-100">
+              <div className="sm:col-span-2 lg:col-span-4 flex justify-between items-center pt-2 border-t border-[rgba(255,255,255,0.04)]">
                 <button onClick={() => doSearch(query)}
-                  className="bg-blue-600 text-white rounded-xl px-5 py-2 text-sm font-semibold hover:bg-blue-700 transition">
+                  className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl px-5 py-2 text-sm font-semibold hover:brightness-110 transition">
                   Apply filters
                 </button>
                 <button onClick={() => { setSelectedBrand(''); setMinBudget(0); setMaxBudget(300000); setOnly5G(false); setMinRAM(''); setSort('relevance') }}
-                  className="text-sm text-gray-400 hover:text-gray-600 transition">
+                  className="text-sm text-[rgba(255,255,255,0.4)] hover:text-[rgba(255,255,255,0.65)] transition">
                   Reset all
                 </button>
               </div>
@@ -384,25 +384,25 @@ function SearchContent() {
 
           {/* Results */}
           {!searched && !loading && (
-            <div className="bg-white border border-dashed border-gray-200 rounded-2xl py-24 text-center">
+            <div className="bg-[var(--card-bg)] border border-dashed border-[rgba(255,255,255,0.06)] rounded-2xl py-24 text-center">
               <p className="text-4xl mb-3">🔍</p>
-              <p className="text-gray-400 text-sm mb-2">Search for a {itemLabel} or apply filters</p>
-              <p className="text-xs text-gray-300">Or try <button onClick={() => setAiMode(true)} className="text-purple-500 hover:underline">AI Search 🤖</button> for natural language queries</p>
+              <p className="text-[rgba(255,255,255,0.4)] text-sm mb-2">Search for a {itemLabel} or apply filters</p>
+              <p className="text-xs text-[rgba(255,255,255,0.5)]">Or try <button onClick={() => setAiMode(true)} className="text-[#a78bfa] hover:underline">AI Search 🤖</button> for natural language queries</p>
             </div>
           )}
 
           {loading && (
             <div className="text-center py-20">
-              <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+              <div className="w-8 h-8 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin mx-auto" />
             </div>
           )}
 
           {searched && !loading && results.length === 0 && (
-            <div className="bg-white border border-dashed border-gray-200 rounded-2xl py-20 text-center">
+            <div className="bg-[var(--card-bg)] border border-dashed border-[rgba(255,255,255,0.06)] rounded-2xl py-20 text-center">
               <p className="text-3xl mb-3">😕</p>
-              <p className="text-gray-500 text-sm font-medium mb-1">No {itemLabel}s found</p>
-              <p className="text-gray-400 text-xs mb-3">Try different filters or search terms</p>
-              <button onClick={() => setAiMode(true)} className="text-sm text-purple-600 border border-purple-200 px-4 py-2 rounded-xl hover:bg-purple-50 transition">
+              <p className="text-dim text-sm font-medium mb-1">No {itemLabel}s found</p>
+              <p className="text-[rgba(255,255,255,0.4)] text-xs mb-3">Try different filters or search terms</p>
+              <button onClick={() => setAiMode(true)} className="text-sm text-[#a78bfa] border border-[rgba(139,92,246,0.2)] px-4 py-2 rounded-xl hover:bg-[rgba(139,92,246,0.06)] transition">
                 Try AI Search instead 🤖
               </button>
             </div>
@@ -410,19 +410,19 @@ function SearchContent() {
 
           {searched && !loading && results.length > 0 && (
             <div>
-              <p className="text-sm text-gray-400 mb-4">{results.length} {itemLabel}{results.length !== 1 ? 's' : ''} found</p>
+              <p className="text-sm text-[rgba(255,255,255,0.4)] mb-4">{results.length} {itemLabel}{results.length !== 1 ? 's' : ''} found</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {results.map(item => (
                   <Link key={item.id} href={`${itemBase}/${item.slug}`}
-                    className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 hover:shadow-sm transition group">
-                    <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
+                    className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 text-center hover:border-neon-cyan hover:glow transition group">
+                    <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center mb-3 overflow-hidden">
                       {item.image_url
                         ? <img src={item.image_url} alt={item.name} className="object-contain w-full h-full" />
                         : <span className="text-4xl">{itemEmoji}</span>}
                     </div>
-                    <p className="text-xs text-gray-400 mb-0.5">{item.brand}</p>
-                    <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition line-clamp-2">{item.name}</p>
-                    {item.price_inr && <p className="text-xs text-blue-600 font-medium mt-1">{fmt(item.price_inr)}</p>}
+                    <p className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{item.brand}</p>
+                    <p className="text-sm font-semibold text-white group-hover:text-neon-cyan transition line-clamp-2">{item.name}</p>
+                    {item.price_inr && <p className="text-xs text-neon-cyan font-medium mt-1">{fmt(item.price_inr)}</p>}
                   </Link>
                 ))}
               </div>

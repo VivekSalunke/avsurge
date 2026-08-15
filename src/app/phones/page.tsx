@@ -247,7 +247,7 @@ export default async function PhonesPage({
       : null
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 text-[var(--text)]">
 
       {/* Schema */}
       {itemListSchema && (
@@ -264,26 +264,26 @@ export default async function PhonesPage({
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
 
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600">
-              <span className="h-2 w-2 rounded-full bg-blue-600" />
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-neon-cyan">
+              <span className="h-2 w-2 rounded-full bg-neon-cyan" />
               Smartphone Catalog
             </div>
 
-            <h1 className="text-4xl font-extrabold tracking-tight text-gray-950 sm:text-5xl">
+            <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
               {brand ? `${brand} Phones` : 'All Phones'}
             </h1>
 
-            <p className="max-w-2xl text-base leading-7 text-gray-600">
+            <p className="max-w-2xl text-base leading-7 text-[rgba(255,255,255,0.65)]">
               Browse and compare {phones.length} smartphones available in India. Find specs, prices, and make the best choice for your budget.
             </p>
           </div>
 
           <div className="flex shrink-0 gap-3">
-            <div className="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 px-5 py-3.5 shadow-sm">
-              <div className="text-2xl font-bold leading-none text-gray-900">
+          <div className="rounded-xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] px-5 py-3.5 shadow-sm neon-border">
+            <div className="text-2xl font-bold leading-none text-white">
                 {phones.length}
               </div>
-              <div className="mt-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <div className="mt-1.5 text-xs font-semibold uppercase tracking-wide text-[rgba(255,255,255,0.65)]">
                 Phones
               </div>
             </div>
@@ -297,51 +297,51 @@ export default async function PhonesPage({
 
         <Link
           href="/leaderboard"
-          className="group rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-orange-200 hover:shadow-md"
+          className="group rounded-xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md neon-border"
         >
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50 text-xl group-hover:scale-110 transition-transform">
+          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-[rgba(255,255,255,0.02)] text-xl group-hover:scale-110 transition-transform text-neon-violet">
             🔥
           </div>
 
-          <div className="text-sm font-bold text-gray-900 group-hover:text-orange-600">
+          <div className="text-sm font-bold text-white group-hover:text-neon-violet">
             Trending Phones
           </div>
 
-          <div className="mt-1 text-xs text-gray-500">
+          <div className="mt-1 text-xs text-[rgba(255,255,255,0.55)]">
             Check what's popular now
           </div>
         </Link>
 
         <Link
           href="/brands"
-          className="group rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
+          className="group rounded-xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md neon-border"
         >
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-xl group-hover:scale-110 transition-transform">
+          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-[rgba(255,255,255,0.02)] text-xl group-hover:scale-110 transition-transform text-neon-cyan">
             🏷️
           </div>
 
-          <div className="text-sm font-bold text-gray-900 group-hover:text-blue-600">
+          <div className="text-sm font-bold text-white group-hover:text-neon-cyan">
             Browse Brands
           </div>
 
-          <div className="mt-1 text-xs text-gray-500">
+          <div className="mt-1 text-xs text-[rgba(255,255,255,0.55)]">
             Explore by manufacturer
           </div>
         </Link>
 
         <Link
           href="/compare"
-          className="group rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-violet-200 hover:shadow-md"
+          className="group rounded-xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md neon-border"
         >
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-violet-50 text-xl group-hover:scale-110 transition-transform">
+          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-[rgba(255,255,255,0.02)] text-xl group-hover:scale-110 transition-transform text-neon-violet">
             ⚖️
           </div>
 
-          <div className="text-sm font-bold text-gray-900 group-hover:text-violet-600">
+          <div className="text-sm font-bold text-white group-hover:text-neon-violet">
             Compare Phones
           </div>
 
-          <div className="mt-1 text-xs text-gray-500">
+          <div className="mt-1 text-xs text-[rgba(255,255,255,0.55)]">
             Compare side by side
           </div>
         </Link>
@@ -349,14 +349,14 @@ export default async function PhonesPage({
       </section>
 
       {/* Browse by use case */}
-      <section className="mb-10 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <section className="mb-10 rounded-xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-5 shadow-sm neon-border">
 
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-sm font-bold text-gray-900">
+            <h2 className="text-sm font-bold text-white">
               Find phones for your needs
             </h2>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-dim">
               Popular categories
             </p>
           </div>
@@ -375,7 +375,7 @@ export default async function PhonesPage({
             <Link
               key={item.href}
               href={item.href}
-              className="shrink-0 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs font-semibold text-gray-600 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
+              className="shrink-0 rounded-lg border border-[rgba(255,255,255,0.04)] bg-[var(--card-bg)] px-3 py-2 text-xs font-semibold text-[rgba(255,255,255,0.8)] transition hover:border-neon-cyan hover:text-neon-cyan"
             >
               {item.label}
             </Link>
@@ -389,10 +389,10 @@ export default async function PhonesPage({
 
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-bold text-gray-900">
+            <h2 className="text-sm font-bold text-white">
               Browse by brand
             </h2>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-dim">
               {brands.length} brands available
             </p>
           </div>
@@ -404,8 +404,8 @@ export default async function PhonesPage({
             href="/phones"
             className={`shrink-0 rounded-lg border px-3.5 py-2 text-xs font-semibold transition ${
               !brand
-                ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
-                : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-600'
+                ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm'
+                : 'border-[rgba(255,255,255,0.04)] bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] hover:border-neon-cyan hover:text-neon-cyan'
             }`}
           >
             All
@@ -417,8 +417,8 @@ export default async function PhonesPage({
               href={`/phones?brand=${encodeURIComponent(b)}`}
               className={`shrink-0 rounded-lg border px-3.5 py-2 text-xs font-semibold transition ${
                 brand === b
-                  ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
-                  : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:text-blue-600'
+                  ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm'
+                      : 'border-[rgba(255,255,255,0.04)] bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] hover:border-neon-cyan hover:text-neon-cyan'
               }`}
             >
               {b}
@@ -433,17 +433,17 @@ export default async function PhonesPage({
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-white">
               {brand ? `${brand} smartphones` : 'Latest smartphones'}
             </h2>
 
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-dim">
               Compare specs, prices and reviews
             </p>
           </div>
 
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700">
-            <span className="h-2 w-2 rounded-full bg-blue-600" />
+          <span className="inline-flex items-center gap-1.5 rounded-lg badge-blue px-3 py-2 text-xs font-semibold">
+            <span className="h-2 w-2 rounded-full bg-neon-cyan" />
             {phonesWithScores.length} results
           </span>
 

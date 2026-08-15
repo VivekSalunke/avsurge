@@ -57,27 +57,27 @@ export default function RecentlyViewedHome() {
   return (
     <div className="mb-10">
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-base font-bold text-gray-900">🕐 Recently viewed</h2>
+        <h2 className="text-base font-bold text-white">🕐 Recently viewed</h2>
         <button onClick={() => {
           localStorage.removeItem('recently_viewed')
           localStorage.removeItem('recently_viewed_tablets')
           localStorage.removeItem('recently_viewed_laptops')
           setDevices([])
-        }} className="text-xs text-gray-400 hover:text-red-500 transition">Clear</button>
+        }} className="text-xs text-dim hover:text-red-400 transition">Clear</button>
       </div>
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
         {devices.map(device => (
           <Link key={`${device.type}-${device.id}`} href={`/${path(device.type)}/${device.slug}`}
-            className="bg-white border border-gray-200 rounded-xl p-3 text-center hover:border-blue-400 hover:shadow-sm transition group">
-            <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-2 overflow-hidden">
+            className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-3 text-center hover:border-neon-cyan hover:glow transition group">
+            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center mb-2 overflow-hidden">
               {device.image_url
                 ? <img src={device.image_url} alt={device.name} className="object-contain w-full h-full" />
                 : <span className="text-3xl">{emoji(device.type)}</span>}
             </div>
-            <p className="text-xs text-gray-400 mb-0.5">{device.brand}</p>
-            <p className="text-xs font-semibold text-gray-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight">{device.name}</p>
+            <p className="text-xs text-dim mb-0.5">{device.brand}</p>
+            <p className="text-xs font-semibold text-white group-hover:text-neon-cyan transition line-clamp-2 leading-tight">{device.name}</p>
             {device.price_inr && (
-              <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(device.price_inr)}</p>
+              <p className="text-xs text-neon-cyan font-medium mt-1">{formatPriceINR(device.price_inr)}</p>
             )}
           </Link>
         ))}

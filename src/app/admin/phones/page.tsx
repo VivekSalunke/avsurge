@@ -45,63 +45,63 @@ export default function ManagePhonesPage() {
 
   if (loading || fetching) return (
     <main className="min-h-screen flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-8 h-8 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin" />
     </main>
   )
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-10">
+    <main className="max-w-4xl mx-auto px-4 py-10 text-[var(--text)]">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Manage Phones</h1>
-          <p className="text-sm text-gray-400">{phones.length} phones in database</p>
+          <h1 className="text-2xl font-bold text-white">Manage Phones</h1>
+          <p className="text-sm text-[rgba(255,255,255,0.4)]">{phones.length} phones in database</p>
         </div>
         <div className="flex gap-3">
-          <Link href="/admin" className="text-sm text-gray-500 hover:text-gray-700 px-3 py-2">← Admin</Link>
-          <Link href="/admin/add-phone" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition">+ Add phone</Link>
+          <Link href="/admin" className="text-sm text-dim hover:text-white px-3 py-2">← Admin</Link>
+          <Link href="/admin/add-phone" className="text-sm bg-gradient-to-r from-neon-violet to-neon-cyan text-black px-4 py-2 rounded-xl transition hover:brightness-110">+ Add phone</Link>
         </div>
       </div>
 
       <input
-        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 mb-6"
+        className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-neon-cyan mb-6"
         placeholder="Search phones..."
         value={search}
         onChange={e => setSearch(e.target.value)}
       />
 
       {filtered.length === 0 ? (
-        <div className="bg-white border border-dashed border-gray-200 rounded-2xl py-16 text-center">
-          <p className="text-gray-400 text-sm">No phones found</p>
+        <div className="bg-[var(--card-bg)] border border-dashed border-[rgba(255,255,255,0.06)] rounded-2xl py-16 text-center">
+          <p className="text-[rgba(255,255,255,0.4)] text-sm">No phones found</p>
         </div>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+        <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl overflow-hidden">
           {filtered.map((phone, i) => (
-            <div key={phone.id} className={`flex items-center justify-between px-5 py-4 ${i !== filtered.length - 1 ? 'border-b border-gray-100' : ''}`}>
+            <div key={phone.id} className={`flex items-center justify-between px-5 py-4 ${i !== filtered.length - 1 ? 'border-b border-[rgba(255,255,255,0.04)]' : ''}`}>
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden">
+                <div className="w-10 h-10 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center overflow-hidden">
                   {phone.image_url
                     ? <img src={phone.image_url} alt={phone.name} className="w-full h-full object-contain" />
                     : <span className="text-lg">📱</span>
                   }
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{phone.name}</p>
-                  <p className="text-xs text-gray-400">{phone.brand} · {phone.price_inr ? `₹${phone.price_inr.toLocaleString()}` : 'No price'}</p>
+                  <p className="text-sm font-semibold text-white">{phone.name}</p>
+                  <p className="text-xs text-[rgba(255,255,255,0.4)]">{phone.brand} · {phone.price_inr ? `₹${phone.price_inr.toLocaleString()}` : 'No price'}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <Link href={`/admin/edit-phone/${phone.slug}`}
-                  className="text-xs text-blue-600 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition">
+                  className="text-xs text-neon-cyan border border-[rgba(6,182,212,0.25)] px-3 py-1.5 rounded-lg hover:bg-[rgba(6,182,212,0.06)] transition">
                   Edit
                 </Link>
                 <Link href={`/phones/${phone.slug}`} target="_blank"
-                  className="text-xs text-gray-500 border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition">
+                  className="text-xs text-dim border border-[rgba(255,255,255,0.06)] px-3 py-1.5 rounded-lg hover:bg-[rgba(255,255,255,0.02)] transition">
                   View
                 </Link>
                 <button
                   onClick={() => deletePhone(phone.id, phone.name)}
                   disabled={deleting === phone.id}
-                  className="text-xs text-red-500 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-50 transition disabled:opacity-50">
+                  className="text-xs text-red-400 border border-[rgba(239,68,68,0.3)] px-3 py-1.5 rounded-lg hover:bg-[rgba(239,68,68,0.08)] transition disabled:opacity-50">
                   {deleting === phone.id ? '...' : 'Delete'}
                 </button>
               </div>

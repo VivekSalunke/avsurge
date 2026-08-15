@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  'Phones': 'bg-blue-100 text-blue-700',
-  'Tablets': 'bg-teal-100 text-teal-700',
-  'Laptops': 'bg-indigo-100 text-indigo-700',
-  'Reviews': 'bg-yellow-100 text-yellow-700',
-  'Tips': 'bg-green-100 text-green-700',
-  'Industry News': 'bg-purple-100 text-purple-700',
-  'General': 'bg-gray-100 text-gray-700',
+  'Phones': 'neon-badge',
+  'Tablets': 'badge-green',
+  'Laptops': 'badge-blue',
+  'Reviews': 'badge-red',
+  'Tips': 'badge-green',
+  'Industry News': 'badge-blue',
+  'General': 'neon-badge',
 }
 
 export default async function NewsPage() {
@@ -27,24 +27,24 @@ export default async function NewsPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <main className="max-w-5xl mx-auto px-4 py-8">
+    <main className="max-w-5xl mx-auto px-4 py-8 text-[var(--text)]">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Tech News & Reviews</h1>
-        <p className="text-sm text-gray-400">Latest updates from the world of phones, tablets and laptops</p>
+        <h1 className="text-2xl font-bold text-white mb-2">Tech News & Reviews</h1>
+        <p className="text-sm text-[rgba(255,255,255,0.4)]">Latest updates from the world of phones, tablets and laptops</p>
       </div>
 
       {(!articles || articles.length === 0) ? (
-        <div className="bg-white border border-dashed border-gray-200 rounded-2xl py-24 text-center">
+        <div className="bg-[var(--card-bg)] border border-dashed border-[rgba(255,255,255,0.06)] rounded-2xl py-24 text-center">
           <p className="text-4xl mb-3">📰</p>
-          <p className="text-gray-400 text-sm">No articles published yet. Check back soon!</p>
+          <p className="text-[rgba(255,255,255,0.4)] text-sm">No articles published yet. Check back soon!</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map(article => (
             <Link key={article.id} href={`/news/${article.slug}`}
-              className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-blue-300 hover:shadow-sm transition group">
+              className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl overflow-hidden card-hover hover:border-neon-cyan hover:glow transition group">
               {article.image_url && (
-                <div className="w-full h-48 overflow-hidden bg-gray-100">
+                <div className="w-full h-48 overflow-hidden bg-[rgba(255,255,255,0.02)]">
                   <img src={article.image_url} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
                 </div>
               )}
@@ -53,12 +53,12 @@ export default async function NewsPage() {
                   <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${CATEGORY_COLORS[article.category] || CATEGORY_COLORS['General']}`}>
                     {article.category}
                   </span>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-[rgba(255,255,255,0.4)]">
                     {new Date(article.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </span>
                 </div>
-                <h2 className="font-bold text-gray-900 group-hover:text-blue-600 transition mb-2 line-clamp-2">{article.title}</h2>
-                {article.excerpt && <p className="text-sm text-gray-500 line-clamp-2">{article.excerpt}</p>}
+                <h2 className="font-bold text-white group-hover:text-neon-cyan transition mb-2 line-clamp-2">{article.title}</h2>
+                {article.excerpt && <p className="text-sm text-dim line-clamp-2">{article.excerpt}</p>}
               </div>
             </Link>
           ))}

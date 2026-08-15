@@ -51,35 +51,35 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
   } : null
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8">
+    <main className="max-w-6xl mx-auto px-4 py-8 text-[var(--text)]">
       {itemListSchema && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
       )}
 
       {/* Breadcrumb */}
-      <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
-        <Link href="/" className="hover:text-blue-600">Home</Link>
+      <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
+        <Link href="/" className="hover:text-neon-cyan">Home</Link>
         <span>&rsaquo;</span>
-        <Link href="/brands" className="hover:text-blue-600">Brands</Link>
+        <Link href="/brands" className="hover:text-neon-cyan">Brands</Link>
         <span>&rsaquo;</span>
-        <span className="text-gray-600">{brandName}</span>
+        <span className="text-[rgba(255,255,255,0.65)]">{brandName}</span>
       </div>
 
       {/* Brand header */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-8">
+      <div className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-6 mb-8 neon-border">
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-4xl">
+          <div className="w-16 h-16 bg-[rgba(6,182,212,0.06)] rounded-2xl flex items-center justify-center text-4xl">
             {brandIcons[brandName] || '📱'}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{brandName} Devices in India</h1>
-            <p className="text-sm text-gray-400 mt-0.5">
+            <h1 className="text-2xl font-bold text-white">{brandName} Devices in India</h1>
+            <p className="text-sm text-[rgba(255,255,255,0.4)] mt-0.5">
               {totalDevices} devices
               {minPrice && maxPrice && ` · Prices from ₹${minPrice.toLocaleString('en-IN')} to ₹${maxPrice.toLocaleString('en-IN')}`}
             </p>
           </div>
         </div>
-        <div className="flex gap-4 text-sm text-gray-500">
+        <div className="flex gap-4 text-sm text-dim">
           {(phones?.length || 0) > 0 && <span>📱 {phones?.length} phones</span>}
           {(tablets?.length || 0) > 0 && <span>📟 {tablets?.length} tablets</span>}
           {(laptops?.length || 0) > 0 && <span>💻 {laptops?.length} laptops</span>}
@@ -90,8 +90,8 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
       {(phones?.length || 0) > 0 && (
         <div className="mb-10">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-base font-bold text-gray-900">📱 {brandName} Phones</h2>
-            <span className="text-xs text-gray-400">{phones?.length} phones</span>
+            <h2 className="text-base font-bold text-white">📱 {brandName} Phones</h2>
+            <span className="text-xs text-[rgba(255,255,255,0.4)]">{phones?.length} phones</span>
           </div>
           <SortableDeviceGrid devices={phones || []} basePath="phones" fallbackIcon="📱" />
         </div>
@@ -101,8 +101,8 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
       {(tablets?.length || 0) > 0 && (
         <div className="mb-10">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-base font-bold text-gray-900">📟 {brandName} Tablets</h2>
-            <span className="text-xs text-gray-400">{tablets?.length} tablets</span>
+            <h2 className="text-base font-bold text-white">📟 {brandName} Tablets</h2>
+            <span className="text-xs text-[rgba(255,255,255,0.4)]">{tablets?.length} tablets</span>
           </div>
           <SortableDeviceGrid devices={tablets || []} basePath="tablets" fallbackIcon="📟" />
         </div>
@@ -112,8 +112,8 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
       {(laptops?.length || 0) > 0 && (
         <div>
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-base font-bold text-gray-900">💻 {brandName} Laptops</h2>
-            <span className="text-xs text-gray-400">{laptops?.length} laptops</span>
+            <h2 className="text-base font-bold text-white">💻 {brandName} Laptops</h2>
+            <span className="text-xs text-[rgba(255,255,255,0.4)]">{laptops?.length} laptops</span>
           </div>
           <SortableDeviceGrid devices={laptops || []} basePath="laptops" fallbackIcon="💻" />
         </div>

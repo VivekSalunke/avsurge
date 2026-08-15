@@ -123,76 +123,76 @@ export default async function CompareTabletPairPage({ params }: { params: Promis
   }
 
   return (
-    <main className="max-w-5xl mx-auto px-4 py-8">
+    <main className="max-w-5xl mx-auto px-4 py-8 text-[var(--text)]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
 
-      <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
-        <Link href="/" className="hover:text-blue-600">Home</Link>
+      <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
+        <Link href="/" className="hover:text-neon-cyan">Home</Link>
         <span>&rsaquo;</span>
-        <Link href="/tablets" className="hover:text-blue-600">Tablets</Link>
+        <Link href="/tablets" className="hover:text-neon-cyan">Tablets</Link>
         <span>&rsaquo;</span>
-        <span className="text-gray-600">{tabletA.name} vs {tabletB.name}</span>
+        <span className="text-[rgba(255,255,255,0.65)]">{tabletA.name} vs {tabletB.name}</span>
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">{tabletA.name} vs {tabletB.name}</h1>
-      <p className="text-sm text-gray-400 mb-8">Full specs comparison, price and display details</p>
+      <h1 className="text-2xl font-bold text-white mb-2">{tabletA.name} vs {tabletB.name}</h1>
+      <p className="text-sm text-[rgba(255,255,255,0.4)] mb-8">Full specs comparison, price and display details</p>
 
       <div className="grid grid-cols-2 gap-4 mb-8">
         {[tabletA, tabletB].map((tablet) => (
-          <div key={tablet.id} className="bg-white border border-gray-200 rounded-2xl p-5 text-center">
-            <div className="w-28 h-28 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3 overflow-hidden">
+          <div key={tablet.id} className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-5 text-center">
+            <div className="w-28 h-28 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mx-auto mb-3 overflow-hidden">
               {tablet.image_url
                 ? <img src={tablet.image_url} alt={tablet.name} className="object-contain w-full h-full p-2" />
                 : <span className="text-5xl">📟</span>}
             </div>
-            <p className="font-semibold text-gray-900 text-sm">{tablet.name}</p>
-            <p className="text-xs text-gray-400 mb-1">{tablet.brand}</p>
+            <p className="font-semibold text-white text-sm">{tablet.name}</p>
+            <p className="text-xs text-[rgba(255,255,255,0.4)] mb-1">{tablet.brand}</p>
             {tablet.price_inr && (
-              <p className="text-blue-600 text-sm font-bold">{formatPriceINR(tablet.price_inr)}</p>
+              <p className="text-neon-cyan text-sm font-bold">{formatPriceINR(tablet.price_inr)}</p>
             )}
-            <Link href={`/tablets/${tablet.slug}`} className="inline-block mt-2 text-xs text-blue-500 hover:underline">
+            <Link href={`/tablets/${tablet.slug}`} className="inline-block mt-2 text-xs text-neon-cyan hover:underline">
               Full specs →
             </Link>
           </div>
         ))}
       </div>
 
-      <div className="bg-blue-50 border border-blue-100 rounded-2xl px-5 py-4 flex items-center justify-between flex-wrap gap-3 mb-8">
+      <div className="bg-[rgba(6,182,212,0.06)] border border-[rgba(6,182,212,0.15)] rounded-2xl px-5 py-4 flex items-center justify-between flex-wrap gap-3 mb-8">
         <div>
-          <p className="text-xs text-blue-400 mb-0.5">Want to compare with a different tablet?</p>
-          <p className="text-sm font-semibold text-blue-800">Use our interactive comparison tool</p>
+          <p className="text-xs text-neon-cyan mb-0.5">Want to compare with a different tablet?</p>
+          <p className="text-sm font-semibold text-neon-cyan">Use our interactive comparison tool</p>
         </div>
         <Link href={`/compare-tablets?a=${tabletA.slug}`}
-          className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">
+          className="text-xs bg-gradient-to-r from-neon-violet to-neon-cyan text-black px-3 py-1.5 rounded-lg hover:brightness-110 transition">
           Open in compare tool →
         </Link>
       </div>
 
       <div className="flex flex-col gap-5">
         {allCategories.map(cat => (
-          <div key={cat} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-            <div className="flex items-center gap-2 px-5 py-3 bg-gray-50 border-b border-gray-100">
+          <div key={cat} className="bg-[var(--card-bg)] rounded-2xl border border-[rgba(255,255,255,0.06)] overflow-hidden">
+            <div className="flex items-center gap-2 px-5 py-3 bg-[rgba(255,255,255,0.02)] border-b border-[rgba(255,255,255,0.04)]">
               <span>{ICONS[cat] || '📋'}</span>
-              <span className="text-sm font-semibold text-gray-700">{cat}</span>
+              <span className="text-sm font-semibold text-[rgba(255,255,255,0.85)]">{cat}</span>
             </div>
-            <div className="grid grid-cols-3 border-b border-gray-100">
-              <div className="px-4 py-2 text-xs font-medium text-blue-600 bg-blue-50/50 truncate">{tabletA.name}</div>
-              <div className="px-4 py-2 text-xs font-medium text-gray-400 text-center">Spec</div>
-              <div className="px-4 py-2 text-xs font-medium text-purple-600 bg-purple-50/50 text-right truncate">{tabletB.name}</div>
+            <div className="grid grid-cols-3 border-b border-[rgba(255,255,255,0.04)]">
+              <div className="px-4 py-2 text-xs font-medium text-neon-cyan bg-[rgba(6,182,212,0.06)] truncate">{tabletA.name}</div>
+              <div className="px-4 py-2 text-xs font-medium text-[rgba(255,255,255,0.4)] text-center">Spec</div>
+              <div className="px-4 py-2 text-xs font-medium text-neon-violet bg-[rgba(139,92,246,0.06)] text-right truncate">{tabletB.name}</div>
             </div>
             {getLabels(cat).map((label, i) => {
               const valA = getVal(specsA, cat, label)
               const valB = getVal(specsB, cat, label)
               const winner = isBetter(valA, valB)
               return (
-                <div key={label} className={`grid grid-cols-3 items-center ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/40'}`}>
-                  <div className={`px-4 py-3 text-sm font-medium ${winner === 'a' ? 'text-blue-700 bg-blue-50/60' : 'text-gray-700'}`}>
+                <div key={label} className={`grid grid-cols-3 items-center ${i % 2 === 0 ? 'bg-[var(--card-bg)]' : 'bg-[rgba(255,255,255,0.02)]'}`}>
+                  <div className={`px-4 py-3 text-sm font-medium ${winner === 'a' ? 'text-neon-cyan bg-[rgba(6,182,212,0.06)]' : 'text-[rgba(255,255,255,0.85)]'}`}>
                     {valA}
-                    {winner === 'a' && <span className="ml-1.5 text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded">✓</span>}
+                    {winner === 'a' && <span className="ml-1.5 text-xs neon-badge px-1.5 py-0.5 rounded">✓</span>}
                   </div>
-                  <div className="px-4 py-3 text-xs text-gray-400 text-center">{label}</div>
-                  <div className={`px-4 py-3 text-sm font-medium text-right ${winner === 'b' ? 'text-purple-700 bg-purple-50/60' : 'text-gray-700'}`}>
-                    {winner === 'b' && <span className="mr-1.5 text-xs bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded">✓</span>}
+                  <div className="px-4 py-3 text-xs text-[rgba(255,255,255,0.4)] text-center">{label}</div>
+                  <div className={`px-4 py-3 text-sm font-medium text-right ${winner === 'b' ? 'text-neon-violet bg-[rgba(139,92,246,0.06)]' : 'text-[rgba(255,255,255,0.85)]'}`}>
+                    {winner === 'b' && <span className="mr-1.5 text-xs neon-badge px-1.5 py-0.5 rounded">✓</span>}
                     {valB}
                   </div>
                 </div>
@@ -204,11 +204,11 @@ export default async function CompareTabletPairPage({ params }: { params: Promis
 
       <div className="grid grid-cols-2 gap-4 mt-8">
         <Link href={`/tablets/${tabletA.slug}`}
-          className="bg-white border border-gray-200 rounded-xl py-3 text-center text-sm text-blue-600 hover:border-blue-300 transition">
+          className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl py-3 text-center text-sm text-neon-cyan hover:border-neon-cyan transition">
           Full specs: {tabletA.name} →
         </Link>
         <Link href={`/tablets/${tabletB.slug}`}
-          className="bg-white border border-gray-200 rounded-xl py-3 text-center text-sm text-purple-600 hover:border-purple-300 transition">
+          className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl py-3 text-center text-sm text-neon-violet hover:border-neon-violet transition">
           Full specs: {tabletB.name} →
         </Link>
       </div>

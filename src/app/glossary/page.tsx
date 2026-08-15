@@ -157,25 +157,25 @@ const GLOSSARY: GlossarySection[] = [
 
 export default function GlossaryPage() {
   return (
-    <main className="max-w-3xl mx-auto px-4 py-12">
-      <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
-        <Link href="/" className="hover:text-blue-600">Home</Link>
+    <main className="max-w-3xl mx-auto px-4 py-12 text-[var(--text)]">
+      <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
+        <Link href="/" className="hover:text-neon-cyan">Home</Link>
         <span>&rsaquo;</span>
-        <span className="text-gray-600">Glossary</span>
+        <span className="text-[rgba(255,255,255,0.65)]">Glossary</span>
       </div>
 
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Mobile &amp; Tech Glossary</h1>
-      <p className="text-gray-500 leading-relaxed mb-8">
+      <h1 className="text-3xl font-bold text-white mb-2">Mobile &amp; Tech Glossary</h1>
+      <p className="text-dim leading-relaxed mb-8">
         Confused by a spec on a device page? Here&apos;s a plain-English explanation of the most common terms you&apos;ll come across when comparing phones, tablets, and laptops on AVSurge.
       </p>
 
-      <div className="flex flex-wrap gap-2 mb-10 pb-6 border-b border-gray-100">
+      <div className="flex flex-wrap gap-2 mb-10 pb-6 border-b border-[rgba(255,255,255,0.04)]">
         {GLOSSARY.map(section => (
           
             <a
               key={section.letter}
             href={`#${section.letter}`}
-            className="w-8 h-8 flex items-center justify-center text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition"
+            className="w-8 h-8 flex items-center justify-center text-sm font-medium text-neon-cyan bg-[rgba(6,182,212,0.06)] rounded-lg hover:bg-[rgba(6,182,212,0.1)] hover:text-white transition"
           >
             {section.letter}
           </a>
@@ -185,14 +185,14 @@ export default function GlossaryPage() {
       <div className="space-y-10">
         {GLOSSARY.map(section => (
           <section key={section.letter} id={section.letter} className="scroll-mt-20">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-[rgba(255,255,255,0.04)]">
               {section.letter}
             </h2>
             <dl className="space-y-5">
               {section.entries.map(entry => (
                 <div key={entry.term}>
-                  <dt className="font-semibold text-gray-900 text-sm mb-1">{entry.term}</dt>
-                  <dd className="text-gray-600 text-sm leading-relaxed">{entry.definition}</dd>
+                  <dt className="font-semibold text-white text-sm mb-1">{entry.term}</dt>
+                  <dd className="text-[rgba(255,255,255,0.65)] text-sm leading-relaxed">{entry.definition}</dd>
                 </div>
               ))}
             </dl>
@@ -200,9 +200,9 @@ export default function GlossaryPage() {
         ))}
       </div>
 
-      <p className="mt-12 pt-6 border-t border-gray-100 text-sm text-gray-400">
+      <p className="mt-12 pt-6 border-t border-[rgba(255,255,255,0.04)] text-sm text-[rgba(255,255,255,0.4)]">
         Missing a term you think should be here?{' '}
-        <Link href="/contact" className="text-blue-600 hover:underline">Let us know</Link>.
+        <Link href="/contact" className="text-neon-cyan hover:underline">Let us know</Link>.
       </p>
     </main>
   )

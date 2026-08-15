@@ -65,46 +65,46 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
   const stars = (n: number, size = 'text-xl') => (
     <div className="flex gap-0.5">
       {[1,2,3,4,5].map(i => (
-        <span key={i} className={`${size} ${i <= n ? 'text-yellow-400' : 'text-gray-200'}`}>★</span>
+        <span key={i} className={`${size} ${i <= n ? 'text-yellow-400' : 'text-[rgba(255,255,255,0.15)]'}`}>★</span>
       ))}
     </div>
   )
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 bg-gray-50 border-b border-gray-100">
+    <div className="bg-[var(--card-bg)] rounded-2xl border border-[rgba(255,255,255,0.06)] overflow-hidden neon-border text-[var(--text)]">
+      <div className="flex items-center justify-between px-5 py-4 bg-[rgba(255,255,255,0.02)] border-b border-[rgba(255,255,255,0.04)]">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-semibold text-gray-700">⭐ Reviews</span>
+          <span className="text-sm font-semibold text-[rgba(255,255,255,0.85)]">⭐ Reviews</span>
           {avgRating && (
             <div className="flex items-center gap-1.5">
               <span className="text-lg font-bold text-yellow-500">{avgRating}</span>
               {stars(Math.round(Number(avgRating)), 'text-sm')}
-              <span className="text-xs text-gray-400">({reviews.length})</span>
+              <span className="text-xs text-[rgba(255,255,255,0.4)]">({reviews.length})</span>
             </div>
           )}
         </div>
         {user && !showForm && (
           <button
             onClick={() => setShowForm(true)}
-            className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">
+            className="text-xs bg-gradient-to-r from-neon-violet to-neon-cyan text-black px-3 py-1.5 rounded-lg hover:opacity-90 transition">
             Write a review
           </button>
         )}
         {!user && (
-          <a href="/login" className="text-xs text-blue-600 hover:underline">Sign in to review</a>
+          <a href="/login" className="text-xs text-neon-cyan hover:underline">Sign in to review</a>
         )}
       </div>
 
       {showForm && (
-        <div className="px-5 py-5 border-b border-gray-100 bg-blue-50/30">
-          <h3 className="text-sm font-semibold text-gray-800 mb-4">Your review</h3>
+        <div className="px-5 py-5 border-b border-[rgba(255,255,255,0.04)] bg-[rgba(6,182,212,0.02)]">
+          <h3 className="text-sm font-semibold text-white mb-4">Your review</h3>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg px-3 py-2 mb-3">{error}</div>
+            <div className="bg-[rgba(239,68,68,0.06)] border border-[rgba(239,68,68,0.2)] text-red-400 text-xs rounded-lg px-3 py-2 mb-3">{error}</div>
           )}
 
           <div className="mb-4">
-            <label className="block text-xs font-medium text-gray-500 mb-2">Rating *</label>
+            <label className="block text-xs font-medium text-dim mb-2">Rating *</label>
             <div className="flex gap-1">
               {[1,2,3,4,5].map(i => (
                 <button
@@ -112,22 +112,22 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
                   onMouseEnter={() => setHovered(i)}
                   onMouseLeave={() => setHovered(0)}
                   onClick={() => setRating(i)}
-                  className={`text-3xl transition ${i <= (hovered || rating) ? 'text-yellow-400' : 'text-gray-200'}`}>
+                  className={`text-3xl transition ${i <= (hovered || rating) ? 'text-yellow-400' : 'text-[rgba(255,255,255,0.15)]'}`}>
                   ★
                 </button>
               ))}
             </div>
             {rating > 0 && (
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-[rgba(255,255,255,0.4)] mt-1">
                 {['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][rating]}
               </p>
             )}
           </div>
 
           <div className="mb-4">
-            <label className="block text-xs font-medium text-gray-500 mb-1">Review <span className="text-gray-300">(optional)</span></label>
+            <label className="block text-xs font-medium text-dim mb-1">Review <span className="text-[rgba(255,255,255,0.3)]">(optional)</span></label>
             <textarea
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400 resize-none"
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan resize-none"
               placeholder="Share your experience with this phone... (optional)"
               rows={4}
               value={body}
@@ -139,12 +139,12 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
             <button
               onClick={handleSubmit}
               disabled={status === 'saving'}
-              className="flex-1 bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-50">
+              className="flex-1 bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl py-2.5 text-sm font-semibold hover:opacity-90 transition disabled:opacity-50">
               {status === 'saving' ? 'Posting…' : 'Post review'}
             </button>
             <button
               onClick={() => { setShowForm(false); setRating(0); setBody(''); setError('') }}
-              className="px-4 py-2.5 border border-gray-200 text-gray-500 rounded-xl text-sm hover:bg-gray-50 transition">
+              className="px-4 py-2.5 border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] rounded-xl text-sm hover:border-neon-violet hover:text-white hover:glow transition">
               Cancel
             </button>
           </div>
@@ -152,21 +152,21 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
       )}
 
       {reviews.length === 0 ? (
-        <div className="px-5 py-12 text-center text-gray-400 text-sm">
+        <div className="px-5 py-12 text-center text-[rgba(255,255,255,0.4)] text-sm">
           No reviews yet. Be the first to review!
         </div>
       ) : (
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-[rgba(255,255,255,0.06)]">
           {reviews.map(review => (
             <div key={review.id} className="px-5 py-4">
               <div className="flex items-start justify-between gap-3 mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xs font-bold flex-shrink-0">
+                  <div className="w-8 h-8 bg-[rgba(6,182,212,0.12)] rounded-full flex items-center justify-center text-neon-cyan text-xs font-bold flex-shrink-0">
                     {review.user_email?.[0].toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-gray-700">{review.user_email?.split('@')[0]}</p>
-                    <p className="text-xs text-gray-400">{new Date(review.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                    <p className="text-xs font-medium text-[rgba(255,255,255,0.85)]">{review.user_email?.split('@')[0]}</p>
+                    <p className="text-xs text-[rgba(255,255,255,0.4)]">{new Date(review.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -174,14 +174,14 @@ export default function Reviews({ phoneId }: { phoneId: number }) {
                   {user?.email === review.user_email && (
                     <button
                       onClick={() => deleteReview(review.id)}
-                      className="text-xs text-red-400 hover:text-red-600 ml-2">
+                      className="text-xs text-red-400 hover:text-red-300 ml-2">
                       Delete
                     </button>
                   )}
                 </div>
               </div>
               {review.body && (
-                <p className="text-sm text-gray-600 leading-relaxed">{review.body}</p>
+                <p className="text-sm text-[rgba(255,255,255,0.65)] leading-relaxed">{review.body}</p>
               )}
             </div>
           ))}

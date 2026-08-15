@@ -22,7 +22,7 @@ export interface DeviceCardProps {
 function getScoreStyle(score: number) {
   if (score >= 90) {
     return {
-      badge: 'bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-700 ring-1 ring-emerald-200 shadow-sm',
+      badge: 'neon-badge',
       label: 'Excellent',
       icon: '⭐',
     }
@@ -30,7 +30,7 @@ function getScoreStyle(score: number) {
 
   if (score >= 80) {
     return {
-      badge: 'bg-gradient-to-br from-green-50 to-green-100 text-green-700 ring-1 ring-green-200 shadow-sm',
+      badge: 'bg-[rgba(6,182,212,0.1)] text-neon-cyan ring-1 ring-[rgba(6,182,212,0.2)]',
       label: 'Very Good',
       icon: '✨',
     }
@@ -38,7 +38,7 @@ function getScoreStyle(score: number) {
 
   if (score >= 70) {
     return {
-      badge: 'bg-gradient-to-br from-blue-50 to-blue-100 text-blue-700 ring-1 ring-blue-200 shadow-sm',
+      badge: 'bg-[rgba(139,92,246,0.12)] text-[#a78bfa] ring-1 ring-[rgba(139,92,246,0.2)]',
       label: 'Good',
       icon: '👍',
     }
@@ -46,14 +46,14 @@ function getScoreStyle(score: number) {
 
   if (score >= 60) {
     return {
-      badge: 'bg-gradient-to-br from-amber-50 to-amber-100 text-amber-700 ring-1 ring-amber-200 shadow-sm',
+      badge: 'bg-[rgba(251,191,36,0.1)] text-[#fbbf24] ring-1 ring-[rgba(251,191,36,0.2)]',
       label: 'Decent',
       icon: '👌',
     }
   }
 
   return {
-    badge: 'bg-gradient-to-br from-gray-50 to-gray-100 text-gray-600 ring-1 ring-gray-200 shadow-sm',
+    badge: 'bg-[rgba(255,255,255,0.05)] text-dim ring-1 ring-[rgba(255,255,255,0.1)]',
     label: 'Basic',
     icon: '📱',
   }
@@ -77,12 +77,12 @@ export default function DeviceCard({
       : null
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-blue-300 hover:shadow-xl">
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl neon-border bg-[var(--panel)] text-[var(--text)] transition-all duration-300 card-hover hover:glow">
 
       {/* Product Image */}
       <Link
         href={`/${type}s/${device.slug}`}
-        className="relative block aspect-[4/4.5] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100"
+        className="relative block aspect-[4/4.5] overflow-hidden bg-[linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.02))]"
       >
         {/* Subtle image-area decoration */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(59,130,246,0.08),transparent_60%)]" />
@@ -96,7 +96,7 @@ export default function DeviceCard({
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <div className="rounded-lg border border-dashed border-gray-300 px-3 py-2 text-center text-xs font-medium text-gray-400">
+            <div className="rounded-lg border border-dashed border-transparent px-3 py-2 text-center text-xs font-medium text-dim bg-[rgba(255,255,255,0.02)]">
               <div className="text-lg mb-1">📸</div>
               <div>No image</div>
             </div>
@@ -108,8 +108,8 @@ export default function DeviceCard({
       <div className="flex flex-1 flex-col p-4 sm:p-4">
 
         {/* Brand Badge */}
-        <div className="inline-flex w-fit items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-600">
-          <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
+        <div className="inline-flex w-fit items-center gap-1 rounded-full neon-badge px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em]">
+          <span className="h-1.5 w-1.5 rounded-full bg-neon-cyan" />
           {device.brand}
         </div>
 
@@ -118,7 +118,7 @@ export default function DeviceCard({
           href={`/${type}s/${device.slug}`}
           className="mt-2.5 block flex-1"
         >
-          <h3 className="line-clamp-2 text-sm font-bold leading-snug text-gray-900 transition-colors group-hover:text-blue-600">
+          <h3 className="line-clamp-2 text-sm font-bold leading-snug text-[var(--text)] transition-colors group-hover:text-[var(--accent-v)]">
             {device.name}
           </h3>
         </Link>
@@ -127,23 +127,23 @@ export default function DeviceCard({
         <div className="mt-3 space-y-1">
           {device.price_inr ? (
             <>
-              <p className="text-lg font-extrabold tracking-tight text-gray-900">
+              <p className="text-lg font-extrabold tracking-tight text-[var(--text)]">
                 {formatPriceINR(device.price_inr)}
               </p>
 
-              <span className="text-[10px] font-medium text-gray-400">
+              <span className="text-[10px] font-medium text-dim">
                 Starting price
               </span>
             </>
           ) : (
-            <p className="text-xs font-medium text-gray-400">
+            <p className="text-xs font-medium text-dim">
               Price on request
             </p>
           )}
         </div>
 
         {/* Bottom section */}
-        <div className="mt-3 space-y-3 border-t border-gray-100 pt-3">
+        <div className="mt-3 space-y-3 border-t border-[rgba(255,255,255,0.04)] pt-3">
 
           {/* AVSurge Score */}
           {scoreStyle && score !== null && score !== undefined ? (
@@ -156,11 +156,11 @@ export default function DeviceCard({
               </div>
 
               <div className="min-w-0 flex-1 leading-tight">
-                <div className="text-[11px] font-semibold text-gray-600">
+                <div className="text-[11px] font-semibold text-dim">
                   AVSurge Score
                 </div>
 
-                <div className="text-[10px] font-medium text-gray-400">
+                <div className="text-[10px] font-medium text-dim">
                   {scoreStyle.icon} {scoreStyle.label}
                 </div>
               </div>
@@ -168,10 +168,10 @@ export default function DeviceCard({
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gray-100 flex items-center justify-center text-sm">
+              <div className="h-8 w-8 rounded-lg bg-[rgba(255,255,255,0.03)] flex items-center justify-center text-sm text-dim">
                 ?
               </div>
-              <span className="text-[11px] font-medium text-gray-500">
+              <span className="text-[11px] font-medium text-dim">
                 Score unavailable
               </span>
             </div>
@@ -180,7 +180,7 @@ export default function DeviceCard({
           {/* Action Button */}
           <Link
             href={`${compareHref}?a=${device.slug}`}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-[11px] font-semibold text-gray-600 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 active:scale-95"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[rgba(255,255,255,0.08)] px-3 py-2 text-[11px] font-semibold text-[rgba(255,255,255,0.75)] transition hover:border-neon-cyan hover:bg-[rgba(6,182,212,0.06)] hover:text-neon-cyan active:scale-95"
           >
             <svg
               className="h-3.5 w-3.5"

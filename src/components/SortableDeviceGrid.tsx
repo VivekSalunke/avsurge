@@ -57,12 +57,12 @@ export default function SortableDeviceGrid({
   const sorted = useMemo(() => sortDevices(devices, sortKey), [devices, sortKey])
 
   return (
-    <div>
+    <div className="text-[var(--text)]">
       <div className="flex justify-end mb-4">
         <select
           value={sortKey}
           onChange={e => setSortKey(e.target.value as SortKey)}
-          className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700 bg-white hover:border-blue-400 transition focus:outline-none focus:ring-2 focus:ring-blue-100"
+          className="text-sm border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-1.5 text-[rgba(255,255,255,0.85)] bg-[var(--card-bg)] hover:border-neon-cyan transition focus:outline-none focus:ring-2 focus:ring-[rgba(6,182,212,0.15)]"
         >
           {SORT_OPTIONS.map(opt => (
             <option key={opt.key} value={opt.key}>{opt.label}</option>
@@ -72,15 +72,15 @@ export default function SortableDeviceGrid({
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {sorted.map(device => (
           <Link key={device.id} href={`/${basePath}/${device.slug}`}
-            className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 transition group">
-            <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
+            className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 text-center hover:border-neon-cyan transition group">
+            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center mb-3 overflow-hidden">
               {device.image_url
                 ? <img src={device.image_url} alt={device.name} className="object-contain w-full h-full" />
                 : <span className="text-4xl">{fallbackIcon}</span>}
             </div>
-            <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{device.name}</p>
+            <p className="text-sm font-semibold text-white leading-tight group-hover:text-neon-cyan transition line-clamp-2">{device.name}</p>
             {device.price_inr && (
-              <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(device.price_inr)}</p>
+              <p className="text-xs text-neon-cyan font-medium mt-1">{formatPriceINR(device.price_inr)}</p>
             )}
           </Link>
         ))}

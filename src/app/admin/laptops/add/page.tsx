@@ -36,61 +36,61 @@ export default function AddLaptopPage() {
 
   if (loading || profileLoading) return (
     <main className="min-h-screen flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-8 h-8 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin" />
     </main>
   )
 
   return (
-    <main className="max-w-2xl mx-auto px-4 py-8">
+    <main className="max-w-2xl mx-auto px-4 py-8 text-[var(--text)]">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Add Laptop</h1>
-        <Link href="/admin/laptops" className="text-sm text-blue-600 hover:underline">← Back</Link>
+        <h1 className="text-xl font-bold text-white">Add Laptop</h1>
+        <Link href="/admin/laptops" className="text-sm text-neon-cyan hover:underline">← Back</Link>
       </div>
 
-      {msg && <div className={`rounded-xl px-4 py-3 text-sm mb-4 ${msg.startsWith('Error') ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-700'}`}>{msg}</div>}
+      {msg && <div className={`rounded-xl px-4 py-3 text-sm mb-4 ${msg.startsWith('Error') ? 'bg-[rgba(239,68,68,0.08)] text-red-400' : 'bg-[rgba(16,185,129,0.08)] text-green-400'}`}>{msg}</div>}
 
-      <div className="bg-white border border-gray-200 rounded-2xl p-6">
+      <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 neon-border">
         <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="col-span-2">
-            <label className="text-xs text-gray-500 mb-1 block">Name *</label>
+            <label className="text-xs text-dim mb-1 block">Name *</label>
             <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value, slug: autoSlug(e.target.value) }))}
               placeholder="Apple MacBook Air 13 M3"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400" style={inputStyle} />
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle} />
           </div>
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Brand *</label>
+            <label className="text-xs text-dim mb-1 block">Brand *</label>
             <input value={form.brand} onChange={e => setForm(f => ({ ...f, brand: e.target.value }))}
               placeholder="Apple"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400" style={inputStyle} />
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle} />
           </div>
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Slug *</label>
+            <label className="text-xs text-dim mb-1 block">Slug *</label>
             <input value={form.slug} onChange={e => setForm(f => ({ ...f, slug: e.target.value }))}
               placeholder="apple-macbook-air-13-m3"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400" style={inputStyle} />
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle} />
           </div>
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Price (INR)</label>
+            <label className="text-xs text-dim mb-1 block">Price (INR)</label>
             <input type="number" value={form.price_inr} onChange={e => setForm(f => ({ ...f, price_inr: e.target.value }))}
               placeholder="114900"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400" style={inputStyle} />
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle} />
           </div>
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Released At</label>
+            <label className="text-xs text-dim mb-1 block">Released At</label>
             <input value={form.released_at} onChange={e => setForm(f => ({ ...f, released_at: e.target.value }))}
               placeholder="2024-03-08"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400" style={inputStyle} />
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle} />
           </div>
           <div className="col-span-2">
-            <label className="text-xs text-gray-500 mb-1 block">Image URL</label>
+            <label className="text-xs text-dim mb-1 block">Image URL</label>
             <input value={form.image_url} onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
               placeholder="https://..."
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400" style={inputStyle} />
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle} />
           </div>
         </div>
-        <p className="text-xs text-gray-400 mb-4">After adding, you'll be taken to the edit page to add specs.</p>
+        <p className="text-xs text-[rgba(255,255,255,0.4)] mb-4">After adding, you'll be taken to the edit page to add specs.</p>
         <button onClick={handleSave} disabled={saving}
-          className="bg-blue-600 text-white rounded-xl px-6 py-2.5 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-50">
+          className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl px-6 py-2.5 text-sm font-semibold transition hover:brightness-110 disabled:opacity-50">
           {saving ? 'Adding...' : 'Add Laptop'}
         </button>
       </div>

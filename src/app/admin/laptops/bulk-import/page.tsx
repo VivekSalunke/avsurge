@@ -72,7 +72,7 @@ export default function BulkImportLaptopsPage() {
     else if (!isAdmin) router.push('/')
   }, [user, isAdmin, loading, profileLoading])
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen text-sm text-gray-400">Loading...</div>
+  if (loading) return <div className="flex items-center justify-center min-h-screen text-sm text-[rgba(255,255,255,0.4)]">Loading...</div>
   if (!user || !isAdmin) return null
 
   const handleImport = async (skipDupes = false, laptopsToImport?: any[]) => {
@@ -129,29 +129,29 @@ export default function BulkImportLaptopsPage() {
   }
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-8">
+    <main className="max-w-4xl mx-auto px-4 py-8 text-[var(--text)]">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Bulk Import Laptops</h1>
-        <Link href="/admin/laptops" className="text-sm text-blue-600 hover:underline">← Laptop Admin</Link>
+        <h1 className="text-xl font-bold text-white">Bulk Import Laptops</h1>
+        <Link href="/admin/laptops" className="text-sm text-neon-cyan hover:underline">← Laptop Admin</Link>
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-sm text-blue-700">
+      <div className="bg-[rgba(6,182,212,0.06)] border border-[rgba(6,182,212,0.25)] rounded-xl p-4 mb-6 text-sm text-neon-cyan">
         Paste a JSON array of laptops. Each laptop can include a <code>specs</code> array with category, label, and value fields.
       </div>
 
       {showDuplicates && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 mb-6">
-          <h3 className="font-semibold text-yellow-800 mb-3">⚠️ {duplicates.length} duplicate{duplicates.length !== 1 ? 's' : ''} found</h3>
+        <div className="bg-[rgba(250,204,21,0.06)] border border-[rgba(250,204,21,0.25)] rounded-xl p-5 mb-6">
+          <h3 className="font-semibold text-yellow-300 mb-3">⚠️ {duplicates.length} duplicate{duplicates.length !== 1 ? 's' : ''} found</h3>
           <div className="space-y-1 mb-4">
             {duplicates.map((d, i) => (
-              <p key={i} className="text-xs text-yellow-700">
+              <p key={i} className="text-xs text-yellow-300">
                 <strong>{d.name}</strong> → already exists as "{d.existingName}"
               </p>
             ))}
           </div>
           <div className="flex gap-3">
             <button onClick={() => handleImport(true, toImport)}
-              className="bg-blue-600 text-white rounded-xl px-4 py-2 text-sm font-semibold hover:bg-blue-700 transition">
+              className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl px-4 py-2 text-sm font-semibold transition hover:brightness-110">
               Import {toImport.length} non-duplicates
             </button>
             <button onClick={() => handleImport(true, [...duplicates, ...toImport])}
@@ -159,7 +159,7 @@ export default function BulkImportLaptopsPage() {
               Import all anyway
             </button>
             <button onClick={() => setShowDuplicates(false)}
-              className="border border-gray-200 rounded-xl px-4 py-2 text-sm hover:border-gray-400 transition">
+              className="border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] rounded-xl px-4 py-2 text-sm hover:border-neon-cyan hover:text-white transition">
               Cancel
             </button>
           </div>
@@ -167,13 +167,13 @@ export default function BulkImportLaptopsPage() {
       )}
 
       {status === 'success' && (
-        <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 text-sm text-green-700">
+        <div className="bg-[rgba(16,185,129,0.08)] border border-[rgba(16,185,129,0.25)] rounded-xl p-4 mb-6 text-sm text-green-400">
           ✅ {message}
         </div>
       )}
 
       {status === 'error' && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-sm text-red-700">
+        <div className="bg-[rgba(239,68,68,0.08)] border border-[rgba(239,68,68,0.25)] rounded-xl p-4 mb-6 text-sm text-red-400">
           ❌ {message}
         </div>
       )}
@@ -182,7 +182,7 @@ export default function BulkImportLaptopsPage() {
         value={json}
         onChange={e => { setJson(e.target.value); setStatus('idle'); setMessage('') }}
         rows={24}
-        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono mb-4 focus:outline-none focus:border-blue-400"
+        className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-4 py-3 text-sm font-mono mb-4 focus:outline-none focus:border-neon-cyan"
         style={{ color: '#111827', backgroundColor: '#ffffff' }}
         placeholder="Paste JSON array here..."
       />
@@ -191,14 +191,14 @@ export default function BulkImportLaptopsPage() {
         <button
           onClick={() => handleImport()}
           disabled={status === 'importing' || status === 'checking'}
-          className="bg-blue-600 text-white rounded-xl px-6 py-2.5 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-50">
+          className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl px-6 py-2.5 text-sm font-semibold transition hover:brightness-110 disabled:opacity-50">
           {status === 'importing' ? 'Importing...' : status === 'checking' ? 'Checking...' : 'Import Laptops'}
         </button>
         <button onClick={() => setJson(SAMPLE)}
-          className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm hover:border-gray-400 transition">
+          className="border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] rounded-xl px-4 py-2.5 text-sm hover:border-neon-cyan hover:text-white transition">
           Load Sample
         </button>
-        <Link href="/laptops" className="text-sm text-blue-600 hover:underline ml-auto">
+        <Link href="/laptops" className="text-sm text-neon-cyan hover:underline ml-auto">
           View Laptops →
         </Link>
       </div>

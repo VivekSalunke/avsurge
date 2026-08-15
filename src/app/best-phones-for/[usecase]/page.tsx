@@ -110,59 +110,59 @@ export default async function BestPhonesForPage({ params }: { params: Promise<{ 
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8">
+    <main className="max-w-6xl mx-auto px-4 py-8 text-[var(--text)]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
-        <Link href="/" className="hover:text-blue-600">Home</Link>
+      <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
+        <Link href="/" className="hover:text-neon-cyan">Home</Link>
         <span>&rsaquo;</span>
-        <Link href="/phones" className="hover:text-blue-600">Phones</Link>
+        <Link href="/phones" className="hover:text-neon-cyan">Phones</Link>
         <span>&rsaquo;</span>
-        <span className="text-gray-600">{uc.title}</span>
+        <span className="text-[rgba(255,255,255,0.65)]">{uc.title}</span>
       </div>
 
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">{uc.title} in India (2025)</h1>
-        <p className="text-sm text-gray-500">{uc.intro}</p>
+        <h1 className="text-2xl font-bold text-white mb-2">{uc.title} in India (2025)</h1>
+        <p className="text-sm text-dim">{uc.intro}</p>
       </div>
 
       {/* Use case quick links */}
       <div className="flex flex-wrap gap-2 mb-8">
         {Object.entries(USE_CASES).map(([key, val]) => (
           <Link key={key} href={`/best-phones-for/${key}`}
-            className={`px-3 py-1.5 rounded-full text-sm border transition ${key === usecase ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'}`}>
+            className={`px-3 py-1.5 rounded-full text-sm border transition ${key === usecase ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm' : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'}`}>
             {val.title.replace('Best ', '').replace(' Phones', '')}
           </Link>
         ))}
       </div>
 
       {(!phones || phones.length === 0) ? (
-        <div className="bg-white border border-dashed border-gray-200 rounded-2xl py-20 text-center">
-          <p className="text-gray-400 text-sm">No phones found for this category yet.</p>
+        <div className="bg-[var(--card-bg)] border border-dashed border-[rgba(255,255,255,0.06)] rounded-2xl py-20 text-center">
+          <p className="text-[rgba(255,255,255,0.4)] text-sm">No phones found for this category yet.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {phones.map((phone: any) => (
             <Link key={phone.id} href={`/phones/${phone.slug}`}
-              className="bg-white border border-gray-200 rounded-2xl p-4 hover:shadow-md hover:border-blue-300 transition group">
-              <div className="aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+              className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4 hover:border-[rgba(6,182,212,0.35)] hover:glow transition-all duration-200 card-hover group">
+              <div className="aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden">
                 {phone.image_url
                   ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full p-2" />
                   : <span className="text-4xl">📱</span>}
               </div>
-              <p className="text-xs text-gray-400 mb-0.5">{phone.brand}</p>
-              <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight mb-2">{phone.name}</p>
+              <p className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{phone.brand}</p>
+              <p className="text-sm font-semibold text-white group-hover:text-neon-cyan transition line-clamp-2 leading-tight mb-2">{phone.name}</p>
               {phone.price_inr && (
-                <p className="text-sm font-bold text-blue-600">{formatPriceINR(phone.price_inr)}</p>
+                <p className="text-sm font-bold text-neon-cyan">{formatPriceINR(phone.price_inr)}</p>
               )}
             </Link>
           ))}
         </div>
       )}
 
-      <div className="mt-12 p-6 bg-gray-50 rounded-2xl">
-        <h2 className="text-base font-semibold text-gray-800 mb-2">How to choose the {uc.title.toLowerCase()}?</h2>
-        <p className="text-sm text-gray-500 leading-relaxed">{uc.intro} Use our <Link href="/compare" className="text-blue-600 hover:underline">comparison tool</Link> to compare any two phones side by side, or try <Link href="/ai-recommend" className="text-blue-600 hover:underline">AI Recommender</Link> for personalized suggestions.</p>
+      <div className="mt-12 p-6 bg-[var(--panel)] rounded-2xl border border-[rgba(255,255,255,0.06)]">
+        <h2 className="text-base font-semibold text-white mb-2">How to choose the {uc.title.toLowerCase()}?</h2>
+        <p className="text-sm text-dim leading-relaxed">{uc.intro} Use our <Link href="/compare" className="text-neon-cyan hover:underline">comparison tool</Link> to compare any two phones side by side, or try <Link href="/ai-recommend" className="text-neon-cyan hover:underline">AI Recommender</Link> for personalized suggestions.</p>
       </div>
     </main>
   )

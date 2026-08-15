@@ -20,12 +20,12 @@ export default function NavAuth() {
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
-  if (loading) return <div className="w-8 h-7 bg-gray-100 rounded-lg animate-pulse" />
+  if (loading) return <div className="w-8 h-7 bg-[var(--card-bg)] rounded-lg animate-pulse" />
 
   if (!user) {
     return (
       <Link href="/login"
-        className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition font-medium">
+        className="text-xs bg-gradient-to-r from-neon-violet to-neon-cyan text-black px-3 py-1.5 rounded-lg transition font-medium">
         Sign in
       </Link>
     )
@@ -35,7 +35,7 @@ export default function NavAuth() {
     <div ref={ref} className="flex items-center gap-2">
       {isAdmin && (
         <Link href="/admin"
-          className="group flex items-center gap-0 overflow-hidden bg-blue-100 hover:bg-blue-600 text-blue-600 hover:text-white rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
+          className="group flex items-center gap-0 overflow-hidden bg-[rgba(6,182,212,0.1)] hover:bg-neon-cyan text-neon-cyan hover:text-black rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
           <span className="font-bold text-lg leading-none">+</span>
           <span className="max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-200 text-xs font-medium group-hover:ml-1.5">
             Admin panel
@@ -46,7 +46,7 @@ export default function NavAuth() {
       <div className="relative">
         <button
           onClick={() => setOpen(o => !o)}
-          className="group flex items-center gap-0 overflow-hidden bg-blue-100 hover:bg-blue-600 text-blue-600 hover:text-white rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
+          className="group flex items-center gap-0 overflow-hidden bg-[rgba(6,182,212,0.1)] hover:bg-neon-cyan text-neon-cyan hover:text-black rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
           <span className="text-xs font-bold leading-none">{user.email?.[0].toUpperCase()}</span>
           <span className="max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-200 text-xs font-medium group-hover:ml-1.5">
             {displayName}
@@ -54,31 +54,31 @@ export default function NavAuth() {
         </button>
 
         {open && (
-          <div className="absolute right-0 top-11 bg-white border border-gray-200 rounded-xl shadow-lg p-2 w-52 z-50">
-            <p className="text-xs text-gray-400 px-2 py-1 truncate">{user.email}</p>
-            {isAdmin && <p className="text-xs text-blue-600 font-semibold px-2 py-1">Admin</p>}
-            <hr className="my-1 border-gray-100" />
+          <div className="absolute right-0 top-11 bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl shadow-lg p-2 w-52 z-50 neon-border">
+            <p className="text-xs text-dim px-2 py-1 truncate">{user.email}</p>
+            {isAdmin && <p className="text-xs text-neon-cyan font-semibold px-2 py-1">Admin</p>}
+            <hr className="my-1 border-[rgba(255,255,255,0.04)]" />
             {isAdmin && (
               <button
                 onMouseDown={() => { setOpen(false); router.push('/admin') }}
-                className="w-full text-left text-xs text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded-lg transition">
+                className="w-full text-left text-xs text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.03)] px-2 py-1.5 rounded-lg transition">
                 Admin Panel
               </button>
             )}
             <button
               onMouseDown={() => { setOpen(false); router.push('/wishlist') }}
-              className="w-full text-left text-xs text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded-lg transition">
+              className="w-full text-left text-xs text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.03)] px-2 py-1.5 rounded-lg transition">
               ❤️ My Wishlist
             </button>
             <button
               onMouseDown={() => { setOpen(false); router.push('/profile') }}
-              className="w-full text-left text-xs text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded-lg transition">
+              className="w-full text-left text-xs text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.03)] px-2 py-1.5 rounded-lg transition">
               My Profile
             </button>
-            <hr className="my-1 border-gray-100" />
+            <hr className="my-1 border-[rgba(255,255,255,0.04)]" />
             <button
               onMouseDown={() => { setOpen(false); signOut(); router.push('/') }}
-              className="w-full text-left text-xs text-red-500 hover:bg-red-50 px-2 py-1.5 rounded-lg transition">
+              className="w-full text-left text-xs text-red-400 hover:bg-[rgba(239,68,68,0.08)] px-2 py-1.5 rounded-lg transition">
               Sign out
             </button>
           </div>

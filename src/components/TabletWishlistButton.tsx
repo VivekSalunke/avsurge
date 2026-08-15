@@ -43,8 +43,8 @@ export default function TabletWishlistButton({ tabletId }: { tabletId: number })
       disabled={loading}
       className={`w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition border ${
         wishlisted
-          ? 'bg-red-50 border-red-200 text-red-500 hover:bg-red-100'
-          : 'bg-white border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-500'
+          ? 'bg-[rgba(239,68,68,0.08)] border-[rgba(239,68,68,0.2)] text-red-400 hover:bg-[rgba(239,68,68,0.12)]'
+          : 'bg-[var(--card-bg)] border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.85)] hover:border-[rgba(239,68,68,0.4)] hover:text-red-400'
       }`}>
       <span className="text-base">{wishlisted ? '❤️' : '🤍'}</span>
       {wishlisted ? 'Saved to wishlist' : 'Add to wishlist'}

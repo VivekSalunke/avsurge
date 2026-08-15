@@ -38,8 +38,8 @@ export default function LaptopWishlistButton({ laptopId }: { laptopId: number })
       disabled={loading}
       className={`w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition border ${
         wishlisted
-          ? 'bg-red-50 border-red-200 text-red-500 hover:bg-red-100'
-          : 'bg-white border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-500'
+          ? 'bg-[rgba(239,68,68,0.08)] border-[rgba(239,68,68,0.3)] text-red-400 hover:bg-[rgba(239,68,68,0.12)]'
+          : 'border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] hover:border-red-400 hover:text-red-400 hover:glow'
       }`}>
       <span className="text-base">{wishlisted ? '❤️' : '🤍'}</span>
       {wishlisted ? 'Saved to wishlist' : 'Add to wishlist'}

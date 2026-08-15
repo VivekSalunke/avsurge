@@ -62,63 +62,63 @@ export default async function UnderBudgetLaptopsPage({ params }: { params: Promi
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8">
+    <main className="max-w-6xl mx-auto px-4 py-8 text-[var(--text)]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
-        <Link href="/" className="hover:text-blue-600">Home</Link>
+      <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
+        <Link href="/" className="hover:text-neon-cyan">Home</Link>
         <span>&rsaquo;</span>
-        <Link href="/laptops" className="hover:text-blue-600">Laptops</Link>
+        <Link href="/laptops" className="hover:text-neon-cyan">Laptops</Link>
         <span>&rsaquo;</span>
-        <span className="text-gray-600">Under {budgetLabel}</span>
+        <span className="text-[rgba(255,255,255,0.65)]">Under {budgetLabel}</span>
       </div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Best Laptops Under {budgetLabel} in India</h1>
-        <p className="text-sm text-gray-500">{laptops.length} laptops found — sorted by price (high to low)</p>
+        <h1 className="text-2xl font-bold text-white mb-2">Best Laptops Under {budgetLabel} in India</h1>
+        <p className="text-sm text-dim">{laptops.length} laptops found — sorted by price (high to low)</p>
       </div>
       <div className="flex flex-wrap gap-2 mb-4">
         {VALID_BUDGETS.map(budget => (
           <Link key={budget} href={`/best-laptops/${budget}`}
-            className={`px-3 py-1.5 rounded-full text-sm border transition ${budget === b ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'}`}>
+            className={`px-3 py-1.5 rounded-full text-sm border transition ${budget === b ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm' : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'}`}>
             Under {formatPriceINR(budget)}
           </Link>
         ))}
       </div>
       <div className="flex flex-wrap gap-2 mb-8">
-        <Link href="/leaderboard" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+        <Link href="/leaderboard" className="px-3 py-1.5 rounded-full text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)]">
           🔥 Trending laptops
         </Link>
-        <Link href="/brands" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+        <Link href="/brands" className="px-3 py-1.5 rounded-full text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)]">
           🏷️ Browse by brand
         </Link>
-        <Link href="/best-laptops-for/gaming" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+        <Link href="/best-laptops-for/gaming" className="px-3 py-1.5 rounded-full text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)]">
           🎮 Best for gaming
         </Link>
-        <Link href="/best-laptops-for/students" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+        <Link href="/best-laptops-for/students" className="px-3 py-1.5 rounded-full text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)]">
           🎓 Best for students
         </Link>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {laptops.map((laptop: any) => (
           <Link key={laptop.id} href={`/laptops/${laptop.slug}`}
-            className="bg-white border border-gray-200 rounded-2xl p-4 hover:shadow-md hover:border-blue-300 transition group">
-            <div className="aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+            className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4 hover:border-[rgba(6,182,212,0.35)] hover:glow transition-all duration-200 card-hover group">
+            <div className="aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden">
               {laptop.image_url
                 ? <img src={laptop.image_url} alt={laptop.name} className="object-contain w-full h-full p-2" />
                 : <span className="text-4xl">💻</span>}
             </div>
-            <p className="text-xs text-gray-400 mb-0.5">{laptop.brand}</p>
-            <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight mb-2">{laptop.name}</p>
+            <p className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{laptop.brand}</p>
+            <p className="text-sm font-semibold text-white group-hover:text-neon-cyan transition line-clamp-2 leading-tight mb-2">{laptop.name}</p>
             {laptop.price_inr && (
-              <p className="text-sm font-bold text-blue-600">{formatPriceINR(laptop.price_inr)}</p>
+              <p className="text-sm font-bold text-neon-cyan">{formatPriceINR(laptop.price_inr)}</p>
             )}
           </Link>
         ))}
       </div>
-      <div className="mt-12 p-6 bg-gray-50 rounded-2xl">
-        <h2 className="text-base font-semibold text-gray-800 mb-2">How to pick the best laptop under {budgetLabel}?</h2>
-        <p className="text-sm text-gray-500 leading-relaxed">
+      <div className="mt-12 p-6 bg-[var(--panel)] rounded-2xl border border-[rgba(255,255,255,0.06)]">
+        <h2 className="text-base font-semibold text-white mb-2">How to pick the best laptop under {budgetLabel}?</h2>
+        <p className="text-sm text-dim leading-relaxed">
           When buying a laptop under {budgetLabel}, focus on the processor, RAM, storage type (SSD vs HDD), display quality, and battery life.
-          Use the <Link href="/compare-laptops" className="text-blue-600 hover:underline">comparison tool</Link> to compare any two laptops side by side.
+          Use the <Link href="/compare-laptops" className="text-neon-cyan hover:underline">comparison tool</Link> to compare any two laptops side by side.
         </p>
       </div>
     </main>

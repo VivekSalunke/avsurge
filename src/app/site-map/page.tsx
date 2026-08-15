@@ -19,15 +19,15 @@ export default async function SitemapPage() {
   const laptopBrands = [...new Set((laptops || []).map(l => l.brand))].sort()
 
   return (
-    <main className="max-w-5xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">Sitemap</h1>
-      <p className="text-sm text-gray-400 mb-10">All pages on AVSurge</p>
+    <main className="max-w-5xl mx-auto px-4 py-10 text-[var(--text)]">
+      <h1 className="text-2xl font-bold text-white mb-1">Sitemap</h1>
+      <p className="text-sm text-[rgba(255,255,255,0.4)] mb-10">All pages on AVSurge</p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
         {/* Main pages */}
         <div>
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Main</h2>
+          <h2 className="text-xs font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-widest mb-4">Main</h2>
           <div className="flex flex-col gap-2">
             {[
               { href: '/', label: 'Home' },
@@ -43,8 +43,8 @@ export default async function SitemapPage() {
               { href: '/profile', label: 'My Profile' },
             ].map(item => (
               <Link key={item.href} href={item.href}
-                className="text-sm text-blue-600 hover:underline flex items-center gap-1.5">
-                <span className="text-gray-300">→</span> {item.label}
+                className="text-sm text-neon-cyan hover:underline flex items-center gap-1.5">
+                <span className="text-[rgba(255,255,255,0.3)]">→</span> {item.label}
               </Link>
             ))}
           </div>
@@ -52,12 +52,12 @@ export default async function SitemapPage() {
 
         {/* Brands */}
         <div>
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Browse by Brand</h2>
+          <h2 className="text-xs font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-widest mb-4">Browse by Brand</h2>
           <div className="flex flex-col gap-2">
             {brands.map(brand => (
               <Link key={brand} href={`/brands/${encodeURIComponent(brand)}`}
-                className="text-sm text-blue-600 hover:underline flex items-center gap-1.5">
-                <span className="text-gray-300">→</span> {brand}
+                className="text-sm text-neon-cyan hover:underline flex items-center gap-1.5">
+                <span className="text-[rgba(255,255,255,0.3)]">→</span> {brand}
               </Link>
             ))}
           </div>
@@ -65,7 +65,7 @@ export default async function SitemapPage() {
 
         {/* Laptops */}
         <div>
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Laptops</h2>
+          <h2 className="text-xs font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-widest mb-4">Laptops</h2>
           <div className="flex flex-col gap-2">
             {[
               { href: '/laptops', label: 'All Laptops' },
@@ -74,15 +74,15 @@ export default async function SitemapPage() {
               { href: '/best-laptops/100000', label: 'Best under ₹1L' },
             ].map(item => (
               <Link key={item.href} href={item.href}
-                className="text-sm text-blue-600 hover:underline flex items-center gap-1.5">
-                <span className="text-gray-300">→</span> {item.label}
+                className="text-sm text-neon-cyan hover:underline flex items-center gap-1.5">
+                <span className="text-[rgba(255,255,255,0.3)]">→</span> {item.label}
               </Link>
             ))}
           </div>
         </div>
         {/* Account */}
         <div>
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Account</h2>
+          <h2 className="text-xs font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-widest mb-4">Account</h2>
           <div className="flex flex-col gap-2">
             {[
               { href: '/login', label: 'Sign In' },
@@ -92,8 +92,8 @@ export default async function SitemapPage() {
               { href: '/glossary', label: 'Glossary' },
             ].map(item => (
               <Link key={item.href} href={item.href}
-                className="text-sm text-blue-600 hover:underline flex items-center gap-1.5">
-                <span className="text-gray-300">→</span> {item.label}
+                className="text-sm text-neon-cyan hover:underline flex items-center gap-1.5">
+                <span className="text-[rgba(255,255,255,0.3)]">→</span> {item.label}
               </Link>
             ))}
           </div>
@@ -104,16 +104,16 @@ export default async function SitemapPage() {
       {/* Laptops list by brand */}
       {(laptops || []).length > 0 && (
         <div className="mt-12">
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">All Laptops</h2>
+          <h2 className="text-xs font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-widest mb-6">All Laptops</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {laptopBrands.map(brand => (
               <div key={brand}>
-                <h3 className="text-sm font-bold text-gray-700 mb-3 pb-2 border-b border-gray-100">{brand}</h3>
+                <h3 className="text-sm font-bold text-[rgba(255,255,255,0.85)] mb-3 pb-2 border-b border-[rgba(255,255,255,0.04)]">{brand}</h3>
                 <div className="flex flex-col gap-1.5">
                   {(laptops || []).filter(l => l.brand === brand).map(laptop => (
                     <Link key={laptop.slug} href={`/laptops/${laptop.slug}`}
-                      className="text-sm text-blue-600 hover:underline flex items-center gap-1.5">
-                      <span className="text-gray-300">→</span> {laptop.name}
+                      className="text-sm text-neon-cyan hover:underline flex items-center gap-1.5">
+                      <span className="text-[rgba(255,255,255,0.3)]">→</span> {laptop.name}
                     </Link>
                   ))}
                 </div>
@@ -125,16 +125,16 @@ export default async function SitemapPage() {
 
       {/* Phones list by brand */}
       <div className="mt-12">
-        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">All Phones</h2>
+        <h2 className="text-xs font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-widest mb-6">All Phones</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {brands.map(brand => (
             <div key={brand}>
-              <h3 className="text-sm font-bold text-gray-700 mb-3 pb-2 border-b border-gray-100">{brand}</h3>
+              <h3 className="text-sm font-bold text-[rgba(255,255,255,0.85)] mb-3 pb-2 border-b border-[rgba(255,255,255,0.04)]">{brand}</h3>
               <div className="flex flex-col gap-1.5">
                 {(phones || []).filter(p => p.brand === brand).map(phone => (
                   <Link key={phone.slug} href={`/phones/${phone.slug}`}
-                    className="text-sm text-blue-600 hover:underline flex items-center gap-1.5">
-                    <span className="text-gray-300">→</span> {phone.name}
+                    className="text-sm text-neon-cyan hover:underline flex items-center gap-1.5">
+                    <span className="text-[rgba(255,255,255,0.3)]">→</span> {phone.name}
                   </Link>
                 ))}
               </div>

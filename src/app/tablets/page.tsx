@@ -86,7 +86,7 @@ export default async function TabletsPage({
       : null
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 text-[var(--text)]">
 
       {/* Schema */}
       {itemListSchema && (
@@ -99,8 +99,8 @@ export default async function TabletsPage({
       )}
 
       {/* Hero */}
-      <div className="bg-gradient-to-br from-blue-600 via-blue-600 to-blue-700 rounded-2xl p-8 mb-10 text-white shadow-lg">
-        <p className="text-blue-200 text-xs mb-3 uppercase tracking-widest font-semibold">
+      <div className="rounded-2xl p-8 mb-10 text-white shadow-lg border border-[rgba(255,255,255,0.06)] bg-[var(--panel)]">
+        <p className="text-dim text-xs mb-3 uppercase tracking-widest font-semibold">
           India's Tablet Database
         </p>
 
@@ -108,14 +108,14 @@ export default async function TabletsPage({
           Find your perfect tablet
         </h1>
 
-        <p className="text-blue-100 max-w-lg text-base leading-relaxed mb-6">
+        <p className="text-[rgba(255,255,255,0.65)] max-w-lg text-base leading-relaxed mb-6">
           Explore specs, prices and comparisons for every tablet available in India.
         </p>
 
         <div className="flex gap-3 flex-wrap">
           <Link
             href="/compare-tablets"
-            className="bg-white text-blue-600 px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-50 transition shadow-md hover:shadow-lg"
+            className="rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] px-6 py-2.5 text-sm font-semibold text-[rgba(255,255,255,0.85)] transition-all duration-200 hover:border-neon-violet hover:text-white hover:glow"
           >
             Compare tablets →
           </Link>
@@ -127,21 +127,21 @@ export default async function TabletsPage({
 
         <Link
           href="/leaderboard"
-          className="px-3.5 py-2 rounded-lg text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white font-medium"
+          className="px-3.5 py-2 rounded-lg text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)] font-medium"
         >
           🔥 Trending tablets
         </Link>
 
         <Link
           href="/brands"
-          className="px-3.5 py-2 rounded-lg text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white font-medium"
+          className="px-3.5 py-2 rounded-lg text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)] font-medium"
         >
           🏷️ Browse by brand
         </Link>
 
         <Link
           href="/compare-tablets"
-          className="px-3.5 py-2 rounded-lg text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white font-medium"
+          className="px-3.5 py-2 rounded-lg text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)] font-medium"
         >
           ⚖️ Compare tablets
         </Link>
@@ -151,7 +151,7 @@ export default async function TabletsPage({
       {/* Browse by use case */}
       <section className="mb-10">
 
-        <h2 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4">
+        <h2 className="text-sm font-bold text-white uppercase tracking-widest mb-4">
           Browse by use case
         </h2>
 
@@ -168,7 +168,7 @@ export default async function TabletsPage({
             <Link
               key={item.href}
               href={item.href}
-              className="px-3.5 py-2 rounded-lg text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white font-medium"
+              className="px-3.5 py-2 rounded-lg text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)] font-medium"
             >
               {item.label}
             </Link>
@@ -180,7 +180,7 @@ export default async function TabletsPage({
       {/* Browse by budget */}
       <section className="mb-10">
 
-        <h2 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4">
+        <h2 className="text-sm font-bold text-white uppercase tracking-widest mb-4">
           Browse by budget
         </h2>
 
@@ -197,13 +197,13 @@ export default async function TabletsPage({
             <Link
               key={budget}
               href={`/best-tablets/${budget}`}
-              className="bg-white border border-gray-200 rounded-lg p-3 text-center hover:border-blue-400 hover:shadow-md transition group"
+              className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-lg p-3 text-center hover:border-[rgba(6,182,212,0.35)] hover:glow transition-all duration-200 group card-hover"
             >
               <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">
                 📟
               </div>
 
-              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">
+              <p className="text-xs font-semibold text-[rgba(255,255,255,0.85)] group-hover:text-neon-cyan transition">
                 {label}
               </p>
             </Link>
@@ -215,7 +215,7 @@ export default async function TabletsPage({
       {/* Brand filters */}
       <section className="mb-10">
 
-        <h2 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4">
+        <h2 className="text-sm font-bold text-white uppercase tracking-widest mb-4">
           Filter by brand
         </h2>
 
@@ -225,8 +225,8 @@ export default async function TabletsPage({
             href="/tablets"
             className={`px-3.5 py-2 rounded-lg text-sm border transition font-medium ${
               !brand
-                ? 'bg-blue-600 text-white border-blue-600 shadow-md'
-                : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'
+                ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm'
+                : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'
             }`}
           >
             All
@@ -238,8 +238,8 @@ export default async function TabletsPage({
               href={`/tablets?brand=${encodeURIComponent(b)}`}
               className={`px-3.5 py-2 rounded-lg text-sm border transition font-medium ${
                 brand === b
-                  ? 'bg-blue-600 text-white border-blue-600 shadow-md'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'
+                  ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm'
+                  : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'
               }`}
             >
               {brandIcons[b] || '📟'} {b}
@@ -255,16 +255,16 @@ export default async function TabletsPage({
         <div className="flex items-center justify-between">
 
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-white">
               {brand ? `${brand} tablets` : 'All tablets'}
             </h2>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-dim">
               Compare specs and prices
             </p>
           </div>
 
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700">
-            <span className="h-2 w-2 rounded-full bg-blue-600" />
+          <span className="inline-flex items-center gap-1.5 rounded-lg badge-blue px-3 py-2 text-xs font-semibold">
+            <span className="h-2 w-2 rounded-full bg-neon-cyan" />
             {tablets.length} devices
           </span>
 
@@ -297,23 +297,23 @@ export default async function TabletsPage({
 
       ) : (
 
-        <div className="bg-white border border-dashed border-gray-300 rounded-2xl py-24 text-center">
+        <div className="bg-[var(--card-bg)] border border-dashed border-[rgba(255,255,255,0.08)] rounded-2xl py-24 text-center">
 
           <p className="text-6xl mb-6">
             📟
           </p>
 
-          <p className="text-gray-600 text-lg font-semibold mb-2">
+          <p className="text-[rgba(255,255,255,0.65)] text-lg font-semibold mb-2">
             No tablets found
           </p>
 
-          <p className="text-gray-500 text-sm mb-6">
+          <p className="text-dim text-sm mb-6">
             Try adjusting your filters
           </p>
 
           <Link
             href="/tablets"
-            className="inline-block text-blue-600 text-sm font-semibold hover:text-blue-700 hover:underline"
+            className="inline-block text-neon-cyan text-sm font-semibold hover:text-neon-cyan hover:underline"
           >
             View all tablets →
           </Link>

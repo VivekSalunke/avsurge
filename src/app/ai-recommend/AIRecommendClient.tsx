@@ -132,31 +132,31 @@ export default function AIRecommendClient() {
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-8">
+    <main className="max-w-3xl mx-auto px-4 py-8 text-[var(--text)]">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">🤖</div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">AI Device Recommender</h1>
-        <p className="text-gray-400 text-sm">Describe what you need and AI will find the best devices for you</p>
+        <div className="w-16 h-16 bg-gradient-to-br from-neon-violet to-neon-cyan rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">🤖</div>
+        <h1 className="text-2xl font-bold text-white mb-2">AI Device Recommender</h1>
+        <p className="text-[rgba(255,255,255,0.4)] text-sm">Describe what you need and AI will find the best devices for you</p>
       </div>
 
       {/* Mode toggle */}
-      <div className="flex gap-2 mb-6 bg-white border border-gray-200 rounded-xl p-1 w-fit mx-auto">
+      <div className="flex gap-2 mb-6 bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl p-1 w-fit mx-auto">
         {(['phones', 'tablets', 'laptops'] as Mode[]).map(m => (
           <button key={m} onClick={() => switchMode(m)}
-            className={`px-5 py-2 rounded-lg text-sm font-medium transition ${mode === m ? 'bg-purple-600 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+            className={`px-5 py-2 rounded-lg text-sm font-medium transition ${mode === m ? 'bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm' : 'text-dim hover:text-[rgba(255,255,255,0.85)]'}`}>
             {MODE_CONFIG[m].emoji} {MODE_CONFIG[m].label}s
           </button>
         ))}
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">What are you looking for?</label>
+      <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
+        <label className="block text-sm font-medium text-[rgba(255,255,255,0.85)] mb-2">What are you looking for?</label>
         <textarea
           value={query}
           onChange={e => setQuery(e.target.value)}
           rows={3}
           placeholder={`e.g. ${EXAMPLES[mode][0]}...`}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-400 resize-none"
+          className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-neon-violet resize-none"
           style={{ color: '#111827', backgroundColor: '#ffffff' }}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleRecommend())}
         />
@@ -164,14 +164,14 @@ export default function AIRecommendClient() {
         <div className="flex flex-wrap gap-2 mt-3 mb-4">
           {EXAMPLES[mode].map(ex => (
             <button key={ex} onClick={() => setQuery(ex)}
-              className="text-xs px-3 py-1.5 bg-purple-50 text-purple-600 border border-purple-200 rounded-full hover:bg-purple-100 transition">
+              className="text-xs px-3 py-1.5 neon-badge border border-[rgba(139,92,246,0.2)] rounded-full hover:border-neon-violet transition">
               {ex}
             </button>
           ))}
         </div>
 
         <button onClick={handleRecommend} disabled={loading || !query.trim()}
-          className="w-full bg-purple-600 text-white rounded-xl py-3 text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-50 flex items-center justify-center gap-2">
+          className="w-full bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl py-3 text-sm font-semibold hover:brightness-110 transition disabled:opacity-50 flex items-center justify-center gap-2">
           {loading ? (
             <>
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -184,23 +184,23 @@ export default function AIRecommendClient() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-red-600 text-sm">{error}</div>
+        <div className="bg-[rgba(239,68,68,0.06)] border border-[rgba(239,68,68,0.2)] rounded-xl p-4 mb-6 text-red-400 text-sm">{error}</div>
       )}
 
       {recommendations.length > 0 && (
         <div>
           {explanation && (
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-6">
-              <p className="text-sm text-purple-700"><span className="font-semibold">🤖 AI:</span> {explanation}</p>
+            <div className="bg-[rgba(139,92,246,0.08)] border border-[rgba(139,92,246,0.2)] rounded-xl p-4 mb-6">
+              <p className="text-sm text-[#a78bfa]"><span className="font-semibold">🤖 AI:</span> {explanation}</p>
             </div>
           )}
 
-          <h2 className="text-base font-bold text-gray-900 mb-4">Top recommendations for you</h2>
+          <h2 className="text-base font-bold text-white mb-4">Top recommendations for you</h2>
           <div className="flex flex-col gap-4">
             {recommendations.map((rec: any, i: number) => (
               <Link key={i} href={`/${config.table}/${rec.item.slug}`}
-                className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-purple-300 hover:shadow-sm transition group flex gap-4">
-                <div className="w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
+                className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-5 hover:border-neon-violet hover:glow transition group flex gap-4">
+                <div className="w-20 h-20 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
                   {rec.item.image_url
                     ? <img src={rec.item.image_url} alt={rec.item.name} className="object-contain w-full h-full p-1" />
                     : <span className="text-3xl">{config.emoji}</span>}
@@ -208,23 +208,23 @@ export default function AIRecommendClient() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div>
-                      <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-medium mr-2">#{i + 1}</span>
-                      <span className="text-xs text-gray-400">{rec.item.brand}</span>
+                      <span className="text-xs neon-badge px-2 py-0.5 rounded-full font-medium mr-2">#{i + 1}</span>
+                      <span className="text-xs text-[rgba(255,255,255,0.4)]">{rec.item.brand}</span>
                     </div>
                     {rec.item.price_inr && (
-                      <span className="text-sm font-bold text-blue-600 flex-shrink-0">
+                      <span className="text-sm font-bold text-neon-cyan flex-shrink-0">
                         {formatPriceINR(rec.item.price_inr)}
                       </span>
                     )}
                   </div>
-                  <p className="font-semibold text-gray-900 group-hover:text-purple-600 transition mb-1">{rec.item.name}</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{rec.reason}</p>
+                  <p className="font-semibold text-white group-hover:text-neon-violet transition mb-1">{rec.item.name}</p>
+                  <p className="text-xs text-dim leading-relaxed">{rec.reason}</p>
                 </div>
               </Link>
             ))}
           </div>
 
-          <p className="text-xs text-gray-400 text-center mt-6">
+          <p className="text-xs text-[rgba(255,255,255,0.4)] text-center mt-6">
             Powered by AI · Based on AVSurge's device database
           </p>
         </div>

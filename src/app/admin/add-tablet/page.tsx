@@ -43,14 +43,14 @@ export default function AddTabletPage() {
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-8">
+    <main className="max-w-3xl mx-auto px-4 py-8 text-[var(--text)]">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/admin" className="text-sm text-gray-400 hover:text-blue-600">← Admin</Link>
-        <h1 className="text-2xl font-bold text-gray-900">Add Tablet</h1>
+        <Link href="/admin" className="text-sm text-[rgba(255,255,255,0.4)] hover:text-neon-cyan">← Admin</Link>
+        <h1 className="text-2xl font-bold text-white">Add Tablet</h1>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
-        <h2 className="font-semibold text-gray-700 mb-4">Basic Info</h2>
+      <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
+        <h2 className="font-semibold text-white mb-4">Basic Info</h2>
         <div className="grid grid-cols-2 gap-4">
           {[
             { k: 'name', label: 'Tablet Name', placeholder: 'Samsung Galaxy Tab S10' },
@@ -59,7 +59,7 @@ export default function AddTabletPage() {
             { k: 'released_at', label: 'Release Date', placeholder: '2024-08-01' },
           ].map(({ k, label, placeholder }) => (
             <div key={k}>
-              <label className="block text-xs text-gray-500 mb-1">{label}</label>
+              <label className="block text-xs text-dim mb-1">{label}</label>
               <input
                 value={form[k as keyof typeof form]}
                 onChange={e => {
@@ -67,37 +67,37 @@ export default function AddTabletPage() {
                   if (k === 'name') updateForm('slug', autoSlug(e.target.value))
                 }}
                 placeholder={placeholder}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+                className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
                 style={{ color: '#111827', backgroundColor: '#ffffff' }}
               />
             </div>
           ))}
           <div className="col-span-2">
-            <label className="block text-xs text-gray-500 mb-1">Slug</label>
+            <label className="block text-xs text-dim mb-1">Slug</label>
             <input
               value={form.slug}
               onChange={e => updateForm('slug', e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
               style={{ color: '#111827', backgroundColor: '#ffffff' }}
             />
           </div>
           <div className="col-span-2">
-            <label className="block text-xs text-gray-500 mb-1">Image URL</label>
+            <label className="block text-xs text-dim mb-1">Image URL</label>
             <input
               value={form.image_url}
               onChange={e => updateForm('image_url', e.target.value)}
               placeholder="https://..."
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
               style={{ color: '#111827', backgroundColor: '#ffffff' }}
             />
           </div>
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
+      <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-gray-700">Specs</h2>
-          <button onClick={addSpec} className="text-xs text-blue-600 font-medium hover:underline">+ Add spec</button>
+          <h2 className="font-semibold text-white">Specs</h2>
+          <button onClick={addSpec} className="text-xs text-neon-cyan font-medium hover:underline">+ Add spec</button>
         </div>
         <div className="space-y-3">
           {specs.map((spec, i) => (
@@ -105,7 +105,7 @@ export default function AddTabletPage() {
               <select
                 value={spec.category}
                 onChange={e => updateSpec(i, 'category', e.target.value)}
-                className="col-span-2 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+                className="col-span-2 border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
                 style={{ color: '#111827', backgroundColor: '#ffffff' }}>
                 {CATEGORIES.map(c => <option key={c}>{c}</option>)}
               </select>
@@ -113,14 +113,14 @@ export default function AddTabletPage() {
                 value={spec.label}
                 onChange={e => updateSpec(i, 'label', e.target.value)}
                 placeholder="Label"
-                className="col-span-2 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+                className="col-span-2 border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
                 style={{ color: '#111827', backgroundColor: '#ffffff' }}
               />
               <input
                 value={spec.value}
                 onChange={e => updateSpec(i, 'value', e.target.value)}
                 placeholder="Value"
-                className="col-span-2 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+                className="col-span-2 border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
                 style={{ color: '#111827', backgroundColor: '#ffffff' }}
               />
               <button onClick={() => removeSpec(i)} className="text-red-400 hover:text-red-600 text-lg">×</button>
@@ -132,7 +132,7 @@ export default function AddTabletPage() {
       <button
         onClick={handleSave}
         disabled={saving || !form.name || !form.brand || !form.slug}
-        className="w-full bg-blue-600 text-white rounded-xl py-3 font-semibold hover:bg-blue-700 transition disabled:opacity-50">
+        className="w-full bg-gradient-to-r from-neon-violet to-neon-cyan text-black font-semibold rounded-xl py-3 transition disabled:opacity-50">
         {saving ? 'Saving...' : 'Save Tablet'}
       </button>
     </main>

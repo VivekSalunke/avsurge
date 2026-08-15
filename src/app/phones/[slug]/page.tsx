@@ -61,57 +61,57 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
   const highlights = ['Camera', 'Battery', 'Display', 'Performance']
 
   return (
-    <main className="max-w-5xl mx-auto px-4 py-8">
+    <main className="max-w-5xl mx-auto px-4 py-8 text-[var(--text)]">
       <PhoneTracker deviceId={phone.id} />
       <PhoneJsonLd phone={phone} specs={specs} />
-      <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
-        <Link href="/" className="hover:text-blue-600">Home</Link>
+      <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
+        <Link href="/" className="hover:text-neon-cyan">Home</Link>
         <span>&rsaquo;</span>
-        <Link href="/phones" className="hover:text-blue-600">Phones</Link>
+        <Link href="/phones" className="hover:text-neon-cyan">Phones</Link>
         <span>&rsaquo;</span>
-        <Link href={`/phones?brand=${phone.brand}`} className="hover:text-blue-600">{phone.brand}</Link>
+        <Link href={`/phones?brand=${phone.brand}`} className="hover:text-neon-cyan">{phone.brand}</Link>
         <span>&rsaquo;</span>
-        <span className="text-gray-600">{phone.name}</span>
+        <span className="text-[rgba(255,255,255,0.65)]">{phone.name}</span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 sticky top-20">
-            <div className="w-full aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-5 text-7xl overflow-hidden">
+          <div className="bg-[var(--card-bg)] rounded-2xl border border-[rgba(255,255,255,0.06)] p-6 sticky top-20">
+            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-5 text-7xl overflow-hidden">
               {phone.image_url
                 ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full p-2" />
                 : '📱'}
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-1">{phone.name}</h1>
-            <p className="text-sm text-gray-400 mb-4">{phone.brand}</p>
+            <h1 className="text-xl font-bold text-white mb-1">{phone.name}</h1>
+            <p className="text-sm text-[rgba(255,255,255,0.4)] mb-4">{phone.brand}</p>
             <SpecScoreBadge specs={specs} overrideScore={phone.spec_score_override} />
 
             {phone.price_inr && (
-              <div className="bg-blue-50 rounded-xl px-4 py-3 mb-4 text-center">
-                <div className="text-xs text-blue-400 mb-0.5">Starting price in India</div>
-                <div className="text-2xl font-bold text-blue-700">{formatPriceINR(phone.price_inr)}</div>
+              <div className="price-tag rounded-xl px-4 py-3 mb-4 text-center">
+                <div className="text-xs text-neon-cyan mb-0.5">Starting price in India</div>
+                <div className="text-2xl font-bold text-neon-cyan">{formatPriceINR(phone.price_inr)}</div>
               </div>
             )}
 
             {phone.released_at && (
-              <p className="text-xs text-gray-400 text-center mb-4">
+              <p className="text-xs text-[rgba(255,255,255,0.4)] text-center mb-4">
                 Released {new Date(phone.released_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
               </p>
             )}
 
             <div className="flex flex-col gap-2">
               <a href={`https://www.flipkart.com/search?q=${encodeURIComponent(phone.name)}`} target="_blank"
-                className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-medium hover:bg-blue-700 transition text-center">
+                className="w-full bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl py-2.5 text-sm font-medium hover:brightness-110 transition text-center">
                 Check on Flipkart →
               </a>
               <a href={buildAmazonSearchUrl(phone.name)} target="_blank"
-                className="w-full bg-white border border-gray-200 text-gray-700 rounded-xl py-2.5 text-sm font-medium hover:bg-gray-50 transition text-center">
+                className="w-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] rounded-xl py-2.5 text-sm font-medium hover:border-neon-violet hover:text-white hover:glow transition text-center">
                 Check on Amazon →
               </a>
               <WishlistButton phoneId={phone.id} />
               <PriceAlertButton phoneId={phone.id} phoneName={phone.name} currentPrice={phone.price_inr} />
               <Link href={`/compare?a=${phone.slug}`}
-                className="w-full text-center border border-dashed border-gray-300 text-gray-500 rounded-xl py-2.5 text-sm hover:border-blue-400 hover:text-blue-600 transition">
+                className="w-full text-center border border-dashed border-[rgba(255,255,255,0.08)] text-dim rounded-xl py-2.5 text-sm hover:border-neon-cyan hover:text-neon-cyan transition">
                 + Add to compare
               </Link>
             </div>
@@ -125,10 +125,10 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
                 const first = grouped[cat]?.[0]
                 if (!first) return null
                 return (
-                  <div key={cat} className="bg-white border border-gray-200 rounded-xl p-3">
+                  <div key={cat} className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-3">
                     <div className="text-xl mb-1">{ICONS[cat]}</div>
-                    <div className="text-xs text-gray-400 mb-0.5">{cat}</div>
-                    <div className="text-sm font-semibold text-gray-800 leading-tight">{first.value}</div>
+                    <div className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{cat}</div>
+                    <div className="text-sm font-semibold text-white leading-tight">{first.value}</div>
                   </div>
                 )
               })}
@@ -136,14 +136,14 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
           )}
 
           {comparisonCandidates.length > 0 && (
-            <div className="bg-white rounded-2xl border border-gray-200 p-5">
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">Popular comparisons</h2>
+            <div className="bg-[var(--card-bg)] rounded-2xl border border-[rgba(255,255,255,0.06)] p-5">
+              <h2 className="text-sm font-semibold text-[rgba(255,255,255,0.85)] mb-3">Popular comparisons</h2>
               <div className="flex flex-wrap gap-2">
                 {comparisonCandidates.map((c: any) => (
                   <Link
                     key={c.slug}
                     href={`/compare/${[phone.slug, c.slug].sort().join('-vs-')}`}
-                    className="text-xs px-3 py-1.5 rounded-full border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white"
+                    className="text-xs px-3 py-1.5 rounded-full border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)]"
                   >
                     vs {c.name} →
                   </Link>
@@ -153,17 +153,17 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
           )}
 
           {Object.entries(grouped).map(([category, catSpecs]: [string, any]) => (
-            <div key={category} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="flex items-center gap-2 px-5 py-3 bg-gray-50 border-b border-gray-100">
+            <div key={category} className="bg-[var(--card-bg)] rounded-2xl border border-[rgba(255,255,255,0.06)] overflow-hidden">
+              <div className="flex items-center gap-2 px-5 py-3 bg-[rgba(255,255,255,0.02)] border-b border-[rgba(255,255,255,0.04)]">
                 <span>{ICONS[category] || '📋'}</span>
-                <span className="text-sm font-semibold text-gray-700">{category}</span>
+                <span className="text-sm font-semibold text-[rgba(255,255,255,0.85)]">{category}</span>
               </div>
               <table className="w-full">
                 <tbody>
                   {catSpecs.map((spec: any, i: number) => (
-                    <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
-                      <td className="px-5 py-3 text-sm text-gray-400 w-2/5">{spec.label}</td>
-                      <td className="px-5 py-3 text-sm text-gray-900 font-medium">
+                    <tr key={i} className={i % 2 === 0 ? 'bg-[var(--card-bg)]' : 'bg-[rgba(255,255,255,0.02)]'}>
+                      <td className="px-5 py-3 text-sm text-[rgba(255,255,255,0.4)] w-2/5">{spec.label}</td>
+                      <td className="px-5 py-3 text-sm text-white font-medium">
                       {spec.value}
                       <SpecExplainer label={spec.label} value={spec.value} phoneName={phone.name} />
                     </td>
@@ -175,7 +175,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
           ))}
 
           {specs.length === 0 && (
-            <div className="bg-white rounded-2xl border border-dashed border-gray-200 py-16 text-center text-gray-400 text-sm">
+            <div className="bg-[var(--card-bg)] rounded-2xl border border-dashed border-[rgba(255,255,255,0.06)] py-16 text-center text-[rgba(255,255,255,0.4)] text-sm">
               No specs yet.
             </div>
           )}

@@ -14,16 +14,16 @@ const BrandCard = ({ brand, count, label, href, logoUrl }: {
   brand: string, count: number, label: string, href: string, logoUrl?: string
 }) => (
   <Link href={href}
-    className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group text-center">
-    <div className="w-full h-16 bg-gray-50 rounded-xl flex items-center justify-center mb-3 overflow-hidden px-3">
+    className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-5 hover:border-[rgba(6,182,212,0.35)] hover:shadow-sm transition-all duration-200 card-hover hover:glow group text-center">
+    <div className="w-full h-16 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden px-3">
       {logoUrl ? (
         <img src={logoUrl} alt={brand} className="object-contain max-h-10 max-w-full" />
       ) : (
-        <span className="text-lg font-bold text-gray-500">{brand}</span>
+        <span className="text-lg font-bold text-dim">{brand}</span>
       )}
     </div>
-    <h3 className="font-bold text-gray-900 group-hover:text-blue-600 transition text-sm">{brand}</h3>
-    <p className="text-xs text-gray-400 mt-1">{count} {label}{count !== 1 ? 's' : ''}</p>
+    <h3 className="font-bold text-white group-hover:text-neon-cyan transition text-sm">{brand}</h3>
+    <p className="text-xs text-[rgba(255,255,255,0.4)] mt-1">{count} {label}{count !== 1 ? 's' : ''}</p>
   </Link>
 )
 
@@ -71,20 +71,20 @@ export default async function BrandsPage() {
   } : null
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8">
+    <main className="max-w-6xl mx-auto px-4 py-8 text-[var(--text)]">
       {itemListSchema && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
       )}
 
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Brands</h1>
-        <p className="text-sm text-gray-400">Browse phones, tablets and laptops by brand</p>
+        <h1 className="text-2xl font-bold text-white mb-2">Brands</h1>
+        <p className="text-sm text-[rgba(255,255,255,0.4)]">Browse phones, tablets and laptops by brand</p>
       </div>
 
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-5">
-          <h2 className="text-base font-bold text-gray-900">📱 Phone Brands</h2>
-          <span className="text-xs bg-blue-100 text-blue-600 px-2.5 py-1 rounded-full font-medium">{phoneBrands.length} brands</span>
+          <h2 className="text-base font-bold text-white">📱 Phone Brands</h2>
+          <span className="neon-badge text-xs px-2.5 py-1 rounded-full font-medium">{phoneBrands.length} brands</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {phoneBrands.map(([brand, count]) => (
@@ -96,8 +96,8 @@ export default async function BrandsPage() {
 
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-5">
-          <h2 className="text-base font-bold text-gray-900">📟 Tablet Brands</h2>
-          <span className="text-xs bg-blue-100 text-blue-600 px-2.5 py-1 rounded-full font-medium">{tabletBrands.length} brands</span>
+          <h2 className="text-base font-bold text-white">📟 Tablet Brands</h2>
+          <span className="neon-badge text-xs px-2.5 py-1 rounded-full font-medium">{tabletBrands.length} brands</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {tabletBrands.map(([brand, count]) => (
@@ -110,8 +110,8 @@ export default async function BrandsPage() {
       {laptopBrands.length > 0 && (
         <div>
           <div className="flex items-center gap-2 mb-5">
-            <h2 className="text-base font-bold text-gray-900">💻 Laptop Brands</h2>
-            <span className="text-xs bg-blue-100 text-blue-600 px-2.5 py-1 rounded-full font-medium">{laptopBrands.length} brands</span>
+            <h2 className="text-base font-bold text-white">💻 Laptop Brands</h2>
+            <span className="neon-badge text-xs px-2.5 py-1 rounded-full font-medium">{laptopBrands.length} brands</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {laptopBrands.map(([brand, count]) => (

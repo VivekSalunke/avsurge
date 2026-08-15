@@ -77,7 +77,7 @@ export default function SearchBar() {
       {!expanded ? (
         <button
           onClick={handleExpand}
-          className="group flex items-center gap-0 overflow-hidden bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
+          className="group flex items-center gap-0 overflow-hidden bg-[var(--card-bg)] hover:bg-[rgba(255,255,255,0.03)] text-[rgba(255,255,255,0.85)] rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
           <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
@@ -86,9 +86,9 @@ export default function SearchBar() {
           </span>
         </button>
       ) : (
-        <div className="flex items-center gap-2 bg-white border border-blue-400 rounded-xl px-3 py-2 w-56 shadow-sm">
+        <div className="flex items-center gap-2 bg-[var(--card-bg)] border border-[rgba(255,255,255,0.04)] rounded-xl px-3 py-2 w-56 shadow-sm">
           <button onClick={handleEnter}>
-            <svg className="w-4 h-4 text-gray-400 flex-shrink-0 hover:text-blue-500 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[rgba(255,255,255,0.6)] flex-shrink-0 hover:text-neon-cyan transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </button>
@@ -100,48 +100,48 @@ export default function SearchBar() {
             onChange={e => setQuery(e.target.value)}
             onFocus={() => results.length > 0 && setOpen(true)}
             onKeyDown={e => e.key === 'Enter' && handleEnter()}
-            className="bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none w-full"
+            className="bg-transparent text-sm text-[var(--text)] placeholder-[rgba(255,255,255,0.45)] outline-none w-full"
           />
           {loading ? (
-            <div className="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+            <div className="w-3 h-3 border-2 border-[var(--accent-c)] border-t-transparent rounded-full animate-spin flex-shrink-0" />
           ) : query ? (
             <button onClick={() => { setQuery(''); setOpen(false) }}
-              className="text-gray-400 hover:text-gray-600 flex-shrink-0 text-lg leading-none">×</button>
+              className="text-[rgba(255,255,255,0.6)] hover:text-[rgba(255,255,255,0.85)] flex-shrink-0 text-lg leading-none">×</button>
           ) : null}
         </div>
       )}
 
       {open && results.length > 0 && (
-        <div className="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50 w-72">
+        <div className="absolute top-full mt-2 right-0 bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl shadow-2xl overflow-hidden z-50 w-72 neon-border">
           {results.map(item => (
             <button key={`${item.type}-${item.id}`} onClick={() => go(item)}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition text-left border-b border-gray-100 last:border-0">
-              <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center text-xl flex-shrink-0 overflow-hidden">
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[rgba(255,255,255,0.03)] transition text-left border-b border-[rgba(255,255,255,0.04)] last:border-0">
+              <div className="w-9 h-9 bg-[rgba(255,255,255,0.03)] rounded-lg flex items-center justify-center text-xl flex-shrink-0 overflow-hidden">
                 {item.image_url
                   ? <img src={item.image_url} alt={item.name} className="object-contain w-full h-full" />
                   : TYPE_ICON[item.type]}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
-                <p className="text-xs text-gray-400">{item.brand} · {TYPE_LABEL[item.type]}</p>
+                <p className="text-sm font-medium text-white truncate">{item.name}</p>
+                <p className="text-xs text-dim">{item.brand} · {TYPE_LABEL[item.type]}</p>
               </div>
               {item.price_inr && (
-                <p className="text-xs text-blue-600 font-medium flex-shrink-0">
+                <p className="text-xs text-neon-cyan font-medium flex-shrink-0">
                   {formatPriceINR(item.price_inr)}
                 </p>
               )}
             </button>
           ))}
           <button onClick={handleEnter}
-            className="w-full px-4 py-2.5 text-xs text-blue-600 hover:bg-blue-50 transition text-center border-t border-gray-100">
+            className="w-full px-4 py-2.5 text-xs text-neon-cyan hover:bg-[rgba(6,182,212,0.06)] transition text-center border-t border-[rgba(255,255,255,0.04)]">
             See all results for "{query}" →
           </button>
         </div>
       )}
 
       {open && query.length >= 2 && results.length === 0 && !loading && (
-        <div className="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg px-4 py-3 z-50 w-72">
-          <p className="text-sm text-gray-400">No devices found for "{query}"</p>
+        <div className="absolute top-full mt-2 right-0 bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl shadow-2xl px-4 py-3 z-50 w-72 neon-border">
+          <p className="text-sm text-dim">No devices found for "{query}"</p>
         </div>
       )}
     </div>

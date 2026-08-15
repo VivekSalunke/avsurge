@@ -69,69 +69,69 @@ export default function AddPhonePage() {
   }
 
   if (loading || profileLoading) return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+    <main className="min-h-screen flex items-center justify-center text-[var(--text)]">
+      <div className="w-8 h-8 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin" />
     </main>
   )
 
   return (
-    <main className="max-w-2xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">Add a phone</h1>
-      <p className="text-sm text-gray-400 mb-8">Manually enter phone details into the AVSurge database.</p>
+    <main className="max-w-2xl mx-auto px-4 py-10 text-[var(--text)]">
+      <h1 className="text-2xl font-bold text-white mb-1">Add a phone</h1>
+      <p className="text-sm text-[rgba(255,255,255,0.4)] mb-8">Manually enter phone details into the AVSurge database.</p>
 
       {status === 'success' && (
-        <div className="bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm mb-6">
+        <div className="bg-[rgba(16,185,129,0.06)] border border-[rgba(16,185,129,0.2)] text-[#34d399] rounded-xl px-4 py-3 text-sm mb-6">
           ✓ Phone saved! <Link href={`/phones/${slug}`} className="underline font-medium">View page →</Link>
         </div>
       )}
       {status === 'error' && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm mb-6">{error}</div>
+        <div className="bg-[rgba(239,68,68,0.06)] border border-[rgba(239,68,68,0.2)] text-[#f87171] rounded-xl px-4 py-3 text-sm mb-6">{error}</div>
       )}
 
-      <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Basic info</h2>
+      <div className="bg-[var(--card-bg)] rounded-2xl border border-[rgba(255,255,255,0.06)] p-6 mb-6 neon-border">
+        <h2 className="text-sm font-semibold text-dim uppercase tracking-wide mb-4">Basic info</h2>
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2 sm:col-span-1">
-            <label className="block text-xs font-medium text-gray-500 mb-1">Phone name *</label>
-            <input className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+            <label className="block text-xs font-medium text-dim mb-1">Phone name *</label>
+            <input className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
               placeholder="e.g. Samsung Galaxy S26 Ultra" value={name} onChange={e => setName(e.target.value)} />
-            {name && <p className="text-xs text-gray-400 mt-1">Slug: {slug}</p>}
+            {name && <p className="text-xs text-[rgba(255,255,255,0.4)] mt-1">Slug: {slug}</p>}
           </div>
           <div className="col-span-2 sm:col-span-1">
-            <label className="block text-xs font-medium text-gray-500 mb-1">Brand *</label>
-            <input className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+            <label className="block text-xs font-medium text-dim mb-1">Brand *</label>
+            <input className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
               placeholder="e.g. Samsung" value={brand} onChange={e => setBrand(e.target.value)} />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Price (₹)</label>
-            <input type="number" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+            <label className="block text-xs font-medium text-dim mb-1">Price (₹)</label>
+            <input type="number" className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
               placeholder="129999" value={price} onChange={e => setPrice(e.target.value)} />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Release date</label>
-            <input type="date" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+            <label className="block text-xs font-medium text-dim mb-1">Release date</label>
+            <input type="date" className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
               value={releasedAt} onChange={e => setReleasedAt(e.target.value)} />
           </div>
           <div className="col-span-2">
-            <label className="block text-xs font-medium text-gray-500 mb-1">Image URL</label>
-            <input className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+            <label className="block text-xs font-medium text-dim mb-1">Image URL</label>
+            <input className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
               placeholder="https://..." value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Specifications</h2>
+      <div className="bg-[var(--card-bg)] rounded-2xl border border-[rgba(255,255,255,0.06)] p-6 mb-6 neon-border">
+        <h2 className="text-sm font-semibold text-dim uppercase tracking-wide mb-4">Specifications</h2>
         <div className="flex flex-col gap-3">
           {specs.map((spec, i) => (
             <div key={i} className="grid grid-cols-12 gap-2 items-center">
-              <select className="col-span-3 border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-400"
+              <select className="col-span-3 border border-[rgba(255,255,255,0.06)] rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-neon-cyan"
                 value={spec.category} onChange={e => updateSpec(i, 'category', e.target.value)}>
                 {CATEGORIES.map(c => <option key={c}>{c}</option>)}
               </select>
-              <input className="col-span-4 border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-400"
+              <input className="col-span-4 border border-[rgba(255,255,255,0.06)] rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-neon-cyan"
                 placeholder="Label" value={spec.label} onChange={e => updateSpec(i, 'label', e.target.value)} />
-              <input className="col-span-4 border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-400"
+              <input className="col-span-4 border border-[rgba(255,255,255,0.06)] rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-neon-cyan"
                 placeholder="Value" value={spec.value} onChange={e => updateSpec(i, 'value', e.target.value)} />
               <button onClick={() => setSpecs(prev => prev.filter((_, idx) => idx !== i))}
                 className="col-span-1 text-red-400 hover:text-red-600 text-lg leading-none">×</button>
@@ -139,11 +139,11 @@ export default function AddPhonePage() {
           ))}
         </div>
         <button onClick={() => setSpecs(prev => [...prev, { category: 'General', label: '', value: '' }])}
-          className="mt-4 text-sm text-blue-600 hover:underline">+ Add row</button>
+          className="mt-4 text-sm text-neon-cyan hover:underline">+ Add row</button>
       </div>
 
       <button onClick={handleSubmit} disabled={status === 'saving'}
-        className="w-full bg-blue-600 text-white rounded-xl py-3 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-50">
+        className="w-full bg-gradient-to-r from-neon-violet to-neon-cyan text-black font-semibold rounded-xl py-3 text-sm transition disabled:opacity-50">
         {status === 'saving' ? 'Saving…' : 'Save phone'}
       </button>
     </main>

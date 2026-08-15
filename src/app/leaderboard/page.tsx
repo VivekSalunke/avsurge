@@ -121,7 +121,7 @@ export default async function LeaderboardPage({
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
+    <div className="max-w-4xl mx-auto px-4 py-10 text-[var(--text)]">
       {devices.length > 0 && (
         <script
           type="application/ld+json"
@@ -129,18 +129,18 @@ export default async function LeaderboardPage({
         />
       )}
 
-      <h1 className="text-3xl font-bold mb-2">🔥 Trending Devices</h1>
-      <p className="text-gray-500 mb-6">Most viewed devices on AVSurge right now</p>
+      <h1 className="text-3xl font-bold mb-2 text-white">🔥 Trending Devices</h1>
+      <p className="text-dim mb-6">Most viewed devices on AVSurge right now</p>
 
-      <div className="flex gap-2 mb-8 border-b border-gray-200">
+      <div className="flex gap-2 mb-8 border-b border-[rgba(255,255,255,0.06)]">
         {VALID_TABS.map((t) => (
           <Link
             key={t}
             href={t === 'phone' ? '/leaderboard' : `/leaderboard?tab=${t}`}
             className={`px-4 py-2 font-medium capitalize transition-colors ${
               activeTab === t
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-gray-500 hover:text-gray-800'
+                ? 'border-b-2 border-neon-cyan text-neon-cyan'
+                : 'text-dim hover:text-white'
             }`}
           >
             {t}s
@@ -150,35 +150,35 @@ export default async function LeaderboardPage({
 
       <div className="flex flex-wrap gap-2 mb-8">
         <Link href={CATEGORY_PATH[activeTab]}
-          className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          className="px-3 py-1.5 rounded-full text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)]">
           View all {activeTab}s
         </Link>
         <Link href={COMPARE_PATH[activeTab]}
-          className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+          className="px-3 py-1.5 rounded-full text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)]">
           ⚖️ Compare {activeTab}s
         </Link>
         {BUDGET_LINKS[activeTab].map(b => (
           <Link key={b.href} href={b.href}
-            className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+            className="px-3 py-1.5 rounded-full text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)]">
             💰 {b.label}
           </Link>
         ))}
       </div>
 
       {devices.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">No data yet for this category.</div>
+        <div className="text-center py-16 text-[rgba(255,255,255,0.4)]">No data yet for this category.</div>
       ) : (
         <div className="space-y-3">
           {devices.map((device, idx) => (
             <div
               key={device.id}
-              className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 hover:shadow-md transition-shadow bg-white"
+              className="flex items-center gap-4 p-4 rounded-xl border border-[rgba(255,255,255,0.06)] transition-all duration-200 card-hover hover:border-[rgba(6,182,212,0.35)] hover:glow bg-[var(--card-bg)]"
             >
-              <div className="w-10 text-center text-xl font-bold text-gray-400 shrink-0">
+              <div className="w-10 text-center text-xl font-bold text-[rgba(255,255,255,0.4)] shrink-0">
                 {idx < 3 ? RANK_MEDALS[idx] : `#${idx + 1}`}
               </div>
 
-              <div className="w-14 h-14 relative shrink-0 bg-gray-50 rounded-lg overflow-hidden">
+              <div className="w-14 h-14 relative shrink-0 bg-[rgba(255,255,255,0.02)] rounded-lg overflow-hidden">
                 {device.image_url && (
                   <Image
                     src={device.image_url}
@@ -193,19 +193,19 @@ export default async function LeaderboardPage({
               <div className="flex-1 min-w-0">
                 <Link
                   href={`/${activeTab}s/${device.slug}`}
-                  className="font-semibold text-gray-900 hover:text-blue-600 truncate block"
+                  className="font-semibold text-white hover:text-neon-cyan truncate block"
                 >
                   {device.name}
                 </Link>
-                <span className="text-sm text-gray-400">{device.brand}</span>
+                <span className="text-sm text-[rgba(255,255,255,0.4)]">{device.brand}</span>
               </div>
 
               <div className="text-right shrink-0">
-                <div className="text-sm font-medium text-gray-700">
+                <div className="text-sm font-medium text-[rgba(255,255,255,0.85)]">
                   {formatViews(device.view_count || 0)} views
                 </div>
                 {device.price_inr && (
-                  <div className="text-xs text-gray-400">{formatPriceINR(device.price_inr)}</div>
+                  <div className="text-xs text-[rgba(255,255,255,0.4)]">{formatPriceINR(device.price_inr)}</div>
                 )}
               </div>
             </div>

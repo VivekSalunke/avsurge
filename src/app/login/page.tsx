@@ -48,33 +48,33 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="bg-white border border-gray-200 rounded-2xl p-8 w-full max-w-sm shadow-sm">
+    <main className="min-h-screen flex items-center justify-center bg-[var(--card-bg)] px-4 text-[var(--text)]">
+      <div className="bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-8 w-full max-w-sm shadow-sm neon-border">
         <Link href="/" className="flex items-center gap-2 mb-6">
-          <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-sm">AV</div>
-          <span className="font-bold text-gray-900">AVSurge</span>
+          <div className="w-9 h-9 bg-gradient-to-r from-neon-violet to-neon-cyan rounded-xl flex items-center justify-center text-black font-bold text-sm">AV</div>
+          <span className="font-bold text-white">AVSurge</span>
         </Link>
 
-        <h1 className="text-xl font-bold text-gray-900 mb-1">
+        <h1 className="text-xl font-bold text-white mb-1">
           {mode === 'login' ? 'Welcome back' : 'Create account'}
         </h1>
-        <p className="text-sm text-gray-400 mb-6">
+        <p className="text-sm text-[rgba(255,255,255,0.4)] mb-6">
           {mode === 'login' ? 'Sign in to your AVSurge account' : 'Join AVSurge today'}
         </p>
 
         {status === 'error' && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl px-3 py-2 mb-4">{message}</div>
+          <div className="bg-[rgba(239,68,68,0.06)] border border-[rgba(239,68,68,0.2)] text-red-400 text-xs rounded-xl px-3 py-2 mb-4">{message}</div>
         )}
         {status === 'success' && (
-          <div className="bg-green-50 border border-green-200 text-green-600 text-xs rounded-xl px-3 py-2 mb-4">{message}</div>
+          <div className="bg-[rgba(6,182,212,0.06)] border border-[rgba(6,182,212,0.2)] text-neon-cyan text-xs rounded-xl px-3 py-2 mb-4">{message}</div>
         )}
 
         <div className="flex flex-col gap-3 mb-4">
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Email</label>
+            <label className="block text-xs font-medium text-dim mb-1">Email</label>
             <input
               type="email"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
               placeholder="you@example.com"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -82,10 +82,10 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Password</label>
+            <label className="block text-xs font-medium text-dim mb-1">Password</label>
             <input
               type="password"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
               placeholder="••••••••"
               value={password}
               onChange={e => setPassword(e.target.value)}
@@ -107,13 +107,13 @@ export default function LoginPage() {
         <button
           onClick={handleSubmit}
           disabled={status === 'loading' || !captchaToken}
-          className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-50 mb-4">
+          className="w-full bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl py-2.5 text-sm font-semibold hover:brightness-110 transition disabled:opacity-50 mb-4">
           {status === 'loading' ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Create account'}
         </button>
 
-        <p className="text-xs text-center text-gray-400">
+        <p className="text-xs text-center text-[rgba(255,255,255,0.4)]">
           {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-          <button onClick={handleModeSwitch} className="text-blue-600 font-medium hover:underline">
+          <button onClick={handleModeSwitch} className="text-neon-cyan font-medium hover:underline">
             {mode === 'login' ? 'Sign up' : 'Sign in'}
           </button>
         </p>

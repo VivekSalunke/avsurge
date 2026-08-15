@@ -52,64 +52,64 @@ export default function EditArticlePage() {
     setTimeout(() => setMsg(''), 2000)
   }
 
-  if (loading || profileLoading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" /></div>
+  if (loading || profileLoading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin" /></div>
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-8">
+    <main className="max-w-3xl mx-auto px-4 py-8 text-[var(--text)]">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Edit Article</h1>
+        <h1 className="text-xl font-bold text-white">Edit Article</h1>
         <div className="flex gap-3">
-          <Link href={`/news/${form.slug}`} target="_blank" className="text-sm text-blue-600 hover:underline">View →</Link>
-          <Link href="/admin/news" className="text-sm text-blue-600 hover:underline">← Back</Link>
+          <Link href={`/news/${form.slug}`} target="_blank" className="text-sm text-neon-cyan hover:underline">View →</Link>
+          <Link href="/admin/news" className="text-sm text-neon-cyan hover:underline">← Back</Link>
         </div>
       </div>
 
-      {msg && <div className={`rounded-xl px-4 py-3 text-sm mb-4 ${msg.startsWith('Error') ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-700'}`}>{msg}</div>}
+      {msg && <div className={`rounded-xl px-4 py-3 text-sm mb-4 ${msg.startsWith('Error') ? 'bg-[rgba(239,68,68,0.08)] text-red-400' : 'bg-[rgba(16,185,129,0.08)] text-green-400'}`}>{msg}</div>}
 
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
+      <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 space-y-4 neon-border">
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Title</label>
+          <label className="text-xs text-dim mb-1 block">Title</label>
           <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400" style={inputStyle} />
+            className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle} />
         </div>
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Slug</label>
+          <label className="text-xs text-dim mb-1 block">Slug</label>
           <input value={form.slug} onChange={e => setForm(f => ({ ...f, slug: e.target.value }))}
-            className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400" style={inputStyle} />
+            className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle} />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Category</label>
+            <label className="text-xs text-dim mb-1 block">Category</label>
             <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400" style={inputStyle}>
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle}>
               {CATEGORIES.map(c => <option key={c}>{c}</option>)}
             </select>
           </div>
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Cover Image URL</label>
+            <label className="text-xs text-dim mb-1 block">Cover Image URL</label>
             <input value={form.image_url} onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400" style={inputStyle} />
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle} />
           </div>
         </div>
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Excerpt</label>
+          <label className="text-xs text-dim mb-1 block">Excerpt</label>
           <textarea value={form.excerpt} onChange={e => setForm(f => ({ ...f, excerpt: e.target.value }))}
-            rows={2} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400 resize-none" style={inputStyle} />
+            rows={2} className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan resize-none" style={inputStyle} />
         </div>
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Content</label>
+          <label className="text-xs text-dim mb-1 block">Content</label>
           <textarea value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
-            rows={16} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400 resize-none font-mono" style={inputStyle} />
+            rows={16} className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan resize-none font-mono" style={inputStyle} />
         </div>
         <div className="flex items-center gap-4 pt-2">
           <button onClick={handleSave} disabled={saving}
-            className="bg-blue-600 text-white rounded-xl px-5 py-2.5 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-50">
+            className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl px-5 py-2.5 text-sm font-semibold transition hover:brightness-110 disabled:opacity-50">
             {saving ? 'Saving...' : 'Save changes'}
           </button>
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" checked={form.published} onChange={e => setForm(f => ({ ...f, published: e.target.checked }))}
-              className="accent-blue-600 w-4 h-4" />
-            <span className="text-sm text-gray-600">Published</span>
+              className="accent-neon-cyan w-4 h-4" />
+            <span className="text-sm text-[rgba(255,255,255,0.65)]">Published</span>
           </label>
         </div>
       </div>

@@ -35,9 +35,9 @@ export default async function DeviceOfTheDayWrapper() {
   ])
 
   const cards = [
-    phoneData && { type: 'phones', emoji: '📱', label: 'Phone', color: 'from-blue-600 to-blue-700', light: 'bg-blue-500/20', ...phoneData },
-    tabletData && { type: 'tablets', emoji: '📟', label: 'Tablet', color: 'from-teal-600 to-teal-700', light: 'bg-teal-500/20', ...tabletData },
-    laptopData && { type: 'laptops', emoji: '💻', label: 'Laptop', color: 'from-indigo-600 to-indigo-700', light: 'bg-indigo-500/20', ...laptopData },
+    phoneData && { type: 'phones', emoji: '📱', label: 'Phone', color: 'from-violet-600 to-indigo-700', light: 'bg-violet-500/20', ...phoneData },
+    tabletData && { type: 'tablets', emoji: '📟', label: 'Tablet', color: 'from-cyan-600 to-teal-700', light: 'bg-cyan-500/20', ...tabletData },
+    laptopData && { type: 'laptops', emoji: '💻', label: 'Laptop', color: 'from-fuchsia-600 to-violet-700', light: 'bg-fuchsia-500/20', ...laptopData },
   ].filter(Boolean) as any[]
 
   return <DeviceOfTheDay cards={cards} />

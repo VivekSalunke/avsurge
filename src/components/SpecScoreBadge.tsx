@@ -1,10 +1,10 @@
 import { getFinalSpecScore, type SpecRow } from '@/lib/specScore'
 
 function scoreColor(score: number): string {
-  if (score >= 80) return 'text-green-600 bg-green-50 border-green-200'
-  if (score >= 60) return 'text-blue-600 bg-blue-50 border-blue-200'
-  if (score >= 40) return 'text-yellow-600 bg-yellow-50 border-yellow-200'
-  return 'text-gray-600 bg-gray-50 border-gray-200'
+  if (score >= 80) return 'text-green-400 bg-[rgba(34,197,94,0.1)] border-[rgba(34,197,94,0.2)]'
+  if (score >= 60) return 'text-neon-cyan bg-[rgba(6,182,212,0.1)] border-[rgba(6,182,212,0.2)]'
+  if (score >= 40) return 'text-yellow-400 bg-[rgba(251,191,36,0.1)] border-[rgba(251,191,36,0.2)]'
+  return 'text-dim bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.08)]'
 }
 
 export default function SpecScoreBadge({

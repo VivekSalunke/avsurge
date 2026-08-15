@@ -16,7 +16,7 @@ export default function AdminPage() {
 
   if (loading || profileLoading) return (
     <main className="min-h-screen flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-8 h-8 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin" />
     </main>
   )
 
@@ -69,21 +69,21 @@ export default function AdminPage() {
   ]
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-10">
+    <main className="max-w-4xl mx-auto px-4 py-10 text-[var(--text)]">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Admin Panel</h1>
-        <p className="text-sm text-gray-400">Manage AVSurge content</p>
+        <h1 className="text-2xl font-bold text-white mb-1">Admin Panel</h1>
+        <p className="text-sm text-[rgba(255,255,255,0.4)]">Manage AVSurge content</p>
       </div>
 
       {sections.map(section => (
         <div key={section.title} className="mb-8">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-4">{section.title}</h2>
+          <h2 className="text-sm font-semibold text-dim uppercase tracking-widest mb-4">{section.title}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {section.cards.map(card => (
               <Link key={card.href} href={card.href}
-                className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition group">
-                <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600">{card.title}</h3>
-                <p className="text-xs text-gray-400">{card.desc}</p>
+                className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-5 hover:border-neon-cyan hover:glow transition group">
+                <h3 className="font-bold text-white mb-1 group-hover:text-neon-cyan">{card.title}</h3>
+                <p className="text-xs text-[rgba(255,255,255,0.4)]">{card.desc}</p>
               </Link>
             ))}
           </div>

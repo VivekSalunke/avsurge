@@ -37,59 +37,59 @@ export default function PriceAlertButton({ phoneId, phoneName, currentPrice }: {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 bg-white border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded-xl hover:border-blue-300 hover:text-blue-600 transition">
+        className="inline-flex items-center gap-1.5 border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] text-sm font-medium px-4 py-2 rounded-xl hover:border-neon-cyan hover:text-neon-cyan transition">
         🔔 Notify me on price drop
       </button>
     )
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5 mt-4">
+    <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-5 mt-4 neon-border">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-semibold text-gray-900">🔔 Price drop alert</h4>
-        <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 text-lg">×</button>
+        <h4 className="font-semibold text-white">🔔 Price drop alert</h4>
+        <button onClick={() => setOpen(false)} className="text-dim hover:text-white text-lg">×</button>
       </div>
 
       {status === 'success' ? (
-        <div className="bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm">
+        <div className="bg-[rgba(34,197,94,0.08)] border border-[rgba(34,197,94,0.2)] text-green-400 rounded-xl px-4 py-3 text-sm">
           ✅ {message}
         </div>
       ) : (
         <>
           <div className="space-y-3 mb-4">
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">Your email</label>
+              <label className="text-xs text-dim mb-1 block">Your email</label>
               <input
                 type="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400 price-alert-input"
+                className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan price-alert-input"
               />
             </div>
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">
+              <label className="text-xs text-dim mb-1 block">
                 Notify me when price drops to (₹)
-                {currentPrice && <span className="text-gray-400 ml-1">· Current: {formatPriceINR(currentPrice)}</span>}
+                {currentPrice && <span className="text-[rgba(255,255,255,0.4)] ml-1">· Current: {formatPriceINR(currentPrice)}</span>}
               </label>
               <input
                 type="number"
                 placeholder="e.g. 45000"
                 value={targetPrice}
                 onChange={e => setTargetPrice(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400 price-alert-input"
+                className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan price-alert-input"
               />
             </div>
           </div>
 
           {status === 'error' && (
-            <p className="text-red-500 text-xs mb-3">{message}</p>
+            <p className="text-red-400 text-xs mb-3">{message}</p>
           )}
 
           <button
             onClick={handleSubmit}
             disabled={status === 'loading' || !email || !targetPrice}
-            className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-50">
+            className="w-full bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl py-2.5 text-sm font-semibold transition disabled:opacity-50">
             {status === 'loading' ? 'Setting alert...' : 'Set alert'}
           </button>
         </>

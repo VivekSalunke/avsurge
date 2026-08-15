@@ -28,8 +28,8 @@ export default function DeviceOfTheDay({ cards }: { cards: DeviceCard[] }) {
   return (
     <div className="mb-10">
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-base font-bold text-gray-900">⭐ Featured today</h2>
-        <span className="text-xs text-gray-400">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+        <h2 className="text-base font-bold text-white">⭐ Featured today</h2>
+        <span className="text-xs text-dim">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
       </div>
 
       <div className="relative h-96 sm:h-64">
@@ -83,7 +83,7 @@ export default function DeviceOfTheDay({ cards }: { cards: DeviceCard[] }) {
                     </div>
                     <div className="flex gap-3">
                       <Link href={`/${type}/${device.slug}`}
-                        className="inline-block bg-white text-gray-800 text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-white/90 transition">
+                        className="inline-block bg-white text-[#0a0a0c] text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-white/90 transition">
                         View specs →
                       </Link>
                       <Link href={`/${type}`}
@@ -111,7 +111,7 @@ export default function DeviceOfTheDay({ cards }: { cards: DeviceCard[] }) {
       <div className="flex items-center justify-center gap-2 mt-4">
         {cards.map((c, i) => (
           <button key={i} onClick={() => setActive(i)}
-            className={`rounded-full transition-all duration-300 ${i === active ? 'w-6 h-2 bg-blue-600' : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'}`} />
+            className={`rounded-full transition-all duration-300 ${i === active ? 'w-6 h-2 bg-neon-cyan' : 'w-2 h-2 bg-[rgba(255,255,255,0.25)] hover:bg-[rgba(255,255,255,0.5)]'}`} />
         ))}
       </div>
     </div>

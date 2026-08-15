@@ -22,19 +22,19 @@ export default function DeletePhonePage({ params }: { params: { slug: string } }
     router.push('/admin')
   }
 
-  if (loading) return <div className="max-w-md mx-auto px-4 py-16 text-center text-gray-400">Loading…</div>
-  if (!phone) return <div className="max-w-md mx-auto px-4 py-16 text-center text-gray-400">Phone not found.</div>
+  if (loading) return <div className="max-w-md mx-auto px-4 py-16 text-center text-[rgba(255,255,255,0.4)]">Loading…</div>
+  if (!phone) return <div className="max-w-md mx-auto px-4 py-16 text-center text-[rgba(255,255,255,0.4)]">Phone not found.</div>
 
   return (
-    <main className="max-w-md mx-auto px-4 py-16">
-      <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
-        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+    <main className="max-w-md mx-auto px-4 py-16 text-[var(--text)]">
+      <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-8 text-center neon-border">
+        <div className="w-16 h-16 bg-[rgba(239,68,68,0.1)] rounded-full flex items-center justify-center mx-auto mb-4">
           <span className="text-3xl">🗑️</span>
         </div>
-        <h1 className="text-xl font-bold text-gray-900 mb-2">Delete phone</h1>
-        <p className="text-sm text-gray-500 mb-2">Are you sure you want to delete</p>
-        <p className="text-base font-semibold text-gray-900 mb-1">{phone.name}</p>
-        <p className="text-sm text-gray-400 mb-8">This will also delete all specs. This cannot be undone.</p>
+        <h1 className="text-xl font-bold text-white mb-2">Delete phone</h1>
+        <p className="text-sm text-dim mb-2">Are you sure you want to delete</p>
+        <p className="text-base font-semibold text-white mb-1">{phone.name}</p>
+        <p className="text-sm text-[rgba(255,255,255,0.4)] mb-8">This will also delete all specs. This cannot be undone.</p>
 
         <div className="flex gap-3">
           <button onClick={handleDelete} disabled={deleting}
@@ -42,7 +42,7 @@ export default function DeletePhonePage({ params }: { params: { slug: string } }
             {deleting ? 'Deleting…' : 'Yes, delete'}
           </button>
           <Link href="/admin"
-            className="flex-1 border border-gray-200 text-gray-600 rounded-xl py-3 text-sm font-medium hover:bg-gray-50 transition text-center">
+            className="flex-1 border border-[rgba(255,255,255,0.1)] text-[rgba(255,255,255,0.65)] rounded-xl py-3 text-sm font-medium hover:bg-[rgba(255,255,255,0.02)] hover:text-white transition text-center">
             Cancel
           </Link>
         </div>

@@ -6,6 +6,106 @@ import { formatPriceINR } from '@/lib/format'
 
 export const revalidate = 60
 
+const BRAND_ICONS: Record<string, string> = {
+  Samsung: '🔵', Apple: '🍎', OnePlus: '🔴', Google: '🟡',
+  Xiaomi: '🟠', Realme: '🟢', Vivo: '🔷', OPPO: '🟣',
+  Nothing: '⚫', iQOO: '🔸', Motorola: '🔹',
+}
+
+const cardBase =
+  'group flex h-full flex-col rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] ' +
+  'transition-all duration-300 card-hover hover:border-[rgba(139,92,246,0.3)] hover:glow'
+
+const deviceImage = (url: string | null, name: string, fallback: string) => (
+  <div className="relative flex aspect-[4/4.5] items-center justify-center overflow-hidden bg-[linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.02))]">
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(139,92,246,0.06),transparent_60%)]" />
+    {url ? (
+      <img src={url} alt={name} loading="lazy"
+        className="relative h-full w-full object-contain p-6 transition-transform duration-500 ease-out group-hover:scale-110" />
+    ) : (
+      <span className="text-3xl opacity-60">{fallback}</span>
+    )}
+  </div>
+)
+
+function DeviceCard({ device, href, fallback }: { device: any, href: string, fallback: string }) {
+  return (
+    <Link href={href} className={cardBase}>
+      {deviceImage(device.image_url, device.name, fallback)}
+      <div className="flex flex-1 flex-col px-4 pb-4 pt-3">
+        <span className="inline-flex w-fit items-center gap-1 rounded-full neon-badge px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em]">
+          <span className="h-1.5 w-1.5 rounded-full bg-neon-cyan" />
+          {device.brand}
+        </span>
+        <h3 className="mt-2.5 line-clamp-2 text-sm font-bold leading-snug text-[var(--text)] transition-colors group-hover:text-neon-violet">
+          {device.name}
+        </h3>
+        <div className="mt-3 flex items-end justify-between gap-2">
+          {device.price_inr ? (
+            <div>
+              <p className="text-base font-extrabold tracking-tight text-white">{formatPriceINR(device.price_inr)}</p>
+              <span className="text-[10px] font-medium text-dim">Starting price</span>
+            </div>
+          ) : (
+            <p className="text-xs font-medium text-dim">Price on request</p>
+          )}
+          <span className="text-neon-cyan opacity-0 transition-opacity group-hover:opacity-100">→</span>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+function SectionHeader({ title, badge, href }: { title: string, badge?: string, href: string }) {
+  return (
+    <div className="mb-5 flex items-center justify-between gap-3">
+      <div className="flex items-center gap-3">
+        <span className="h-5 w-1 rounded-full bg-gradient-to-b from-neon-violet to-neon-cyan" />
+        <h2 className="text-xl font-bold tracking-tight text-white">{title}</h2>
+        {badge && (
+          <span className="neon-badge text-[10px] uppercase tracking-wider">{badge}</span>
+        )}
+      </div>
+      <Link href={href} className="group/link text-sm font-medium text-[rgba(255,255,255,0.55)] transition hover:text-neon-cyan">
+        See all
+        <span className="ml-1 inline-block transition-transform group-hover/link:translate-x-0.5">→</span>
+      </Link>
+    </div>
+  )
+}
+
+function BudgetGrid({ hrefPrefix, items }: { hrefPrefix: string, items: { label: string, budget: number }[] }) {
+  return (
+    <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+      {items.map(({ label, budget }) => (
+        <Link key={budget} href={`${hrefPrefix}${budget}`}
+          className="group rounded-xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] px-3 py-3.5 text-center transition-all duration-200 card-hover hover:border-[rgba(6,182,212,0.35)] hover:glow">
+          <p className="text-sm font-semibold text-[rgba(255,255,255,0.85)] transition-colors group-hover:text-neon-cyan">{label}</p>
+        </Link>
+      ))}
+    </div>
+  )
+}
+
+function UseCaseGrid({ items }: { items: { label: string, href: string }[] }) {
+  return (
+    <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+      {items.map(({ label, href }) => {
+        const [icon, ...rest] = label.split(' ')
+        return (
+          <Link key={href} href={href}
+            className="group rounded-xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] px-3 py-4 text-center transition-all duration-200 card-hover hover:border-[rgba(139,92,246,0.35)] hover:glow">
+            <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-[rgba(255,255,255,0.03)] text-lg transition-transform group-hover:scale-110">
+              {icon}
+            </div>
+            <p className="text-xs font-semibold text-[rgba(255,255,255,0.75)]">{rest.join(' ')}</p>
+          </Link>
+        )
+      })}
+    </div>
+  )
+}
+
 export default async function HomePage() {
   const [
     { data: latestPhones },
@@ -31,7 +131,6 @@ export default async function HomePage() {
     supabase.from('laptops').select('id'),
   ])
 
-  // Top rated phones
   const ratingMap: Record<number, { total: number; count: number }> = {}
   for (const r of reviews || []) {
     if (!ratingMap[r.phone_id]) ratingMap[r.phone_id] = { total: 0, count: 0 }
@@ -49,372 +148,291 @@ export default async function HomePage() {
 
   const brands = [...new Set((brandsRaw || []).map((b: any) => b.brand))].sort()
 
-  const brandIcons: Record<string, string> = {
-    Samsung: '🔵', Apple: '🍎', OnePlus: '🔴', Google: '🟡',
-    Xiaomi: '🟠', Realme: '🟢', Vivo: '🔷', OPPO: '🟣',
-    Nothing: '⚫', iQOO: '🔸', Motorola: '🔹',
-  }
-
-  const PhoneCard = ({ phone }: { phone: any }) => (
-    <Link href={`/phones/${phone.slug}`}
-      className="bg-white border border-gray-200 rounded-xl p-3 text-center hover:border-blue-400 hover:shadow-sm transition group">
-      <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
-        {phone.image_url
-          ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full" />
-          : <span className="text-4xl">📱</span>}
-      </div>
-      <p className="text-xs text-gray-400 mb-0.5">{phone.brand}</p>
-      <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{phone.name}</p>
-      {phone.price_inr && (
-        <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(phone.price_inr)}</p>
-      )}
-    </Link>
-  )
-
-  const TabletCard = ({ tablet }: { tablet: any }) => (
-    <Link href={`/tablets/${tablet.slug}`}
-      className="bg-white border border-gray-200 rounded-xl p-3 text-center hover:border-blue-400 hover:shadow-sm transition group">
-      <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
-        {tablet.image_url
-          ? <img src={tablet.image_url} alt={tablet.name} className="object-contain w-full h-full" />
-          : <span className="text-4xl">📟</span>}
-      </div>
-      <p className="text-xs text-gray-400 mb-0.5">{tablet.brand}</p>
-      <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{tablet.name}</p>
-      {tablet.price_inr && (
-        <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(tablet.price_inr)}</p>
-      )}
-    </Link>
-  )
-
-  const LaptopCard = ({ laptop }: { laptop: any }) => (
-    <Link href={`/laptops/${laptop.slug}`}
-      className="bg-white border border-gray-200 rounded-xl p-3 text-center hover:border-blue-400 hover:shadow-sm transition group">
-      <div className="w-full aspect-square bg-gray-50 rounded-lg flex items-center justify-center mb-3 overflow-hidden">
-        {laptop.image_url
-          ? <img src={laptop.image_url} alt={laptop.name} className="object-contain w-full h-full" />
-          : <span className="text-4xl">💻</span>}
-      </div>
-      <p className="text-xs text-gray-400 mb-0.5">{laptop.brand}</p>
-      <p className="text-sm font-semibold text-gray-800 leading-tight group-hover:text-blue-600 transition line-clamp-2">{laptop.name}</p>
-      {laptop.price_inr && (
-        <p className="text-xs text-blue-600 font-medium mt-1">{formatPriceINR(laptop.price_inr)}</p>
-      )}
-    </Link>
-  )
-
-  const Section = ({ title, href, phones, badge }: { title: string, href: string, phones: any[], badge?: string }) => (
-    phones.length > 0 ? (
-      <div className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3 flex-wrap">
-            <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-            {badge && <span className="text-xs bg-blue-100 text-blue-700 px-3 py-1.5 rounded-full font-semibold">{badge}</span>}
-          </div>
-          <Link href={href} className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">See all →</Link>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {phones.map((phone: any) => <PhoneCard key={phone.id} phone={phone} />)}
-        </div>
-      </div>
-    ) : null
-  )
+  const stats = [
+    { label: 'Phones', value: (allPhones?.length || 0) + '+', icon: 'M7 18c-1.26 0-2-1-2-2V7M17 6c1.26 0 2 1 2 2v9' },
+    { label: 'Tablets', value: (allTablets?.length || 0) + '+', icon: 'M4 6h16v12H4z' },
+    { label: 'Laptops', value: (allLaptops?.length || 0) + '+', icon: 'M3 7h18v10H3z' },
+    { label: 'Brands', value: brands.length + '+', icon: 'M12 21V7M7 4l5-2 5 2M5 21h14' },
+  ]
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      {/* ── Hero ─────────────────────────────────────────── */}
+      <section className="relative mb-14 overflow-hidden rounded-3xl border border-[rgba(255,255,255,0.06)] bg-[var(--panel)] px-6 py-14 sm:px-12 sm:py-20">
+        {/* Ambient glows */}
+        <div className="pointer-events-none absolute -top-32 left-1/2 h-96 w-[600px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.16),transparent_65%)] blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-40 right-0 h-80 w-80 rounded-full bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.12),transparent_65%)] blur-2xl" />
+        <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:linear-gradient(rgba(255,255,255,0.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.6)_1px,transparent_1px)] [background-size:44px_44px]" />
 
-      {/* Hero */}
-      <div className="relative bg-gradient-to-br from-blue-600 via-blue-600 to-blue-700 rounded-2xl overflow-hidden p-10 mb-12 text-white shadow-xl">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4" />
-        <div className="relative z-10">
-          <p className="text-blue-200 text-xs mb-3 uppercase tracking-widest font-semibold">India's Device Database</p>
-          <h1 className="text-5xl font-extrabold mb-4 leading-tight">Find your perfect device</h1>
-          <p className="text-blue-100 mb-8 max-w-2xl text-lg leading-relaxed">Comprehensive specs, live prices, detailed comparisons and genuine reviews for every phone, tablet and laptop available in India.</p>
-          <div className="flex flex-wrap gap-3">
-            <Link href="/phones" className="bg-white text-blue-600 px-6 py-3 rounded-lg text-sm font-semibold hover:bg-blue-50 transition shadow-lg hover:shadow-xl hover:-translate-y-0.5">
-              📱 Browse phones
-            </Link>
-            <Link href="/tablets" className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-white/30 transition border border-white/30">
-              📟 Browse tablets
-            </Link>
-            <Link href="/laptops" className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-white/30 transition border border-white/30">
-              💻 Browse laptops
-            </Link>
-            <Link href="/compare" className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-white/30 transition border border-white/30">
-              ⚖️ Compare
-            </Link>
-            <Link href="/leaderboard" className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-white/30 transition border border-white/30">
-              🔥 Trending
-            </Link>
+        <div className="relative z-10 grid items-center gap-12 lg:grid-cols-2">
+          <div>
+            <p className="mb-4 inline-flex items-center gap-2 rounded-full neon-badge text-[11px] uppercase tracking-[0.14em]">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-neon-cyan" />
+              India&apos;s Device Database
+            </p>
+            <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-6xl">
+              Find your perfect{' '}
+              <span className="bg-gradient-to-r from-neon-violet via-[#a78bfa] to-neon-cyan bg-clip-text text-transparent">
+                device
+              </span>
+            </h1>
+            <p className="mt-5 max-w-lg text-base leading-relaxed text-[rgba(255,255,255,0.65)] sm:text-lg">
+              Comprehensive specs, live prices, detailed comparisons and genuine reviews for every phone, tablet and laptop available in India.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/phones"
+                className="rounded-lg bg-gradient-to-r from-neon-violet to-neon-cyan px-6 py-3 text-sm font-semibold text-black transition-all duration-200 hover:brightness-110 hover:shadow-[0_8px_30px_rgba(139,92,246,0.4)]">
+                Browse phones
+              </Link>
+              <Link href="/compare"
+                className="rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] px-6 py-3 text-sm font-semibold text-[rgba(255,255,255,0.85)] transition-all duration-200 hover:border-neon-violet hover:text-white hover:glow">
+                Compare devices
+              </Link>
+              <Link href="/leaderboard"
+                className="rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] px-6 py-3 text-sm font-semibold text-[rgba(255,255,255,0.85)] transition-all duration-200 hover:border-neon-cyan hover:text-white hover:glow">
+                Trending now
+              </Link>
+            </div>
+          </div>
+
+          {/* Terminal visualizer */}
+          <div className="relative">
+            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-neon-violet/20 to-neon-cyan/20 blur-lg" />
+            <div className="relative overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[#050507] shadow-2xl">
+              <div className="flex items-center gap-1.5 border-b border-[rgba(255,255,255,0.05)] px-4 py-3">
+                <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+                <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
+                <span className="h-3 w-3 rounded-full bg-[#28c840]" />
+                <span className="ml-3 font-mono text-xs text-[rgba(255,255,255,0.45)]">avsurge — device finder</span>
+              </div>
+              <div className="space-y-2.5 p-5 font-mono text-[13px] leading-relaxed">
+                <p><span className="text-neon-cyan">$</span> <span className="text-[rgba(255,255,255,0.9)]">avsurge find --budget 30000 --gaming</span></p>
+                <p className="text-[rgba(255,255,255,0.45)]">▸ Scanning 250+ devices across India...</p>
+                <p className="text-[rgba(255,255,255,0.45)]">▸ Ranking by spec score, price &amp; reviews...</p>
+                <p className="pt-1"><span className="text-neon-violet">✓</span> <span className="text-white">POCO X6 Pro</span> <span className="text-[rgba(255,255,255,0.45)]">· ₹26,999 · Score 86</span></p>
+                <p><span className="text-neon-violet">✓</span> <span className="text-white">iQOO Neo 9</span> <span className="text-[rgba(255,255,255,0.45)]">· ₹27,999 · Score 84</span></p>
+                <p><span className="text-neon-violet">✓</span> <span className="text-white">OnePlus Nord CE 4</span> <span className="text-[rgba(255,255,255,0.45)]">· ₹24,999 · Score 81</span></p>
+                <p className="pt-1"><span className="text-neon-cyan">$</span><span className="cursor" /></p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <DeviceOfTheDayWrapper />
-
-      {/* Stats bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-12">
-        {[
-          { label: 'Phones', value: (allPhones?.length || 0) + '+', icon: '📱' },
-          { label: 'Tablets', value: (allTablets?.length || 0) + '+', icon: '📟' },
-          { label: 'Brands', value: brands.length + '+', icon: '🏷️' },
-          { label: 'Laptops', value: (allLaptops?.length || 0) + '+', icon: '💻' },
-        ].map(stat => (
-          <div key={stat.label} className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-lg p-4 text-center shadow-sm hover:shadow-md transition hover:border-blue-300">
-            <div className="text-3xl mb-2">{stat.icon}</div>
-            <div className="text-2xl font-extrabold text-gray-900">{stat.value}</div>
-            <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 mt-1">{stat.label}</div>
+      {/* ── Stats bar ────────────────────────────────────── */}
+      <div className="mb-14 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {stats.map(stat => (
+          <div key={stat.label}
+            className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-5 text-center transition-all duration-200 card-hover hover:border-[rgba(139,92,246,0.3)] hover:glow">
+            <svg className="mx-auto mb-3 h-6 w-6 text-neon-violet" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d={stat.icon} />
+            </svg>
+            <div className="bg-gradient-to-r from-white to-[rgba(255,255,255,0.6)] bg-clip-text text-3xl font-extrabold tracking-tight text-transparent">
+              {stat.value}
+            </div>
+            <div className="mt-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-dim">{stat.label}</div>
           </div>
         ))}
       </div>
 
+      <DeviceOfTheDayWrapper />
       <RecentlyViewedHome />
 
-      {/* Browse by Budget - Phones */}
-      <div className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Browse phones by budget</h2>
+      {/* ── Browse by budget ─────────────────────────────── */}
+      <section className="mb-14">
+        <div className="mb-5 flex items-center gap-3">
+          <span className="h-5 w-1 rounded-full bg-gradient-to-b from-neon-violet to-neon-cyan" />
+          <h2 className="text-xl font-bold tracking-tight text-white">Browse by budget</h2>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-          {[
-            { label: 'Under ₹10K', budget: 10000 },
-            { label: 'Under ₹15K', budget: 15000 },
-            { label: 'Under ₹20K', budget: 20000 },
-            { label: 'Under ₹30K', budget: 30000 },
-            { label: 'Under ₹50K', budget: 50000 },
-            { label: 'Under ₹1L', budget: 100000 },
-          ].map(({ label, budget }) => (
-            <Link key={budget} href={`/best-phones/${budget}`}
-              className="group bg-white border border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition">
-              <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">💰</div>
-              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{label}</p>
-            </Link>
+        <div className="grid gap-8 lg:grid-cols-3">
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-dim">Phones</p>
+            <BudgetGrid hrefPrefix="/best-phones/" items={[
+              { label: 'Under ₹10K', budget: 10000 },
+              { label: 'Under ₹20K', budget: 20000 },
+              { label: 'Under ₹30K', budget: 30000 },
+              { label: 'Under ₹50K', budget: 50000 },
+              { label: 'Under ₹1L', budget: 100000 },
+            ]} />
+          </div>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-dim">Tablets</p>
+            <BudgetGrid hrefPrefix="/best-tablets/" items={[
+              { label: 'Under ₹20K', budget: 20000 },
+              { label: 'Under ₹30K', budget: 30000 },
+              { label: 'Under ₹50K', budget: 50000 },
+              { label: 'Under ₹1L', budget: 100000 },
+              { label: 'Under ₹1.5L', budget: 150000 },
+            ]} />
+          </div>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-dim">Laptops</p>
+            <BudgetGrid hrefPrefix="/best-laptops/" items={[
+              { label: 'Under ₹50K', budget: 50000 },
+              { label: 'Under ₹70K', budget: 70000 },
+              { label: 'Under ₹1L', budget: 100000 },
+              { label: 'Under ₹1.5L', budget: 150000 },
+              { label: 'Under ₹2L', budget: 200000 },
+            ]} />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Latest phones ────────────────────────────────── */}
+      <section className="mb-14">
+        <SectionHeader title="Latest phones" badge="New" href="/phones" />
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          {(latestPhones || []).map((phone: any) => (
+            <DeviceCard key={phone.id} device={phone} href={`/phones/${phone.slug}`} fallback="📱" />
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Browse by Budget - Tablets */}
-      <div className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Browse tablets by budget</h2>
-          <Link href="/tablets" className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">All tablets →</Link>
-        </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-          {[
-            { label: 'Under ₹10K', budget: 10000 },
-            { label: 'Under ₹20K', budget: 20000 },
-            { label: 'Under ₹30K', budget: 30000 },
-            { label: 'Under ₹50K', budget: 50000 },
-            { label: 'Under ₹1L', budget: 100000 },
-            { label: 'Under ₹1.5L', budget: 150000 },
-          ].map(({ label, budget }) => (
-            <Link key={budget} href={`/best-tablets/${budget}`}
-              className="group bg-white border border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition">
-              <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">📟</div>
-              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{label}</p>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Browse by Budget - Laptops */}
-      <div className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Browse laptops by budget</h2>
-          <Link href="/laptops" className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">All laptops →</Link>
-        </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-          {[
-            { label: 'Under ₹30K', budget: 30000 },
-            { label: 'Under ₹50K', budget: 50000 },
-            { label: 'Under ₹70K', budget: 70000 },
-            { label: 'Under ₹1L', budget: 100000 },
-            { label: 'Under ₹1.5L', budget: 150000 },
-            { label: 'Under ₹2L', budget: 200000 },
-          ].map(({ label, budget }) => (
-            <Link key={budget} href={`/best-laptops/${budget}`}
-              className="group bg-white border border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition">
-              <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">💻</div>
-              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{label}</p>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Latest phones */}
-      <Section title="Latest phones" href="/phones" phones={latestPhones || []} badge="New" />
-
-      {/* Top rated */}
+      {/* ── Top rated ────────────────────────────────────── */}
       {topRated.length > 0 && (
-        <Section title="Top rated" href="/phones" phones={topRated} badge="⭐ Rated" />
+        <section className="mb-14">
+          <SectionHeader title="Top rated" badge="Rated" href="/phones" />
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {topRated.map((phone: any) => (
+              <DeviceCard key={phone.id} device={phone} href={`/phones/${phone.slug}`} fallback="📱" />
+            ))}
+          </div>
+        </section>
       )}
 
-      {/* Budget phones */}
-      <Section title="Best under ₹40,000" href="/phones?maxPrice=40000" phones={budgetPhones || []} badge="Budget" />
+      {/* ── Budget / premium ─────────────────────────────── */}
+      <div className="mb-14 grid gap-10 lg:grid-cols-2">
+        <section>
+          <SectionHeader title="Best under ₹40K" badge="Budget" href="/phones?maxPrice=40000" />
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {(budgetPhones || []).map((phone: any) => (
+              <DeviceCard key={phone.id} device={phone} href={`/phones/${phone.slug}`} fallback="📱" />
+            ))}
+          </div>
+        </section>
+        <section>
+          <SectionHeader title="Premium phones" badge="Flagship" href="/phones?minPrice=80000" />
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {(premiumPhones || []).map((phone: any) => (
+              <DeviceCard key={phone.id} device={phone} href={`/phones/${phone.slug}`} fallback="📱" />
+            ))}
+          </div>
+        </section>
+      </div>
 
-      {/* Premium phones */}
-      <Section title="Premium phones" href="/phones?minPrice=80000" phones={premiumPhones || []} badge="Flagship" />
-
-      {/* Tablets section */}
+      {/* ── Tablets ──────────────────────────────────────── */}
       {(latestTablets || []).length > 0 && (
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-gray-900">Latest tablets</h2>
-              <span className="text-xs bg-blue-100 text-blue-600 px-2.5 py-1 rounded-full font-medium">📟 New</span>
-            </div>
-            <Link href="/tablets" className="text-sm text-blue-600 hover:underline">See all →</Link>
+        <section className="mb-14">
+          <SectionHeader title="Latest tablets" badge="New" href="/tablets" />
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {(latestTablets || []).map((tablet: any) => (
+              <DeviceCard key={tablet.id} device={tablet} href={`/tablets/${tablet.slug}`} fallback="📟" />
+            ))}
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {(latestTablets || []).map((tablet: any) => <TabletCard key={tablet.id} tablet={tablet} />)}
-          </div>
-        </div>
+        </section>
       )}
 
-      {/* Latest laptops */}
+      {/* ── Laptops ──────────────────────────────────────── */}
       {(latestLaptops || []).length > 0 && (
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-gray-900">Latest laptops</h2>
-              <span className="text-xs bg-blue-100 text-blue-600 px-2.5 py-1 rounded-full font-medium">💻 New</span>
-            </div>
-            <Link href="/laptops" className="text-sm text-blue-600 hover:underline">See all →</Link>
+        <section className="mb-14">
+          <SectionHeader title="Latest laptops" badge="New" href="/laptops" />
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {(latestLaptops || []).map((laptop: any) => (
+              <DeviceCard key={laptop.id} device={laptop} href={`/laptops/${laptop.slug}`} fallback="💻" />
+            ))}
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {(latestLaptops || []).map((laptop: any) => <LaptopCard key={laptop.id} laptop={laptop} />)}
-          </div>
-        </div>
+        </section>
       )}
 
-      {/* Browse by use case - Phones */}
-      <div className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Browse phones by use case</h2>
-        </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-          {[
+      {/* ── Browse by use case ───────────────────────────── */}
+      <div className="mb-14 grid gap-10 lg:grid-cols-3">
+        <section>
+          <div className="mb-5 flex items-center gap-3">
+            <span className="h-5 w-1 rounded-full bg-gradient-to-b from-neon-violet to-neon-cyan" />
+            <h2 className="text-lg font-bold tracking-tight text-white">Phones by use case</h2>
+          </div>
+          <UseCaseGrid items={[
             { label: '🎮 Gaming', href: '/best-phones-for/gaming' },
             { label: '📷 Camera', href: '/best-phones-for/camera' },
             { label: '🔋 Battery', href: '/best-phones-for/battery' },
             { label: '🎓 Students', href: '/best-phones-for/students' },
             { label: '📡 5G', href: '/best-phones-for/5g' },
             { label: '💼 Business', href: '/best-phones-for/business' },
-          ].map(item => (
-            <Link key={item.href} href={item.href}
-              className="group bg-white border border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition">
-              <p className="text-3xl mb-2 group-hover:scale-110 transition-transform">{item.label.split(' ')[0]}</p>
-              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{item.label.split(' ').slice(1).join(' ')}</p>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Browse by use case - Tablets */}
-      <div className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Browse tablets by use case</h2>
-        </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-          {[
+          ]} />
+        </section>
+        <section>
+          <div className="mb-5 flex items-center gap-3">
+            <span className="h-5 w-1 rounded-full bg-gradient-to-b from-neon-violet to-neon-cyan" />
+            <h2 className="text-lg font-bold tracking-tight text-white">Tablets by use case</h2>
+          </div>
+          <UseCaseGrid items={[
             { label: '✏️ Drawing', href: '/best-tablets-for/drawing' },
             { label: '🎓 Students', href: '/best-tablets-for/students' },
             { label: '🎮 Gaming', href: '/best-tablets-for/gaming' },
             { label: '👶 Kids', href: '/best-tablets-for/kids' },
             { label: '🎬 Entertainment', href: '/best-tablets-for/entertainment' },
             { label: '💼 Work', href: '/best-tablets-for/work' },
-          ].map(item => (
-            <Link key={item.href} href={item.href}
-              className="group bg-white border border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition">
-              <p className="text-3xl mb-2 group-hover:scale-110 transition-transform">{item.label.split(' ')[0]}</p>
-              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{item.label.split(' ').slice(1).join(' ')}</p>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Browse by use case - Laptops */}
-      <div className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Browse laptops by use case</h2>
-        </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-          {[
+          ]} />
+        </section>
+        <section>
+          <div className="mb-5 flex items-center gap-3">
+            <span className="h-5 w-1 rounded-full bg-gradient-to-b from-neon-violet to-neon-cyan" />
+            <h2 className="text-lg font-bold tracking-tight text-white">Laptops by use case</h2>
+          </div>
+          <UseCaseGrid items={[
             { label: '🎮 Gaming', href: '/best-laptops-for/gaming' },
             { label: '🎬 Video Editing', href: '/best-laptops-for/video-editing' },
             { label: '🎓 Students', href: '/best-laptops-for/students' },
             { label: '💼 Business', href: '/best-laptops-for/business' },
             { label: '💻 Programming', href: '/best-laptops-for/programming' },
             { label: '✈️ Lightweight', href: '/best-laptops-for/lightweight' },
+          ]} />
+        </section>
+      </div>
+
+      {/* ── Quick actions ────────────────────────────────── */}
+      <section className="mb-14">
+        <div className="mb-5 flex items-center gap-3">
+          <span className="h-5 w-1 rounded-full bg-gradient-to-b from-neon-violet to-neon-cyan" />
+          <h2 className="text-xl font-bold tracking-tight text-white">Explore AVSurge</h2>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
+          {[
+            { href: '/compare', icon: '⚖️', title: 'Compare Phones', desc: 'Side by side' },
+            { href: '/compare-tablets', icon: '📊', title: 'Compare Tablets', desc: 'Side by side' },
+            { href: '/compare-laptops', icon: '🖥️', title: 'Compare Laptops', desc: 'Side by side' },
+            { href: '/search', icon: '🔍', title: 'Search', desc: 'By specs & budget' },
+            { href: '/leaderboard', icon: '🔥', title: 'Trending', desc: 'Most viewed' },
+            { href: '/ai-recommend', icon: '🤖', title: 'AI Recommender', desc: 'Get suggestions' },
+            { href: '/brands', icon: '🏷️', title: 'All Brands', desc: 'Browse by brand' },
           ].map(item => (
             <Link key={item.href} href={item.href}
-              className="group bg-white border border-gray-200 rounded-lg p-4 text-center hover:border-blue-400 hover:shadow-md transition">
-              <p className="text-3xl mb-2 group-hover:scale-110 transition-transform">{item.label.split(' ')[0]}</p>
-              <p className="text-xs font-semibold text-gray-700 group-hover:text-blue-600 transition">{item.label.split(' ').slice(1).join(' ')}</p>
+              className="group rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4 text-center transition-all duration-200 card-hover hover:border-[rgba(139,92,246,0.35)] hover:glow">
+              <div className="mx-auto mb-2.5 flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(255,255,255,0.03)] text-xl transition-transform group-hover:scale-110">
+                {item.icon}
+              </div>
+              <h3 className="text-xs font-bold text-white transition-colors group-hover:text-neon-cyan">{item.title}</h3>
+              <p className="mt-0.5 text-[10px] text-dim">{item.desc}</p>
             </Link>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Quick actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 mb-12">
-        <Link href="/compare" className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition">
-          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">⚖️</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Compare Phones</h3>
-          <p className="text-xs text-gray-500">Side by side</p>
-        </Link>
-        <Link href="/compare-tablets" className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition">
-          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">📊</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Compare Tablets</h3>
-          <p className="text-xs text-gray-500">Side by side</p>
-        </Link>
-        <Link href="/compare-laptops" className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition">
-          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">🖥️</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Compare Laptops</h3>
-          <p className="text-xs text-gray-500">Side by side</p>
-        </Link>
-        <Link href="/search" className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition">
-          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">🔍</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">Search</h3>
-          <p className="text-xs text-gray-500">By specs & budget</p>
-        </Link>
-        <Link href="/leaderboard" className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-orange-300 hover:shadow-md transition">
-          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">🔥</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-orange-600 text-sm">Trending</h3>
-          <p className="text-xs text-gray-500">Most viewed</p>
-        </Link>
-        <Link href="/ai-recommend" className="group bg-white border border-purple-200 rounded-xl p-5 hover:border-purple-300 hover:shadow-md transition">
-          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">🤖</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-purple-600 text-sm">AI Recommender</h3>
-          <p className="text-xs text-gray-500">Get suggestions</p>
-        </Link>
-        <Link href="/brands" className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition">
-          <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">🏷️</div>
-          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 text-sm">All Brands</h3>
-          <p className="text-xs text-gray-500">Browse by brand</p>
-        </Link>
-      </div>
-
-      {/* Brands */}
+      {/* ── Brands ───────────────────────────────────────── */}
       {brands.length > 0 && (
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Browse by brand</h2>
-            <Link href="/brands" className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">All brands →</Link>
-          </div>
+        <section>
+          <SectionHeader title="Browse by brand" href="/brands" />
           <div className="flex flex-wrap gap-2">
             {brands.map((brand: any) => (
               <Link key={brand} href={`/brands/${encodeURIComponent(brand)}`}
-                className="group flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:border-blue-400 hover:text-blue-600 transition hover:shadow-sm">
-                <span className="text-lg">{brandIcons[brand] || '📱'}</span>
+                className="group flex items-center gap-2 rounded-xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] px-4 py-2 text-sm font-medium text-[rgba(255,255,255,0.75)] transition-all duration-200 hover:border-[rgba(6,182,212,0.4)] hover:text-neon-cyan hover:glow">
+                <span className="text-base">{BRAND_ICONS[brand] || '▫'}</span>
                 {brand}
               </Link>
             ))}
           </div>
-        </div>
+        </section>
       )}
-
     </main>
   )
 }

@@ -301,7 +301,7 @@ export default function PhoneFilters({
             Search phones
           </label>
 
-          <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-gray-400">
+          <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-dim">
             <svg
               className="h-5 w-5"
               viewBox="0 0 24 24"

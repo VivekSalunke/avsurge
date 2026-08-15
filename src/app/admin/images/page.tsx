@@ -101,40 +101,40 @@ export default function AdminImagesPage() {
   const emoji = mode === 'phones' ? '📱' : mode === 'tablets' ? '📟' : '💻'
   const folder = mode
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen"><div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" /></div>
+  if (loading) return <div className="flex items-center justify-center min-h-screen text-[var(--text)]"><div className="w-8 h-8 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin" /></div>
 
   return (
-    <main className="max-w-5xl mx-auto px-4 py-8">
+    <main className="max-w-5xl mx-auto px-4 py-8 text-[var(--text)]">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Image Manager</h1>
-          <p className="text-sm text-gray-400 mt-1">Manage device images via GitHub</p>
+          <h1 className="text-xl font-bold text-white">Image Manager</h1>
+          <p className="text-sm text-[rgba(255,255,255,0.4)] mt-1">Manage device images via GitHub</p>
         </div>
-        <Link href="/admin" className="text-sm text-blue-600 hover:underline">← Admin</Link>
+        <Link href="/admin" className="text-sm text-neon-cyan hover:underline">← Admin</Link>
       </div>
 
       {/* GitHub info box */}
-      <div className="bg-gray-900 text-gray-100 rounded-2xl p-5 mb-6 text-sm">
+      <div className="bg-[var(--panel)] text-[var(--text)] rounded-2xl p-5 mb-6 text-sm neon-border">
         <p className="font-semibold mb-2">📦 GitHub Image Repo Setup</p>
-        <p className="text-gray-400 text-xs mb-3">Upload device images to your GitHub repo and use jsDelivr CDN for fast delivery.</p>
+        <p className="text-dim text-xs mb-3">Upload device images to your GitHub repo and use jsDelivr CDN for fast delivery.</p>
         <div className="space-y-1.5 text-xs">
-          <p>1. Create repo: <code className="bg-gray-800 px-2 py-0.5 rounded text-green-400">github.com/{GITHUB_USER}/{GITHUB_REPO}</code> (Public)</p>
-          <p>2. Create folders: <code className="bg-gray-800 px-2 py-0.5 rounded text-green-400">phones/</code> <code className="bg-gray-800 px-2 py-0.5 rounded text-green-400">tablets/</code> <code className="bg-gray-800 px-2 py-0.5 rounded text-green-400">laptops/</code></p>
-          <p>3. Name images by slug: <code className="bg-gray-800 px-2 py-0.5 rounded text-green-400">samsung-galaxy-s25.jpg</code></p>
-          <p>4. Click <span className="text-blue-400">Auto-fill URL</span> below to generate CDN links automatically</p>
+          <p>1. Create repo: <code className="bg-[rgba(255,255,255,0.04)] px-2 py-0.5 rounded text-[#34d399]">github.com/{GITHUB_USER}/{GITHUB_REPO}</code> (Public)</p>
+          <p>2. Create folders: <code className="bg-[rgba(255,255,255,0.04)] px-2 py-0.5 rounded text-[#34d399]">phones/</code> <code className="bg-[rgba(255,255,255,0.04)] px-2 py-0.5 rounded text-[#34d399]">tablets/</code> <code className="bg-[rgba(255,255,255,0.04)] px-2 py-0.5 rounded text-[#34d399]">laptops/</code></p>
+          <p>3. Name images by slug: <code className="bg-[rgba(255,255,255,0.04)] px-2 py-0.5 rounded text-[#34d399]">samsung-galaxy-s25.jpg</code></p>
+          <p>4. Click <span className="text-neon-cyan">Auto-fill URL</span> below to generate CDN links automatically</p>
         </div>
-        <div className="mt-3 pt-3 border-t border-gray-700 text-xs text-gray-400">
-          CDN URL format: <code className="text-green-400">https://cdn.jsdelivr.net/gh/{GITHUB_USER}/{GITHUB_REPO}@{GITHUB_BRANCH}/{folder}/[slug].{ext}</code>
+        <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)] text-xs text-[rgba(255,255,255,0.4)]">
+          CDN URL format: <code className="text-[#34d399]">https://cdn.jsdelivr.net/gh/{GITHUB_USER}/{GITHUB_REPO}@{GITHUB_BRANCH}/{folder}/[slug].{ext}</code>
         </div>
       </div>
 
-      {msg && <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-2 text-sm text-green-700 mb-4">{msg}</div>}
+      {msg && <div className="bg-[rgba(16,185,129,0.06)] border border-[rgba(16,185,129,0.2)] rounded-xl px-4 py-2 text-sm text-[#34d399] mb-4">{msg}</div>}
 
       {/* Mode toggle */}
-      <div className="flex gap-2 mb-5 bg-white border border-gray-200 rounded-xl p-1 w-fit">
+      <div className="flex gap-2 mb-5 bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-1 w-fit neon-border">
         {(['phones', 'tablets', 'laptops'] as DeviceType[]).map(m => (
           <button key={m} onClick={() => { setMode(m); setEditingId(null) }}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${mode === m ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${mode === m ? 'bg-gradient-to-r from-neon-violet to-neon-cyan text-black' : 'text-dim hover:text-[rgba(255,255,255,0.85)]'}`}>
             {m === 'phones' ? '📱' : m === 'tablets' ? '📟' : '💻'} {m.charAt(0).toUpperCase() + m.slice(1)}
           </button>
         ))}
@@ -144,22 +144,22 @@ export default function AdminImagesPage() {
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <div className="flex gap-2">
           <button onClick={() => setFilter('missing')}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${filter === 'missing' ? 'bg-orange-500 text-white border-orange-500' : 'border-gray-200 text-gray-500 hover:border-orange-400'}`}>
+            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${filter === 'missing' ? 'bg-orange-500 text-white border-orange-500' : 'border-[rgba(255,255,255,0.1)] text-dim hover:border-orange-400'}`}>
             ⚠️ Missing ({missingCount})
           </button>
           <button onClick={() => setFilter('all')}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${filter === 'all' ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-500 hover:border-blue-400'}`}>
+            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${filter === 'all' ? 'bg-gradient-to-r from-neon-violet to-neon-cyan text-black border-transparent' : 'border-[rgba(255,255,255,0.1)] text-dim hover:border-neon-cyan'}`}>
             All ({devices.length})
           </button>
         </div>
         <input placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)}
-          className="border border-gray-200 rounded-xl px-3 py-2 text-sm flex-1 max-w-xs focus:outline-none focus:border-blue-400"
+          className="border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm flex-1 max-w-xs focus:outline-none focus:border-neon-cyan"
           style={{ color: '#111827', backgroundColor: '#ffffff' }} />
         <div className="flex items-center gap-2 ml-auto">
-          <span className="text-xs text-gray-400">File ext:</span>
+          <span className="text-xs text-[rgba(255,255,255,0.4)]">File ext:</span>
           {['jpg', 'png', 'webp'].map(e => (
             <button key={e} onClick={() => setExt(e)}
-              className={`text-xs px-2.5 py-1 rounded-full border transition ${ext === e ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-500 hover:border-blue-400'}`}>
+              className={`text-xs px-2.5 py-1 rounded-full border transition ${ext === e ? 'bg-gradient-to-r from-neon-violet to-neon-cyan text-black border-transparent' : 'border-[rgba(255,255,255,0.1)] text-dim hover:border-neon-cyan'}`}>
               .{e}
             </button>
           ))}
@@ -171,17 +171,17 @@ export default function AdminImagesPage() {
       </div>
 
       {fetching ? (
-        <div className="text-center py-20"><div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" /></div>
+        <div className="text-center py-20"><div className="w-8 h-8 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin mx-auto" /></div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white border border-dashed border-gray-200 rounded-2xl py-16 text-center">
+        <div className="bg-[var(--card-bg)] border border-dashed border-[rgba(255,255,255,0.06)] rounded-2xl py-16 text-center neon-border">
           <p className="text-4xl mb-3">🎉</p>
-          <p className="text-sm text-gray-500">All {mode} have images!</p>
+          <p className="text-sm text-dim">All {mode} have images!</p>
         </div>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+        <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl overflow-hidden neon-border">
           <table className="w-full">
             <thead>
-              <tr className="text-xs text-gray-400 border-b border-gray-100 bg-gray-50">
+              <tr className="text-xs text-[rgba(255,255,255,0.4)] border-b border-[rgba(255,255,255,0.04)] bg-[rgba(255,255,255,0.02)]">
                 <th className="px-4 py-3 text-left">Preview</th>
                 <th className="px-4 py-3 text-left">Device</th>
                 <th className="px-4 py-3 text-left">Slug</th>
@@ -191,9 +191,9 @@ export default function AdminImagesPage() {
             </thead>
             <tbody>
               {filtered.map((device, i) => (
-                <tr key={device.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
+                <tr key={device.id} className={i % 2 === 0 ? 'bg-[var(--card-bg)]' : 'bg-[rgba(255,255,255,0.02)]'}>
                   <td className="px-4 py-3">
-                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                    <div className="w-12 h-12 bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center overflow-hidden">
                       {device.image_url
                         ? <img src={device.image_url} alt={device.name} className="object-contain w-full h-full p-1"
                             onError={e => { (e.target as HTMLImageElement).src = '' }} />
@@ -201,22 +201,22 @@ export default function AdminImagesPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <p className="text-sm font-medium text-gray-800">{device.name}</p>
-                    <p className="text-xs text-gray-400">{device.brand}</p>
+                    <p className="text-sm font-medium text-white">{device.name}</p>
+                    <p className="text-xs text-[rgba(255,255,255,0.4)]">{device.brand}</p>
                   </td>
                   <td className="px-4 py-3">
-                    <code className="text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-600">{device.slug}</code>
+                    <code className="text-xs bg-[rgba(255,255,255,0.04)] px-2 py-0.5 rounded text-[rgba(255,255,255,0.65)]">{device.slug}</code>
                   </td>
                   <td className="px-4 py-3 max-w-xs">
                     {editingId === device.id ? (
                       <input value={editUrl} onChange={e => setEditUrl(e.target.value)}
                         placeholder="https://..."
-                        className="w-full border border-blue-400 rounded-lg px-3 py-1.5 text-xs focus:outline-none"
+                        className="w-full border border-neon-cyan rounded-lg px-3 py-1.5 text-xs focus:outline-none"
                         style={{ color: '#111827', backgroundColor: '#ffffff' }}
                         onKeyDown={e => e.key === 'Enter' && saveImage(device.id)}
                         autoFocus />
                     ) : (
-                      <p className="text-xs text-gray-400 truncate">
+                      <p className="text-xs text-[rgba(255,255,255,0.4)] truncate">
                         {device.image_url || <span className="text-orange-400">No image</span>}
                       </p>
                     )}
@@ -225,22 +225,22 @@ export default function AdminImagesPage() {
                     {editingId === device.id ? (
                       <div className="flex gap-1.5">
                         <button onClick={() => saveImage(device.id)} disabled={saving === device.id}
-                          className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition disabled:opacity-50">
+                          className="text-xs bg-gradient-to-r from-neon-violet to-neon-cyan text-black px-3 py-1.5 rounded-lg transition disabled:opacity-50">
                           {saving === device.id ? '...' : 'Save'}
                         </button>
                         <button onClick={() => { setEditingId(null); setEditUrl('') }}
-                          className="text-xs border border-gray-200 px-2 py-1.5 rounded-lg hover:border-gray-400 transition">
+                          className="text-xs border border-[rgba(255,255,255,0.1)] px-2 py-1.5 rounded-lg hover:border-neon-violet transition">
                           ✕
                         </button>
                       </div>
                     ) : (
                       <div className="flex gap-2">
                         <button onClick={() => startEdit(device)}
-                          className="text-xs text-blue-600 hover:underline">
+                          className="text-xs text-neon-cyan hover:underline">
                           {device.image_url ? 'Edit' : '+ Add'}
                         </button>
                         <button onClick={() => applyGithubUrl(device)}
-                          className="text-xs text-green-600 hover:underline">
+                          className="text-xs text-[#34d399] hover:underline">
                           Auto URL
                         </button>
                       </div>

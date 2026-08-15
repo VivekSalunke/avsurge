@@ -36,11 +36,11 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
   const chartMin = minPrice * 0.95
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 bg-gray-50 border-b border-gray-100">
-        <span className="text-sm font-semibold text-gray-700">Price History</span>
+    <div className="bg-[var(--card-bg)] rounded-2xl border border-[rgba(255,255,255,0.06)] overflow-hidden neon-border">
+      <div className="flex items-center justify-between px-5 py-4 bg-[rgba(255,255,255,0.02)] border-b border-[rgba(255,255,255,0.04)]">
+        <span className="text-sm font-semibold text-[rgba(255,255,255,0.85)]">Price History</span>
         {priceChange !== 0 && (
-          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${priceDrop ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${priceDrop ? 'badge-green' : 'badge-red'}`}>
             {priceDrop ? 'Down' : 'Up'} {formatPriceINR(Math.abs(priceChange))} since launch
           </span>
         )}
@@ -48,17 +48,17 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
 
       <div className="px-5 py-4">
         <div className="grid grid-cols-3 gap-3 mb-5">
-          <div className="bg-gray-50 rounded-xl p-3 text-center">
-            <p className="text-xs text-gray-400 mb-1">Lowest</p>
-            <p className="text-sm font-bold text-green-600">{formatPriceINR(minPrice)}</p>
+          <div className="bg-[rgba(255,255,255,0.02)] rounded-xl p-3 text-center">
+            <p className="text-xs text-dim mb-1">Lowest</p>
+            <p className="text-sm font-bold text-green-400">{formatPriceINR(minPrice)}</p>
           </div>
-          <div className="bg-gray-50 rounded-xl p-3 text-center">
-            <p className="text-xs text-gray-400 mb-1">Current</p>
-            <p className="text-sm font-bold text-blue-600">{formatPriceINR((currentPrice || latestPrice))}</p>
+          <div className="bg-[rgba(255,255,255,0.02)] rounded-xl p-3 text-center">
+            <p className="text-xs text-dim mb-1">Current</p>
+            <p className="text-sm font-bold text-neon-cyan">{formatPriceINR((currentPrice || latestPrice))}</p>
           </div>
-          <div className="bg-gray-50 rounded-xl p-3 text-center">
-            <p className="text-xs text-gray-400 mb-1">Highest</p>
-            <p className="text-sm font-bold text-red-500">{formatPriceINR(maxPrice)}</p>
+          <div className="bg-[rgba(255,255,255,0.02)] rounded-xl p-3 text-center">
+            <p className="text-xs text-dim mb-1">Highest</p>
+            <p className="text-sm font-bold text-red-400">{formatPriceINR(maxPrice)}</p>
           </div>
         </div>
 
@@ -70,13 +70,13 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
             return (
               <div key={entry.id} className="flex-1 flex flex-col items-center group relative h-full justify-end">
                 <div
-                  className={`w-full rounded-t-md ${isLatest ? 'bg-blue-500' : 'bg-blue-200 group-hover:bg-blue-300'} transition-all`}
+                  className={`w-full rounded-t-md ${isLatest ? 'bg-neon-cyan' : 'bg-[rgba(6,182,212,0.3)] group-hover:bg-[rgba(6,182,212,0.5)]'} transition-all`}
                   style={{ height: `${Math.max(heightPct, 8)}%` }}
                 />
-                <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none z-10">
+                <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] text-white text-xs rounded px-2 py-1 whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none z-10">
                   {formatPriceINR(entry.price_inr)}
                   <br />
-                  <span className="text-gray-400">{new Date(entry.tracked_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</span>
+                  <span className="text-dim">{new Date(entry.tracked_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</span>
                 </div>
               </div>
             )
@@ -87,7 +87,7 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
           {history.map((entry, i) => (
             <div key={entry.id} className="flex-1 text-center">
               {(i === 0 || i === history.length - 1) && (
-                <p className="text-xs text-gray-400 truncate">
+                <p className="text-xs text-dim truncate">
                   {new Date(entry.tracked_at).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' })}
                 </p>
               )}

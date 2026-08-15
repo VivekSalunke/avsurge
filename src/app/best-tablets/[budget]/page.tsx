@@ -71,21 +71,21 @@ export default async function UnderBudgetTabletsPage({ params }: { params: Promi
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8">
+    <main className="max-w-6xl mx-auto px-4 py-8 text-[var(--text)]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      <div className="text-sm text-gray-400 mb-6 flex items-center gap-1.5">
-        <Link href="/" className="hover:text-blue-600">Home</Link>
+      <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
+        <Link href="/" className="hover:text-neon-cyan">Home</Link>
         <span>&rsaquo;</span>
-        <Link href="/tablets" className="hover:text-blue-600">Tablets</Link>
+        <Link href="/tablets" className="hover:text-neon-cyan">Tablets</Link>
         <span>&rsaquo;</span>
-        <span className="text-gray-600">Under {budgetLabel}</span>
+        <span className="text-[rgba(255,255,255,0.65)]">Under {budgetLabel}</span>
       </div>
 
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-white mb-2">
           Best Tablets Under {budgetLabel} in India
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-dim">
           {tablets.length} tablets found — sorted by price (high to low)
         </p>
       </div>
@@ -97,8 +97,8 @@ export default async function UnderBudgetTabletsPage({ params }: { params: Promi
             href={`/best-tablets/${budget}`}
             className={`px-3 py-1.5 rounded-full text-sm border transition ${
               budget === b
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white text-gray-600 border-gray-200 hover:border-blue-400'
+                ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm'
+                : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'
             }`}
           >
             Under {formatPriceINR(budget)}
@@ -107,16 +107,16 @@ export default async function UnderBudgetTabletsPage({ params }: { params: Promi
       </div>
 
       <div className="flex flex-wrap gap-2 mb-8">
-        <Link href="/leaderboard" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+        <Link href="/leaderboard" className="px-3 py-1.5 rounded-full text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)]">
           🔥 Trending tablets
         </Link>
-        <Link href="/brands" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+        <Link href="/brands" className="px-3 py-1.5 rounded-full text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)]">
           🏷️ Browse by brand
         </Link>
-        <Link href="/best-tablets-for/drawing" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+        <Link href="/best-tablets-for/drawing" className="px-3 py-1.5 rounded-full text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)]">
           ✏️ Best for drawing
         </Link>
-        <Link href="/best-tablets-for/students" className="px-3 py-1.5 rounded-full text-sm border border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 transition bg-white">
+        <Link href="/best-tablets-for/students" className="px-3 py-1.5 rounded-full text-sm border border-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.65)] hover:border-neon-cyan hover:text-neon-cyan transition bg-[var(--card-bg)]">
           🎓 Best for students
         </Link>
       </div>
@@ -126,19 +126,19 @@ export default async function UnderBudgetTabletsPage({ params }: { params: Promi
           <Link
             key={tablet.id}
             href={`/tablets/${tablet.slug}`}
-            className="bg-white border border-gray-200 rounded-2xl p-4 hover:shadow-md hover:border-blue-300 transition group"
+            className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4 hover:border-[rgba(6,182,212,0.35)] hover:glow transition-all duration-200 card-hover group"
           >
-            <div className="aspect-square bg-gray-50 rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+            <div className="aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden">
               {tablet.image_url
                 ? <img src={tablet.image_url} alt={tablet.name} className="object-contain w-full h-full p-2" />
                 : <span className="text-4xl">📟</span>}
             </div>
-            <p className="text-xs text-gray-400 mb-0.5">{tablet.brand}</p>
-            <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight mb-2">
+            <p className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{tablet.brand}</p>
+            <p className="text-sm font-semibold text-white group-hover:text-neon-cyan transition line-clamp-2 leading-tight mb-2">
               {tablet.name}
             </p>
             {tablet.price_inr && (
-              <p className="text-sm font-bold text-blue-600">
+              <p className="text-sm font-bold text-neon-cyan">
                 {formatPriceINR(tablet.price_inr)}
               </p>
             )}
@@ -146,14 +146,14 @@ export default async function UnderBudgetTabletsPage({ params }: { params: Promi
         ))}
       </div>
 
-      <div className="mt-12 p-6 bg-gray-50 rounded-2xl">
-        <h2 className="text-base font-semibold text-gray-800 mb-2">
+      <div className="mt-12 p-6 bg-[var(--panel)] rounded-2xl border border-[rgba(255,255,255,0.06)]">
+        <h2 className="text-base font-semibold text-white mb-2">
           How to pick the best tablet under {budgetLabel}?
         </h2>
-        <p className="text-sm text-gray-500 leading-relaxed">
+        <p className="text-sm text-dim leading-relaxed">
           When buying a tablet under {budgetLabel}, focus on display size, chipset, RAM, and battery life.
-          Use the <Link href="/compare-tablets" className="text-blue-600 hover:underline">comparison tool</Link> to compare any two tablets side by side,
-          or try the <Link href="/search" className="text-blue-600 hover:underline">Search & Discover</Link> to filter by your priorities.
+          Use the <Link href="/compare-tablets" className="text-neon-cyan hover:underline">comparison tool</Link> to compare any two tablets side by side,
+          or try the <Link href="/search" className="text-neon-cyan hover:underline">Search & Discover</Link> to filter by your priorities.
         </p>
       </div>
     </main>

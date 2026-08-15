@@ -105,7 +105,7 @@ export default function Navbar() {
               {phoneItems.map(item => (
                 <Link key={item.href} href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                  className="block px-3 py-2 text-sm text-[rgba(255,255,255,0.7)] hover:text-neon-cyan hover:bg-[rgba(255,255,255,0.02)] rounded-lg transition">
                   {item.label}
                 </Link>
               ))}
@@ -115,7 +115,7 @@ export default function Navbar() {
           {/* Tablets section */}
           <button
             onClick={() => setMobileTabletOpen(!mobileTabletOpen)}
-            className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl">
+            className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.02)] rounded-xl">
             📟 Tablets
             <svg className={`w-4 h-4 transition-transform ${mobileTabletOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -126,7 +126,7 @@ export default function Navbar() {
               {tabletItems.map(item => (
                 <Link key={item.href} href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                  className="block px-3 py-2 text-sm text-[rgba(255,255,255,0.7)] hover:text-neon-cyan hover:bg-[rgba(255,255,255,0.02)] rounded-lg transition">
                   {item.label}
                 </Link>
               ))}
@@ -136,7 +136,7 @@ export default function Navbar() {
           {/* Laptops section */}
           <button
             onClick={() => setMobileLaptopOpen(!mobileLaptopOpen)}
-            className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl">
+            className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.02)] rounded-xl">
             💻 Laptops
             <svg className={`w-4 h-4 transition-transform ${mobileLaptopOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -147,7 +147,7 @@ export default function Navbar() {
               {laptopItems.map(item => (
                 <Link key={item.href} href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                  className="block px-3 py-2 text-sm text-[rgba(255,255,255,0.7)] hover:text-neon-cyan hover:bg-[rgba(255,255,255,0.02)] rounded-lg transition">
                   {item.label}
                 </Link>
               ))}
@@ -156,19 +156,19 @@ export default function Navbar() {
 
           {/* Direct links */}
           <Link href="/brands" onClick={() => setMobileOpen(false)}
-            className="block px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl">
+            className="block px-3 py-2.5 text-sm font-medium text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.02)] rounded-xl">
             🏷️ Brands
           </Link>
           <Link href="/leaderboard" onClick={() => setMobileOpen(false)}
-            className="block px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl">
+            className="block px-3 py-2.5 text-sm font-medium text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.02)] rounded-xl">
             🏆 Leaderboard
           </Link>
           <Link href="/news" onClick={() => setMobileOpen(false)}
-            className="block px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-xl">
+            className="block px-3 py-2.5 text-sm font-medium text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.02)] rounded-xl">
             📰 News
           </Link>
           <Link href="/ai-recommend" onClick={() => setMobileOpen(false)}
-            className="block px-3 py-2.5 text-sm font-medium text-purple-600 hover:bg-purple-50 rounded-xl">
+            className="block px-3 py-2.5 text-sm font-medium text-neon-violet hover:bg-[rgba(139,92,246,0.08)] rounded-xl">
             🤖 AI Recommender
           </Link>
         </div>
