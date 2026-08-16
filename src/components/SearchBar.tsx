@@ -15,9 +15,19 @@ const TYPE_LABEL: Record<string, string> = {
   laptop: 'Laptop',
 }
 
+type SearchResult = {
+  id: number
+  name: string
+  brand: string
+  slug: string
+  price_inr: number | null
+  image_url: string | null
+  type: 'phone' | 'tablet' | 'laptop'
+}
+
 export default function SearchBar() {
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<any[]>([])
+  const [results, setResults] = useState<SearchResult[]>([])
   const [open, setOpen] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -38,16 +48,22 @@ export default function SearchBar() {
   }, [])
 
   useEffect(() => {
-    if (query.length < 2) { setResults([]); setOpen(false); return }
+    if (query.length < 2) return
+    let cancelled = false
     const timeout = setTimeout(async () => {
       setLoading(true)
-      const res = await fetch('/api/search?q=' + encodeURIComponent(query))
-      const data = await res.json()
-      setResults(data)
-      setOpen(true)
-      setLoading(false)
+      try {
+        const res = await fetch('/api/search?q=' + encodeURIComponent(query))
+        const data = (await res.json()) as SearchResult[]
+        if (!cancelled) {
+          setResults(data)
+          setOpen(true)
+        }
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
     }, 300)
-    return () => clearTimeout(timeout)
+    return () => { cancelled = true; clearTimeout(timeout) }
   }, [query])
 
   const handleExpand = () => {
@@ -55,7 +71,7 @@ export default function SearchBar() {
     setTimeout(() => inputRef.current?.focus(), 50)
   }
 
-  const go = (item: any) => {
+  const go = (item: SearchResult) => {
     setQuery('')
     setOpen(false)
     setExpanded(false)
@@ -77,7 +93,7 @@ export default function SearchBar() {
       {!expanded ? (
         <button
           onClick={handleExpand}
-          className="group flex items-center gap-0 overflow-hidden bg-[var(--card-bg)] hover:bg-[rgba(255,255,255,0.03)] text-[rgba(255,255,255,0.85)] rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
+          className="group flex items-center gap-0 overflow-hidden bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.09)] text-[rgba(255,255,255,0.85)] rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
           <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
@@ -86,7 +102,7 @@ export default function SearchBar() {
           </span>
         </button>
       ) : (
-        <div className="flex items-center gap-2 bg-[var(--card-bg)] border border-[rgba(255,255,255,0.04)] rounded-xl px-3 py-2 w-56 shadow-sm">
+        <div className="flex items-center gap-2 bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.08)] rounded-xl px-3 py-2 w-56 shadow-sm">
           <button onClick={handleEnter}>
             <svg className="w-4 h-4 text-[rgba(255,255,255,0.6)] flex-shrink-0 hover:text-neon-cyan transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -97,7 +113,15 @@ export default function SearchBar() {
             type="text"
             placeholder="Search devices..."
             value={query}
-            onChange={e => setQuery(e.target.value)}
+            onChange={e => {
+              const value = e.target.value
+              setQuery(value)
+              if (value.length < 2) {
+                setResults([])
+                setOpen(false)
+                setLoading(false)
+              }
+            }}
             onFocus={() => results.length > 0 && setOpen(true)}
             onKeyDown={e => e.key === 'Enter' && handleEnter()}
             className="bg-transparent text-sm text-[var(--text)] placeholder-[rgba(255,255,255,0.45)] outline-none w-full"
@@ -105,14 +129,14 @@ export default function SearchBar() {
           {loading ? (
             <div className="w-3 h-3 border-2 border-[var(--accent-c)] border-t-transparent rounded-full animate-spin flex-shrink-0" />
           ) : query ? (
-            <button onClick={() => { setQuery(''); setOpen(false) }}
+            <button onClick={() => { setQuery(''); setResults([]); setOpen(false); setLoading(false) }}
               className="text-[rgba(255,255,255,0.6)] hover:text-[rgba(255,255,255,0.85)] flex-shrink-0 text-lg leading-none">×</button>
           ) : null}
         </div>
       )}
 
       {open && results.length > 0 && (
-        <div className="absolute top-full mt-2 right-0 bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl shadow-2xl overflow-hidden z-50 w-72 neon-border">
+        <div className="absolute top-full mt-2 right-0 bg-[var(--panel)] border border-[rgba(255,255,255,0.09)] rounded-xl shadow-2xl shadow-black/40 overflow-hidden z-50 w-72">
           {results.map(item => (
             <button key={`${item.type}-${item.id}`} onClick={() => go(item)}
               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[rgba(255,255,255,0.03)] transition text-left border-b border-[rgba(255,255,255,0.04)] last:border-0">
@@ -134,14 +158,14 @@ export default function SearchBar() {
           ))}
           <button onClick={handleEnter}
             className="w-full px-4 py-2.5 text-xs text-neon-cyan hover:bg-[rgba(6,182,212,0.06)] transition text-center border-t border-[rgba(255,255,255,0.04)]">
-            See all results for "{query}" →
+            See all results for &ldquo;{query}&rdquo; →
           </button>
         </div>
       )}
 
       {open && query.length >= 2 && results.length === 0 && !loading && (
-        <div className="absolute top-full mt-2 right-0 bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl shadow-2xl px-4 py-3 z-50 w-72 neon-border">
-          <p className="text-sm text-dim">No devices found for "{query}"</p>
+        <div className="absolute top-full mt-2 right-0 bg-[var(--panel)] border border-[rgba(255,255,255,0.09)] rounded-xl shadow-2xl shadow-black/40 px-4 py-3 z-50 w-72">
+          <p className="text-sm text-dim">No devices found for &ldquo;{query}&rdquo;</p>
         </div>
       )}
     </div>

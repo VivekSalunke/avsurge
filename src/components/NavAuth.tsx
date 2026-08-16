@@ -54,7 +54,7 @@ export default function NavAuth() {
         </button>
 
         {open && (
-          <div className="absolute right-0 top-11 bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl shadow-lg p-2 w-52 z-50 neon-border">
+          <div className="absolute right-0 top-11 bg-[var(--panel)] border border-[rgba(255,255,255,0.09)] rounded-xl shadow-2xl shadow-black/40 p-2 w-52 z-50">
             <p className="text-xs text-dim px-2 py-1 truncate">{user.email}</p>
             {isAdmin && <p className="text-xs text-neon-cyan font-semibold px-2 py-1">Admin</p>}
             <hr className="my-1 border-[rgba(255,255,255,0.04)]" />

@@ -34,7 +34,7 @@ const NavDropdown = ({ label, items }: { label: string, items: { href: string, l
         </svg>
       </button>
       {open && (
-        <div className="absolute top-full left-0 mt-1 bg-[var(--card-bg)] border border-[rgba(255,255,255,0.04)] rounded-2xl shadow-lg z-50 overflow-hidden min-w-48 neon-border">
+        <div className="absolute top-full left-0 mt-1 bg-[var(--panel)] border border-[rgba(255,255,255,0.09)] rounded-2xl shadow-2xl shadow-black/40 z-50 overflow-hidden min-w-48">
           {items.map(item => (
             <Link key={item.href} href={item.href}
               className="flex flex-col px-4 py-3 hover:bg-[rgba(255,255,255,0.02)] transition border-b border-[rgba(255,255,255,0.02)] last:border-0">
@@ -55,7 +55,7 @@ export default function Navbar() {
   const [mobileLaptopOpen, setMobileLaptopOpen] = useState(false)
 
   return (
-    <nav className="bg-[var(--bg)] border-b border-[rgba(255,255,255,0.04)] sticky top-0 z-50 neon-border">
+    <nav className="sticky top-0 z-50 border-b border-[rgba(255,255,255,0.08)] bg-[rgba(10,10,12,0.82)] backdrop-blur-xl shadow-[0_1px_0_0_rgba(139,92,246,0.04),0_8px_30px_rgba(0,0,0,0.35)]">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
@@ -90,7 +90,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-[rgba(255,255,255,0.03)] bg-[var(--card-bg)] px-4 py-3 space-y-1">
+        <div className="md:hidden border-t border-[rgba(255,255,255,0.06)] bg-[var(--panel)] px-4 py-3 space-y-1">
           {/* Phones section */}
           <button
             onClick={() => setMobilePhoneOpen(!mobilePhoneOpen)}
