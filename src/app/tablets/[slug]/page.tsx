@@ -198,8 +198,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { data: tablet } = await supabase.from('tablets').select('*').eq('slug', slug).single()
   if (!tablet) return { title: 'Tablet not found' }
   return {
-    title: `${tablet.name} Specs & Price in India`,
-    description: `${tablet.name} full specifications, price in India (${formatPriceINR(tablet.price_inr)}), display, battery, performance and more.`,
+    title: tablet.price_inr
+      ? `${tablet.name} Price in India (${formatPriceINR(tablet.price_inr)}) | Full Specs`
+      : `${tablet.name} Full Specs & Price in India`,
+    description: `${tablet.name} full specifications, price in India (${formatPriceINR(tablet.price_inr)}), display, battery, performance and more. Compare models side by side to find the best deal.`,
     alternates: { canonical: `https://avsurge.com/tablets/${slug}` },
     openGraph: {
       title: `${tablet.name} — Full Specs & Price`,

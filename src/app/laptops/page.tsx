@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { formatPriceINR } from '@/lib/format'
 export const revalidate = 60
 export const metadata = {
-  title: 'Laptops Price List in India 2025',
+  title: 'Laptops Price List in India 2026 | AVSurge',
   alternates: { canonical: 'https://avsurge.com/laptops' },
   description: 'Browse all laptops available in India. Compare laptop specs, prices and reviews. Find the best laptop for your budget.',
 }

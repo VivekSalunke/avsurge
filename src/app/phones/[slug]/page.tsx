@@ -196,8 +196,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { data: phone } = await supabase.from('phones').select('*').eq('slug', slug).single()
   if (!phone) return { title: 'Phone not found' }
   return {
-    title: `${phone.name} Specs & Price in India`,
-    description: `${phone.name} full specifications, price in India (${formatPriceINR(phone.price_inr)}), camera, battery, display and more.`,
+    title: phone.price_inr
+      ? `${phone.name} Price in India (${formatPriceINR(phone.price_inr)}) | Full Specs`
+      : `${phone.name} Full Specs & Price in India`,
+    description: `${phone.name} full specifications, price in India (${formatPriceINR(phone.price_inr)}), camera, battery, display and more. Compare models side by side to find the best deal.`,
     keywords: [phone.name, phone.brand, 'specs', 'price India', 'review'],
     openGraph: {
       title: `${phone.name} — Full Specs & Price`,

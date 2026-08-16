@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ budget: s
   const b = parseInt(budget)
   if (!VALID_BUDGETS.includes(b)) return {}
   return {
-    title: `Best Laptops Under ₹${b.toLocaleString('en-IN')} in India (2025)`,
+    title: `Best Laptops Under ₹${b.toLocaleString('en-IN')} in India (2026)`,
     description: `Top laptops under ₹${b.toLocaleString('en-IN')} in India. Compare specs, performance and battery life to find the best laptop for your budget.`,
   }
 }

@@ -178,8 +178,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { data: laptop } = await supabase.from('laptops').select('*').eq('slug', slug).single()
   if (!laptop) return { title: 'Laptop not found' }
   return {
-    title: `${laptop.name} Specs & Price in India`,
-    description: `${laptop.name} full specifications, price in India (${formatPriceINR(laptop.price_inr)}), display, battery, performance and more.`,
+    title: laptop.price_inr
+      ? `${laptop.name} Price in India (${formatPriceINR(laptop.price_inr)}) | Full Specs`
+      : `${laptop.name} Full Specs & Price in India`,
+    description: `${laptop.name} full specifications, price in India (${formatPriceINR(laptop.price_inr)}), display, battery, performance and more. Compare models side by side to find the best deal.`,
     alternates: { canonical: `https://avsurge.com/laptops/${slug}` },
   }
 }

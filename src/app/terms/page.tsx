@@ -17,7 +17,7 @@ export default function TermsPage() {
       </div>
 
       <h1 className="text-3xl font-bold text-white mb-2">Terms and Conditions</h1>
-      <p className="text-sm text-[rgba(255,255,255,0.4)] mb-10">Last updated: June 2025</p>
+      <p className="text-sm text-[rgba(255,255,255,0.4)] mb-10">Last updated: August 2026</p>
 
       <div className="prose prose-sm max-w-none space-y-8">
 

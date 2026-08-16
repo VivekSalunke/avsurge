@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ budget: s
   const b = parseInt(budget)
   if (!VALID_BUDGETS.includes(b)) return {}
   return {
-    title: `Best Phones Under ₹${b.toLocaleString('en-IN')} in India (2025)`,
+    title: `Best Phones Under ₹${b.toLocaleString('en-IN')} in India (2026)`,
     description: `Top smartphones under ₹${b.toLocaleString('en-IN')} in India. Compare specs, cameras, and battery life to find the best phone for your budget.`,
   }
 }
