@@ -1,9 +1,11 @@
 'use client'
 import Link from 'next/link'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import SearchBar from './SearchBar'
 import NavAuth from './NavAuth'
 import AILogo from './AILogo'
+
+type Section = 'phones' | 'tablets' | 'laptops'
 
 const phoneItems = [
   { href: '/phones', label: 'All Phones', desc: 'Browse all 250+ phones' },
@@ -24,74 +26,97 @@ const laptopItems = [
   { href: '/best-laptops/50000', label: 'Browse by Budget', desc: 'Filter by price range' },
 ]
 
-const NavDropdown = ({ label, items }: { label: string, items: { href: string, label: string, desc: string }[] }) => {
-  const [open, setOpen] = useState(false)
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const openMenu = () => {
-    if (closeTimer.current) { clearTimeout(closeTimer.current); closeTimer.current = null }
-    setOpen(true)
-  }
-
-  const scheduleClose = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current)
-    closeTimer.current = setTimeout(() => setOpen(false), 120)
-  }
-
-  return (
-    <div className="relative" onMouseEnter={openMenu} onMouseLeave={scheduleClose}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        className={`flex items-center gap-1 text-sm transition py-1 ${open ? 'text-neon-cyan' : 'text-[rgba(255,255,255,0.8)] hover:text-neon-cyan'}`}>
-        {label}
-        <svg className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-      {open && (
-        <div className="absolute top-full left-0 z-50 pt-2">
-          <div className="dropdown-anim min-w-52 overflow-hidden rounded-xl border border-[rgba(255,255,255,0.09)] bg-[rgba(13,15,20,0.94)] shadow-2xl shadow-black/50 backdrop-blur-xl">
-            {items.map(item => (
-              <Link key={item.href} href={item.href}
-                className="flex flex-col border-l-2 border-transparent px-4 py-3 transition hover:border-neon-violet hover:bg-[rgba(139,92,246,0.06)]">
-                <span className="text-sm font-medium text-white transition group-hover:text-neon-cyan">{item.label}</span>
-                <span className="text-xs text-[rgba(255,255,255,0.6)]">{item.desc}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  )
+const SECTION_LINKS: Record<Section, { icon: string; title: string; desc: string; href: string }[]> = {
+  phones: [
+    { icon: '📱', title: 'All Phones', desc: 'Browse all 250+ phones', href: '/phones' },
+    { icon: '⚖️', title: 'Compare Phones', desc: 'Side-by-side comparison', href: '/compare' },
+    { icon: '🔍', title: 'Search & Discover', desc: 'Filter, find and AI search', href: '/search' },
+    { icon: '✨', title: 'AI Recommender', desc: 'Get personalized picks', href: '/ai-recommend' },
+  ],
+  tablets: [
+    { icon: '📟', title: 'All Tablets', desc: 'Browse all tablets', href: '/tablets' },
+    { icon: '⚖️', title: 'Compare Tablets', desc: 'Side-by-side comparison', href: '/compare-tablets' },
+    { icon: '🔍', title: 'Search & Discover', desc: 'Filter, find and AI search', href: '/search' },
+  ],
+  laptops: [
+    { icon: '💻', title: 'All Laptops', desc: 'Browse all laptops', href: '/laptops' },
+    { icon: '⚖️', title: 'Compare Laptops', desc: 'Side-by-side comparison', href: '/compare-laptops' },
+    { icon: '🔍', title: 'Search & Discover', desc: 'Filter, find and AI search', href: '/search' },
+  ],
 }
+
+const BUDGET_CHIPS: Record<Section, [string, string][]> = {
+  phones: [
+    ['₹10,000', '/best-phones/10000'],
+    ['₹15,000', '/best-phones/15000'],
+    ['₹20,000', '/best-phones/20000'],
+    ['₹30,000', '/best-phones/30000'],
+    ['₹50,000', '/best-phones/50000'],
+  ],
+  tablets: [
+    ['₹20,000', '/best-tablets/20000'],
+    ['₹30,000', '/best-tablets/30000'],
+    ['₹50,000', '/best-tablets/50000'],
+  ],
+  laptops: [
+    ['₹40,000', '/best-laptops/40000'],
+    ['₹60,000', '/best-laptops/60000'],
+    ['₹80,000', '/best-laptops/80000'],
+    ['₹1,00,000', '/best-laptops/100000'],
+  ],
+}
+
+const Chevron = ({ open }: { open: boolean }) => (
+  <svg className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+  </svg>
+)
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobilePhoneOpen, setMobilePhoneOpen] = useState(false)
   const [mobileTabletOpen, setMobileTabletOpen] = useState(false)
   const [mobileLaptopOpen, setMobileLaptopOpen] = useState(false)
+  const [active, setActive] = useState<Section | null>(null)
+
+  const toggle = (s: Section) => setActive(a => (a === s ? null : s))
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[rgba(255,255,255,0.08)] bg-[rgba(10,10,12,0.82)] backdrop-blur-xl shadow-[0_1px_0_0_rgba(139,92,246,0.04),0_8px_30px_rgba(0,0,0,0.35)]">
+    <nav onMouseLeave={() => setActive(null)} className="sticky top-0 z-50 border-b border-[rgba(255,255,255,0.08)] bg-[rgba(10,10,12,0.82)] backdrop-blur-xl shadow-[0_1px_0_0_rgba(139,92,246,0.04),0_8px_30px_rgba(0,0,0,0.35)]">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
+          <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)} onMouseEnter={() => setActive(null)}>
             <div className="w-8 h-8 bg-gradient-to-r from-neon-cyan to-neon-violet rounded-lg flex items-center justify-center text-black text-sm font-bold">AV</div>
             <span className="font-bold text-white text-lg">AVSurge</span>
           </Link>
           {/* Desktop nav */}
           <div className="hidden md:flex gap-5 text-sm text-[rgba(255,255,255,0.75)] items-center">
-            <NavDropdown label="Phones" items={phoneItems} />
-            <NavDropdown label="Tablets" items={tabletItems} />
-            <NavDropdown label="Laptops" items={laptopItems} />
-            <Link href="/brands" className="hover:text-neon-cyan transition">Brands</Link>
-            <Link href="/leaderboard" className="hover:text-neon-cyan transition">Leaderboard</Link>
-            <Link href="/news" className="hover:text-neon-cyan transition">News</Link>
-            <Link href="/ai-recommend" className="flex items-center gap-1.5 text-sm text-neon-violet hover:text-neon-violet/90 font-medium transition bg-[rgba(139,92,246,0.06)] pl-1 pr-3 py-1 rounded-full"><AILogo size="xs" /> AI</Link>
+            <button
+              onMouseEnter={() => setActive('phones')}
+              onClick={() => toggle('phones')}
+              className={`flex items-center gap-1 py-1 transition ${active === 'phones' ? 'text-neon-cyan' : 'hover:text-neon-cyan'}`}>
+              Phones <Chevron open={active === 'phones'} />
+            </button>
+            <button
+              onMouseEnter={() => setActive('tablets')}
+              onClick={() => toggle('tablets')}
+              className={`flex items-center gap-1 py-1 transition ${active === 'tablets' ? 'text-neon-cyan' : 'hover:text-neon-cyan'}`}>
+              Tablets <Chevron open={active === 'tablets'} />
+            </button>
+            <button
+              onMouseEnter={() => setActive('laptops')}
+              onClick={() => toggle('laptops')}
+              className={`flex items-center gap-1 py-1 transition ${active === 'laptops' ? 'text-neon-cyan' : 'hover:text-neon-cyan'}`}>
+              Laptops <Chevron open={active === 'laptops'} />
+            </button>
+            <Link href="/brands" onMouseEnter={() => setActive(null)} className="py-1 hover:text-neon-cyan transition">Brands</Link>
+            <Link href="/leaderboard" onMouseEnter={() => setActive(null)} className="py-1 hover:text-neon-cyan transition">Leaderboard</Link>
+            <Link href="/news" onMouseEnter={() => setActive(null)} className="py-1 hover:text-neon-cyan transition">News</Link>
+            <Link href="/ai-recommend" onMouseEnter={() => setActive(null)} className="flex items-center gap-1.5 text-neon-violet hover:text-neon-violet/90 font-medium transition bg-[rgba(139,92,246,0.06)] pl-1 pr-3 py-1 rounded-full"><AILogo size="xs" /> AI</Link>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" onMouseEnter={() => setActive(null)}>
           <SearchBar />
           <NavAuth />
           {/* Hamburger button */}
@@ -105,6 +130,38 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* Second-row tab bar */}
+      {active && (
+        <div className="hidden md:block border-t border-[rgba(255,255,255,0.06)] bg-[rgba(13,15,20,0.96)] backdrop-blur-xl dropdown-anim">
+          <div className="max-w-6xl mx-auto px-4 py-4">
+            <div className="flex flex-wrap gap-2.5">
+              {SECTION_LINKS[active].map(l => (
+                <Link key={l.href} href={l.href} onClick={() => setActive(null)}
+                  className="group flex min-w-56 items-center gap-3 rounded-xl border border-[rgba(255,255,255,0.07)] bg-[rgba(255,255,255,0.02)] px-4 py-2.5 transition hover:border-neon-violet hover:bg-[rgba(139,92,246,0.07)]">
+                  <span className="text-lg">{l.icon}</span>
+                  <span className="flex-1">
+                    <span className="block text-sm font-medium text-white transition-colors group-hover:text-neon-cyan">{l.title}</span>
+                    <span className="block text-xs text-[rgba(255,255,255,0.55)]">{l.desc}</span>
+                  </span>
+                  <svg className="w-4 h-4 text-neon-cyan opacity-0 transition group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[rgba(255,255,255,0.06)] pt-3.5">
+              <span className="text-xs uppercase tracking-wider text-[rgba(255,255,255,0.45)] font-medium">Browse by budget:</span>
+              {BUDGET_CHIPS[active].map(([label, href]) => (
+                <Link key={href} href={href} onClick={() => setActive(null)}
+                  className="neon-badge rounded-full border border-[rgba(6,182,212,0.15)] px-3 py-1 text-xs hover:border-neon-cyan hover:bg-[rgba(6,182,212,0.1)] transition">
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden border-t border-[rgba(255,255,255,0.06)] bg-[var(--panel)] px-4 py-3 space-y-1">
@@ -113,9 +170,7 @@ export default function Navbar() {
             onClick={() => setMobilePhoneOpen(!mobilePhoneOpen)}
             className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.02)] rounded-xl">
             📱 Phones
-            <svg className={`w-4 h-4 transition-transform ${mobilePhoneOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+            <Chevron open={mobilePhoneOpen} />
           </button>
           {mobilePhoneOpen && (
             <div className="pl-4 space-y-1">
@@ -134,9 +189,7 @@ export default function Navbar() {
             onClick={() => setMobileTabletOpen(!mobileTabletOpen)}
             className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.02)] rounded-xl">
             📟 Tablets
-            <svg className={`w-4 h-4 transition-transform ${mobileTabletOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+            <Chevron open={mobileTabletOpen} />
           </button>
           {mobileTabletOpen && (
             <div className="pl-4 space-y-1">
@@ -155,9 +208,7 @@ export default function Navbar() {
             onClick={() => setMobileLaptopOpen(!mobileLaptopOpen)}
             className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.02)] rounded-xl">
             💻 Laptops
-            <svg className={`w-4 h-4 transition-transform ${mobileLaptopOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+            <Chevron open={mobileLaptopOpen} />
           </button>
           {mobileLaptopOpen && (
             <div className="pl-4 space-y-1">
