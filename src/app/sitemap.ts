@@ -35,10 +35,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { data: topTablets },
     { data: topLaptops },
   ] = await Promise.all([
-    supabase.from('phones').select('slug'),
-    supabase.from('tablets').select('slug'),
+    supabase.from('phones').select('slug, updated_at'),
+    supabase.from('tablets').select('slug, updated_at'),
     supabase.from('phones').select('brand'),
-    supabase.from('laptops').select('slug'),
+    supabase.from('laptops').select('slug, updated_at'),
     supabase.from('news').select('slug, updated_at').eq('published', true),
     supabase.from('phones').select('slug, price_inr, view_count').not('price_inr', 'is', null).order('view_count', { ascending: false, nullsFirst: false }).limit(30),
     supabase.from('tablets').select('slug, price_inr, view_count').not('price_inr', 'is', null).order('view_count', { ascending: false, nullsFirst: false }).limit(30),
@@ -58,21 +58,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const phoneUrls = (phones || []).map(phone => ({
     url: `https://avsurge.com/phones/${phone.slug}`,
-    lastModified: new Date(),
+    lastModified: phone.updated_at ? new Date(phone.updated_at) : new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }))
 
   const tabletUrls = (tablets || []).map(tablet => ({
     url: `https://avsurge.com/tablets/${tablet.slug}`,
-    lastModified: new Date(),
+    lastModified: tablet.updated_at ? new Date(tablet.updated_at) : new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }))
 
   const laptopUrls = (laptops || []).map(laptop => ({
     url: `https://avsurge.com/laptops/${laptop.slug}`,
-    lastModified: new Date(),
+    lastModified: laptop.updated_at ? new Date(laptop.updated_at) : new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }))
@@ -130,6 +130,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: 'https://avsurge.com/privacy', lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
     { url: 'https://avsurge.com/disclaimer', lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
     { url: 'https://avsurge.com/terms', lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
+    { url: 'https://avsurge.com/editorial-policy', lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
     ...['gaming', 'video-editing', 'students', 'business', 'programming', 'lightweight'].map(uc => ({
       url: `https://avsurge.com/best-laptops-for/${uc}`,
       lastModified: new Date(),
