@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
-import DeviceOfTheDayWrapper from '@/components/DeviceOfTheDayWrapper'
 import RecentlyViewedHome from '@/components/RecentlyViewedHome'
+import FeaturedDeviceStack from '@/components/FeaturedDeviceStack'
 import { formatPriceINR } from '@/lib/format'
 
 export const revalidate = 60
@@ -155,6 +155,12 @@ export default async function HomePage() {
     { label: 'Brands', value: brands.length + '+', icon: 'M12 21V7M7 4l5-2 5 2M5 21h14' },
   ]
 
+  const featuredDevices = [
+    ...(latestPhones || []).slice(0, 2).map((p: any) => ({ ...p, type: 'phones' })),
+    ...(latestTablets || []).slice(0, 1).map((t: any) => ({ ...t, type: 'tablets' })),
+    ...(latestLaptops || []).slice(0, 1).map((l: any) => ({ ...l, type: 'laptops' })),
+  ]
+
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* ── Hero ─────────────────────────────────────────── */}
@@ -195,26 +201,10 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Terminal visualizer */}
+          {/* Featured device stack */}
           <div className="relative">
             <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-neon-violet/20 to-neon-cyan/20 blur-lg" />
-            <div className="relative overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[#050507] shadow-2xl">
-              <div className="flex items-center gap-1.5 border-b border-[rgba(255,255,255,0.05)] px-4 py-3">
-                <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
-                <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
-                <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-                <span className="ml-3 font-mono text-xs text-[rgba(255,255,255,0.45)]">avsurge — device finder</span>
-              </div>
-              <div className="space-y-2.5 p-5 font-mono text-[13px] leading-relaxed">
-                <p><span className="text-neon-cyan">$</span> <span className="text-[rgba(255,255,255,0.9)]">avsurge find --budget 30000 --gaming</span></p>
-                <p className="text-[rgba(255,255,255,0.45)]">▸ Scanning 250+ devices across India...</p>
-                <p className="text-[rgba(255,255,255,0.45)]">▸ Ranking by spec score, price &amp; reviews...</p>
-                <p className="pt-1"><span className="text-neon-violet">✓</span> <span className="text-white">POCO X6 Pro</span> <span className="text-[rgba(255,255,255,0.45)]">· ₹26,999 · Score 86</span></p>
-                <p><span className="text-neon-violet">✓</span> <span className="text-white">iQOO Neo 9</span> <span className="text-[rgba(255,255,255,0.45)]">· ₹27,999 · Score 84</span></p>
-                <p><span className="text-neon-violet">✓</span> <span className="text-white">OnePlus Nord CE 4</span> <span className="text-[rgba(255,255,255,0.45)]">· ₹24,999 · Score 81</span></p>
-                <p className="pt-1"><span className="text-neon-cyan">$</span><span className="cursor" /></p>
-              </div>
-            </div>
+            <FeaturedDeviceStack devices={featuredDevices} />
           </div>
         </div>
       </section>
@@ -235,7 +225,6 @@ export default async function HomePage() {
         ))}
       </div>
 
-      <DeviceOfTheDayWrapper />
       <RecentlyViewedHome />
 
       {/* ── Browse by budget ─────────────────────────────── */}
