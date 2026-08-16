@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import AILogo from '@/components/AILogo'
 
 export const metadata: Metadata = {
   title: 'About AVSurge | India\'s Device Comparison Platform',
@@ -48,7 +49,7 @@ export default function AboutPage() {
               { icon: '⭐', title: 'User Reviews', desc: 'Read and write reviews for any device' },
             ].map(item => (
               <div key={item.title} className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 flex gap-3">
-                <span className="text-2xl">{item.icon}</span>
+                {item.title === 'AI Recommender' ? <AILogo size="sm" /> : <span className="text-2xl">{item.icon}</span>}
                 <div>
                   <p className="font-semibold text-white text-sm">{item.title}</p>
                   <p className="text-xs text-[rgba(255,255,255,0.4)] mt-0.5">{item.desc}</p>
@@ -85,7 +86,7 @@ export default function AboutPage() {
             <Link href="/phones" className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black px-4 py-2 rounded-xl text-sm font-semibold hover:opacity-90 transition">Browse Phones</Link>
             <Link href="/tablets" className="border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] px-4 py-2 rounded-xl text-sm font-semibold hover:border-neon-violet hover:text-white hover:glow transition">Browse Tablets</Link>
             <Link href="/laptops" className="border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] px-4 py-2 rounded-xl text-sm font-semibold hover:border-neon-violet hover:text-white hover:glow transition">Browse Laptops</Link>
-            <Link href="/ai-recommend" className="border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-neon-violet px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[rgba(139,92,246,0.06)] hover:text-white transition">🤖 AI Recommender</Link>
+            <Link href="/ai-recommend" className="inline-flex items-center gap-2 border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-neon-violet px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[rgba(139,92,246,0.06)] hover:text-white transition"><AILogo size="xs" /> AI Recommender</Link>
           </div>
         </section>
       </div>

@@ -14,6 +14,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing label or value' }, { status: 400 })
   }
 
+  if (!process.env.OPENROUTER_API_KEY) {
+    return NextResponse.json(
+      { error: 'AI service is not configured (missing OPENROUTER_API_KEY).' },
+      { status: 503 }
+    )
+  }
+
   const prompt = `You are a smartphone expert explaining specs to a regular person in India.
 
 Phone: ${phoneName}

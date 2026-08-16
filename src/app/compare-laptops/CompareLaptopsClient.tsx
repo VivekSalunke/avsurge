@@ -3,6 +3,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
+import AILogo from '@/components/AILogo'
 import { formatPriceINR } from '@/lib/format'
 
 
@@ -81,7 +82,7 @@ function AICompareSummary({ deviceA, deviceB, specsA, specsB }: { deviceA: any, 
     <div className="bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 neon-border">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🤖</span>
+          <AILogo size="sm" />
           <h3 className="font-bold text-white">AI Verdict</h3>
         </div>
         {!summary && (

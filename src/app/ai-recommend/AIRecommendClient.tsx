@@ -2,10 +2,8 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import AILogo from '@/components/AILogo'
 import { formatPriceINR } from '@/lib/format'
-
-
-
 
 type Mode = 'phones' | 'tablets' | 'laptops'
 
@@ -125,22 +123,34 @@ export default function AIRecommendClient() {
 
       setRecommendations(matched)
     } catch (e) {
-      setError('Something went wrong. Please try again.')
+      setError(e instanceof Error && e.message ? e.message : 'Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-8 text-[var(--text)]">
-      <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-gradient-to-br from-neon-violet to-neon-cyan rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">🤖</div>
-        <h1 className="text-2xl font-bold text-white mb-2">AI Device Recommender</h1>
-        <p className="text-[rgba(255,255,255,0.4)] text-sm">Describe what you need and AI will find the best devices for you</p>
+    <main className="relative mx-auto max-w-3xl px-4 py-12 text-[var(--text)]">
+      <div className="pointer-events-none absolute -top-28 left-1/2 h-72 w-[520px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.12),transparent_65%)] blur-2xl" />
+
+      {/* Hero */}
+      <div className="relative mb-10 text-center">
+        <div className="mx-auto mb-5 w-fit">
+          <AILogo size="lg" />
+        </div>
+        <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+          AI Device{' '}
+          <span className="bg-gradient-to-r from-neon-violet to-neon-cyan bg-clip-text text-transparent">
+            Recommender
+          </span>
+        </h1>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[rgba(255,255,255,0.5)]">
+          Describe what you need in plain English and AI will find the best phones, tablets and laptops for you.
+        </p>
       </div>
 
       {/* Mode toggle */}
-      <div className="flex gap-2 mb-6 bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl p-1 w-fit mx-auto">
+      <div className="mb-8 flex w-fit gap-1 rounded-xl border border-[rgba(255,255,255,0.06)] bg-[var(--panel)] p-1">
         {(['phones', 'tablets', 'laptops'] as Mode[]).map(m => (
           <button key={m} onClick={() => switchMode(m)}
             className={`px-5 py-2 rounded-lg text-sm font-medium transition ${mode === m ? 'bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm' : 'text-dim hover:text-[rgba(255,255,255,0.85)]'}`}>
@@ -149,83 +159,107 @@ export default function AIRecommendClient() {
         ))}
       </div>
 
-      <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
-        <label className="block text-sm font-medium text-[rgba(255,255,255,0.85)] mb-2">What are you looking for?</label>
-        <textarea
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          rows={3}
-          placeholder={`e.g. ${EXAMPLES[mode][0]}...`}
-          className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-neon-violet resize-none"
-          style={{ color: '#111827', backgroundColor: '#ffffff' }}
-          onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleRecommend())}
-        />
-
-        <div className="flex flex-wrap gap-2 mt-3 mb-4">
-          {EXAMPLES[mode].map(ex => (
-            <button key={ex} onClick={() => setQuery(ex)}
-              className="text-xs px-3 py-1.5 neon-badge border border-[rgba(139,92,246,0.2)] rounded-full hover:border-neon-violet transition">
-              {ex}
-            </button>
-          ))}
+      {/* Input card */}
+      <div className="relative mb-8 rounded-2xl border border-[rgba(139,92,246,0.22)] bg-[var(--panel)] p-6 shadow-[0_0_50px_rgba(139,92,246,0.07)]">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+          <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.12),transparent_65%)] blur-xl" />
+          <div className="absolute -bottom-20 -left-16 h-40 w-40 rounded-full bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.1),transparent_65%)] blur-xl" />
         </div>
 
-        <button onClick={handleRecommend} disabled={loading || !query.trim()}
-          className="w-full bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl py-3 text-sm font-semibold hover:brightness-110 transition disabled:opacity-50 flex items-center justify-center gap-2">
-          {loading ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Finding best {config.label.toLowerCase()}s...
-            </>
-          ) : (
-            <>🤖 Get AI Recommendations</>
-          )}
-        </button>
+        <div className="relative">
+          <div className="mb-4 flex items-center gap-2.5">
+            <AILogo size="xs" />
+            <label className="text-sm font-semibold text-white">What are you looking for?</label>
+          </div>
+
+          <textarea
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            rows={3}
+            placeholder={`e.g. ${EXAMPLES[mode][0]}...`}
+            className="w-full resize-none rounded-xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] px-4 py-3 text-sm outline-none transition placeholder:text-[rgba(255,255,255,0.4)] focus:border-neon-violet focus:ring-2 focus:ring-[rgba(139,92,246,0.15)]"
+            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleRecommend())}
+          />
+
+          <div className="mb-5 mt-4 flex flex-wrap gap-2">
+            {EXAMPLES[mode].map(ex => (
+              <button key={ex} onClick={() => setQuery(ex)}
+                className="neon-badge rounded-full border border-[rgba(139,92,246,0.25)] px-3 py-1.5 text-xs transition hover:border-neon-violet">
+                {ex}
+              </button>
+            ))}
+          </div>
+
+          <button onClick={handleRecommend} disabled={loading || !query.trim()}
+            className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-neon-violet to-neon-cyan py-3 text-sm font-semibold text-black transition hover:brightness-110 disabled:opacity-50">
+            {loading ? (
+              <>
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent" />
+                Finding best {config.label.toLowerCase()}s...
+              </>
+            ) : (
+              <>
+                <AILogo size="xs" />
+                Get AI Recommendations
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {error && (
-        <div className="bg-[rgba(239,68,68,0.06)] border border-[rgba(239,68,68,0.2)] rounded-xl p-4 mb-6 text-red-400 text-sm">{error}</div>
+        <div className="mb-8 rounded-xl border border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.06)] p-4 text-sm text-red-400">{error}</div>
       )}
 
       {recommendations.length > 0 && (
-        <div>
+        <div className="relative">
           {explanation && (
-            <div className="bg-[rgba(139,92,246,0.08)] border border-[rgba(139,92,246,0.2)] rounded-xl p-4 mb-6">
-              <p className="text-sm text-[#a78bfa]"><span className="font-semibold">🤖 AI:</span> {explanation}</p>
+            <div className="mb-6 flex items-start gap-3 rounded-xl border border-[rgba(139,92,246,0.2)] bg-[rgba(139,92,246,0.08)] p-4">
+              <AILogo size="sm" />
+              <div>
+                <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#a78bfa]">AI analysis</p>
+                <p className="text-sm leading-relaxed text-[#c4b5fd]">{explanation}</p>
+              </div>
             </div>
           )}
 
-          <h2 className="text-base font-bold text-white mb-4">Top recommendations for you</h2>
+          <h2 className="mb-4 flex items-center gap-2 text-base font-bold text-white">
+            <span className="h-4 w-1 rounded-full bg-gradient-to-b from-neon-violet to-neon-cyan" />
+            Top recommendations for you
+          </h2>
+
           <div className="flex flex-col gap-4">
             {recommendations.map((rec: any, i: number) => (
               <Link key={i} href={`/${config.table}/${rec.item.slug}`}
-                className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-5 hover:border-neon-violet hover:glow transition group flex gap-4">
-                <div className="w-20 h-20 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
+                className="group flex gap-4 rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-5 transition hover:border-neon-violet hover:glow">
+                <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[rgba(255,255,255,0.02)]">
                   {rec.item.image_url
-                    ? <img src={rec.item.image_url} alt={rec.item.name} className="object-contain w-full h-full p-1" />
+                    ? <img src={rec.item.image_url} alt={rec.item.name} className="h-full w-full object-contain p-1" />
                     : <span className="text-3xl">{config.emoji}</span>}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <div>
-                      <span className="text-xs neon-badge px-2 py-0.5 rounded-full font-medium mr-2">#{i + 1}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="mb-1 flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${i === 0 ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-black' : i === 1 ? 'bg-gradient-to-r from-slate-300 to-slate-400 text-black' : i === 2 ? 'bg-gradient-to-r from-orange-700 to-amber-800 text-white' : 'bg-[rgba(255,255,255,0.08)] text-[rgba(255,255,255,0.7)]'}`}>
+                        {i + 1}
+                      </span>
                       <span className="text-xs text-[rgba(255,255,255,0.4)]">{rec.item.brand}</span>
                     </div>
                     {rec.item.price_inr && (
-                      <span className="text-sm font-bold text-neon-cyan flex-shrink-0">
+                      <span className="flex-shrink-0 text-sm font-bold text-neon-cyan">
                         {formatPriceINR(rec.item.price_inr)}
                       </span>
                     )}
                   </div>
-                  <p className="font-semibold text-white group-hover:text-neon-violet transition mb-1">{rec.item.name}</p>
-                  <p className="text-xs text-dim leading-relaxed">{rec.reason}</p>
+                  <p className="mb-1 font-semibold text-white transition group-hover:text-neon-violet">{rec.item.name}</p>
+                  <p className="text-xs leading-relaxed text-dim">{rec.reason}</p>
                 </div>
               </Link>
             ))}
           </div>
 
-          <p className="text-xs text-[rgba(255,255,255,0.4)] text-center mt-6">
-            Powered by AI · Based on AVSurge's device database
+          <p className="mt-6 text-center text-xs text-[rgba(255,255,255,0.4)]">
+            Powered by AI · Based on AVSurge&apos;s device database
           </p>
         </div>
       )}

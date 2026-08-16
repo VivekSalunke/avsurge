@@ -43,6 +43,11 @@ body {
 /* Smooth transitions globally */
 a, button { transition: all 0.12s ease; }
 
+/* Buttons don't inherit text color by default — default them to the bright theme text
+   so any unstyled button isn't rendered in browser-default black on the dark theme.
+   Tailwind text-* utilities still override this. */
+button { color: var(--text); }
+
 /* Inputs: dark surfaces */
 input, select, textarea {
   color: var(--text) !important;
@@ -103,6 +108,13 @@ input::placeholder, textarea::placeholder { color: rgba(230,238,248,0.38) !impor
 ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 6px; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 6px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.12); }
+
+/* Dropdown entrance */
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.dropdown-anim { animation: dropdown-in 0.15s ease; }
 
 /* Page fade in */
 main { animation: fadeIn 0.18s ease; }

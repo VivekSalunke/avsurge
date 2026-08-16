@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import AILogo from '@/components/AILogo'
 
 const RATING_COLORS: Record<string, string> = {
   excellent: 'text-green-400 bg-[rgba(34,197,94,0.1)] border-[rgba(34,197,94,0.2)]',
@@ -50,9 +51,9 @@ export default function SpecExplainer({ label, value, phoneName }: {
     <div>
       <button
         onClick={explain}
-        className="text-xs text-neon-cyan hover:text-white hover:underline ml-1 transition"
+        className="ml-1 inline-flex items-center rounded-lg transition hover:scale-110"
         title="Get an AI-generated explanation of this spec">
-        🤖
+        <AILogo size="xs" />
       </button>
 
       {open && (

@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import RecentlyViewedHome from '@/components/RecentlyViewedHome'
 import FeaturedDeviceStack from '@/components/FeaturedDeviceStack'
+import AILogo from '@/components/AILogo'
 import { formatPriceINR } from '@/lib/format'
 
 export const revalidate = 60
@@ -187,7 +188,7 @@ export default async function HomePage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/phones"
-                className="rounded-lg bg-gradient-to-r from-neon-violet to-neon-cyan px-6 py-3 text-sm font-semibold text-black transition-all duration-200 hover:brightness-110 hover:shadow-[0_8px_30px_rgba(139,92,246,0.4)]">
+                className="rounded-lg bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:brightness-110 hover:shadow-[0_8px_30px_rgba(16,185,129,0.4)]">
                 Browse phones
               </Link>
               <Link href="/compare"
@@ -398,7 +399,7 @@ export default async function HomePage() {
             <Link key={item.href} href={item.href}
               className="group rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4 text-center transition-all duration-200 card-hover hover:border-[rgba(139,92,246,0.35)] hover:glow">
               <div className="mx-auto mb-2.5 flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(255,255,255,0.03)] text-xl transition-transform group-hover:scale-110">
-                {item.icon}
+                {item.href === '/ai-recommend' ? <AILogo size="sm" /> : item.icon}
               </div>
               <h3 className="text-xs font-bold text-white transition-colors group-hover:text-neon-cyan">{item.title}</h3>
               <p className="mt-0.5 text-[10px] text-dim">{item.desc}</p>

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import AILogo from '@/components/AILogo'
 
 export default function ProfilePage() {
   const { user, loading, signOut } = useAuth()
@@ -139,7 +140,7 @@ export default function ProfilePage() {
           </div>
         </Link>
         <Link href="/ai-recommend" className="bg-[var(--card-bg)] border border-[rgba(139,92,246,0.2)] rounded-xl p-3 flex items-center gap-3 hover:border-neon-violet transition">
-          <span className="text-2xl">🤖</span>
+          <AILogo size="sm" />
           <div>
             <p className="text-sm font-semibold text-white">AI Recommender</p>
             <p className="text-xs text-[rgba(255,255,255,0.4)]">Get AI suggestions</p>

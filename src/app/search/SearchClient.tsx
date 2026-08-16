@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Suspense } from 'react'
+import AILogo from '@/components/AILogo'
 import { formatPriceINR } from '@/lib/format'
 
 const BUDGET_PRESETS = {
@@ -223,8 +224,8 @@ function SearchContent() {
           🔍 Search & Filter
         </button>
         <button onClick={() => setAiMode(true)}
-          className={`px-4 py-2 rounded-xl text-sm font-medium border transition ${aiMode ? 'bg-gradient-to-r from-neon-violet to-neon-cyan text-black border-transparent shadow-sm' : 'bg-[var(--panel)] text-dim border-[rgba(255,255,255,0.06)] hover:border-neon-violet'}`}>
-          🤖 AI Search
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium border transition ${aiMode ? 'bg-gradient-to-r from-neon-violet to-neon-cyan text-black border-transparent shadow-sm' : 'bg-[var(--panel)] text-dim border-[rgba(255,255,255,0.06)] hover:border-neon-violet'}`}>
+          <AILogo size="xs" /> AI Search
         </button>
       </div>
 
@@ -232,7 +233,10 @@ function SearchContent() {
         /* AI Search */
         <div>
           <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
-            <p className="text-sm text-dim mb-3">Describe what you're looking for in plain English</p>
+            <div className="mb-3 flex items-center gap-2">
+              <AILogo size="xs" />
+              <p className="text-sm text-dim">Describe what you&apos;re looking for in plain English</p>
+            </div>
             <div className="flex gap-3 mb-4">
               <textarea value={aiQuery} onChange={e => setAiQuery(e.target.value)} rows={2}
                 placeholder={`e.g. ${AI_EXAMPLES[mode][0]}`}
@@ -241,7 +245,7 @@ function SearchContent() {
                 onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleAISearch())} />
               <button onClick={handleAISearch} disabled={aiLoading || !aiQuery.trim()}
                 className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black px-5 rounded-xl text-sm font-semibold hover:brightness-110 transition disabled:opacity-50 flex items-center gap-2">
-                {aiLoading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : '🤖'}
+                {aiLoading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <AILogo size="xs" />}
                 {aiLoading ? '' : 'Ask AI'}
               </button>
             </div>
@@ -259,7 +263,7 @@ function SearchContent() {
 
           {aiExplanation && (
             <div className="bg-[rgba(139,92,246,0.08)] border border-[rgba(139,92,246,0.2)] rounded-xl p-4 mb-6">
-              <p className="text-sm text-[#a78bfa]"><span className="font-semibold">🤖 AI:</span> {aiExplanation}</p>
+              <p className="text-sm text-[#a78bfa]"><span className="font-semibold inline-flex items-center gap-1.5"><AILogo size="xs" /> AI:</span> {aiExplanation}</p>
             </div>
           )}
 

@@ -33,6 +33,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing phones' }, { status: 400 })
   }
 
+  if (!process.env.OPENROUTER_API_KEY) {
+    return NextResponse.json(
+      { error: 'AI service is not configured (missing OPENROUTER_API_KEY).' },
+      { status: 503 }
+    )
+  }
+
   const formatSpecs = (specs: any[]) =>
     specs.map(s => `${s.label}: ${s.value}`).join(', ')
 

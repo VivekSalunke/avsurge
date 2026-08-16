@@ -35,7 +35,7 @@ export default function NavAuth() {
     <div ref={ref} className="flex items-center gap-2">
       {isAdmin && (
         <Link href="/admin"
-          className="group flex items-center gap-0 overflow-hidden bg-[rgba(6,182,212,0.1)] hover:bg-neon-cyan text-neon-cyan hover:text-black rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
+          className="group flex items-center gap-0 overflow-hidden bg-[rgba(6,182,212,0.1)] hover:bg-blue-500 text-neon-cyan hover:text-white rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
           <span className="font-bold text-lg leading-none">+</span>
           <span className="max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-200 text-xs font-medium group-hover:ml-1.5">
             Admin panel
@@ -46,7 +46,7 @@ export default function NavAuth() {
       <div className="relative">
         <button
           onClick={() => setOpen(o => !o)}
-          className="group flex items-center gap-0 overflow-hidden bg-[rgba(6,182,212,0.1)] hover:bg-neon-cyan text-neon-cyan hover:text-black rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
+          className="group flex items-center gap-0 overflow-hidden bg-[rgba(6,182,212,0.1)] hover:bg-blue-500 text-neon-cyan hover:text-white rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
           <span className="text-xs font-bold leading-none">{user.email?.[0].toUpperCase()}</span>
           <span className="max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-200 text-xs font-medium group-hover:ml-1.5">
             {displayName}
