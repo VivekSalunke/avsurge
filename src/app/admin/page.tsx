@@ -10,13 +10,13 @@ type RecentDevice = { type: 'phone' | 'tablet' | 'laptop'; name: string; brand: 
 
 type SearchResult = RecentDevice
 
-const STAT_CARDS: { key: keyof Counts; label: string; icon: string; accent: string }[] = [
-  { key: 'phones', label: 'Phones', icon: '📱', accent: 'from-neon-violet to-neon-cyan' },
-  { key: 'tablets', label: 'Tablets', icon: '📟', accent: 'from-neon-cyan to-emerald-400' },
-  { key: 'laptops', label: 'Laptops', icon: '💻', accent: 'from-neon-violet to-blue-500' },
-  { key: 'news', label: 'News', icon: '📰', accent: 'from-amber-400 to-orange-500' },
-  { key: 'brands', label: 'Brands', icon: '🏷️', accent: 'from-pink-500 to-neon-violet' },
-  { key: 'priceHistory', label: 'Price History', icon: '📈', accent: 'from-emerald-400 to-teal-500' },
+const STAT_CARDS: { key: keyof Counts; label: string; icon: string; accent: string; href: string }[] = [
+  { key: 'phones', label: 'Phones', icon: '📱', accent: 'from-neon-violet to-neon-cyan', href: '/admin/phones' },
+  { key: 'tablets', label: 'Tablets', icon: '📟', accent: 'from-neon-cyan to-emerald-400', href: '/admin/tablets' },
+  { key: 'laptops', label: 'Laptops', icon: '💻', accent: 'from-neon-violet to-blue-500', href: '/admin/laptops' },
+  { key: 'news', label: 'News', icon: '📰', accent: 'from-amber-400 to-orange-500', href: '/admin/news' },
+  { key: 'brands', label: 'Brands', icon: '🏷️', accent: 'from-pink-500 to-neon-violet', href: '/admin/brands' },
+  { key: 'priceHistory', label: 'Price History', icon: '📈', accent: 'from-emerald-400 to-teal-500', href: '/admin/price-history' },
 ]
 
 const QUICK_ACTIONS = [
@@ -48,10 +48,24 @@ export default function AdminDashboard() {
       const { count } = await supabase.from(table).select('*', { count: 'exact', head: true })
       return count || 0
     }
-    const [phones, tablets, laptops, news, brands, priceHistory] = await Promise.all([
-      count('phones'), count('tablets'), count('laptops'), count('news'), count('brand_logos'), count('price_history'),
+    const [phones, tablets, laptops, news] = await Promise.all([
+      count('phones'), count('tablets'), count('laptops'), count('news'),
     ])
-    setCounts({ phones, tablets, laptops, news, brands, priceHistory })
+    const [ph, tph, lph] = await Promise.all([
+      count('price_history'), count('tablet_price_history'), count('laptop_price_history'),
+    ])
+
+    const [phoneBrands, tabletBrands, laptopBrands] = await Promise.all([
+      supabase.from('phones').select('brand'),
+      supabase.from('tablets').select('brand'),
+      supabase.from('laptops').select('brand'),
+    ])
+    const brandSet = new Set<string>()
+    for (const arr of [phoneBrands.data, tabletBrands.data, laptopBrands.data]) {
+      for (const row of (arr || [])) if (row.brand) brandSet.add(row.brand)
+    }
+
+    setCounts({ phones, tablets, laptops, news, brands: brandSet.size, priceHistory: ph + tph + lph })
 
     const recentPhones = (await supabase.from('phones').select('name, brand, slug, price_inr, created_at').order('created_at', { ascending: false }).limit(5)).data || []
     const recentTablets = (await supabase.from('tablets').select('name, brand, slug, price_inr, created_at').order('created_at', { ascending: false }).limit(5)).data || []
@@ -126,14 +140,19 @@ export default function AdminDashboard() {
       {/* Stats */}
       <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {STAT_CARDS.map(card => (
-          <div key={card.key}
-            className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4 transition card-hover hover:border-neon-violet hover:glow">
+          <Link key={card.key} href={card.href}
+            className="group relative rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4 transition card-hover hover:border-neon-violet hover:glow">
             <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br text-base ${card.accent}`}>
               {card.icon}
             </div>
             <p className="text-2xl font-extrabold text-white">{counts ? counts[card.key].toLocaleString('en-IN') : '—'}</p>
-            <p className="mt-0.5 text-xs font-medium text-dim">{card.label}</p>
-          </div>
+            <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-dim">
+              {card.label}
+              <svg className="h-3 w-3 opacity-0 transition group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </p>
+          </Link>
         ))}
       </div>
 
