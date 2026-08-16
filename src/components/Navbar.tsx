@@ -146,14 +146,21 @@ export default function Navbar() {
 
         <div className="flex items-center gap-1.5" onMouseEnter={() => setActive(null)}>
           <SearchBar />
-          <Link href="/ai-recommend" title="AI Recommender" className="hover:scale-110 transition">
-            <AILogo size="sm" />
+          <Link href="/ai-recommend" title="AI Recommender" onMouseEnter={() => setActive(null)}
+            className="group flex items-center gap-0 overflow-hidden bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.09)] rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
+            <AILogo size="xs" />
+            <span className="max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-200 text-xs font-medium text-[rgba(255,255,255,0.85)] group-hover:ml-1.5">
+              AI
+            </span>
           </Link>
-          <Link href="/wishlist" title="Wishlist"
-            className="hidden sm:flex h-8 w-8 items-center justify-center rounded-xl bg-[rgba(255,255,255,0.05)] text-[rgba(255,255,255,0.85)] hover:bg-[rgba(255,255,255,0.09)] hover:text-neon-cyan transition">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <Link href="/wishlist" title="Wishlist" onMouseEnter={() => setActive(null)}
+            className="group hidden sm:flex items-center gap-0 overflow-hidden bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.09)] text-[rgba(255,255,255,0.85)] hover:text-neon-cyan rounded-xl transition-all duration-200 h-9 px-2.5 hover:px-3">
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
             </svg>
+            <span className="max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-200 text-xs font-medium group-hover:ml-1.5">
+              Wishlist
+            </span>
           </Link>
           <NavAuth />
           {/* Hamburger button */}

@@ -78,7 +78,7 @@ export default function FeaturedDeviceStack({ devices }: { devices: FeaturedDevi
                           <p className="text-xs text-dim">Price on request</p>
                         )}
                         <Link href={`/${device.type}/${device.slug}`}
-                          className="flex-shrink-0 rounded-lg bg-gradient-to-r from-neon-violet to-neon-cyan px-3 py-1.5 text-xs font-semibold text-black transition-all duration-200 hover:brightness-110">
+                          className="flex-shrink-0 rounded-lg bg-gradient-to-r from-neon-violet to-neon-cyan px-3 py-1.5 text-xs font-semibold text-emerald-400 transition-all duration-200 hover:brightness-110">
                           View specs
                         </Link>
                       </div>
