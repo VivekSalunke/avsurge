@@ -178,10 +178,7 @@ export default async function HomePage() {
               India&apos;s Device Database
             </p>
             <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-6xl">
-              Find your perfect{' '}
-              <span className="bg-gradient-to-r from-neon-violet via-[#a78bfa] to-neon-cyan bg-clip-text text-transparent">
-                device
-              </span>
+              Find your perfect <span className="text-emerald-400">device</span>
             </h1>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-[rgba(255,255,255,0.65)] sm:text-lg">
               Comprehensive specs, live prices, detailed comparisons and genuine reviews for every phone, tablet and laptop available in India.

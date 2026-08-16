@@ -139,10 +139,7 @@ export default function AIRecommendClient() {
           <AILogo size="lg" />
         </div>
         <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-          AI Device{' '}
-          <span className="bg-gradient-to-r from-neon-violet to-neon-cyan bg-clip-text text-transparent">
-            Recommender
-          </span>
+          AI Device <span className="text-emerald-400">Recommender</span>
         </h1>
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[rgba(255,255,255,0.5)]">
           Describe what you need in plain English and AI will find the best phones, tablets and laptops for you.
