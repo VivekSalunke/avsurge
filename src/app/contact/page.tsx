@@ -32,7 +32,7 @@ export default function ContactPage() {
               <span className="text-xl">📧</span>
               <div>
                 <p className="font-medium text-white">Email</p>
-                <a href="mailto:avector134@gmail.com" className="text-neon-cyan hover:underline">avector134@gmail.com</a>
+                <a href="mailto:contact@avsurge.com" className="text-neon-cyan hover:underline">contact@avsurge.com</a>
               </div>
             </div>
             <div className="flex items-start gap-3">

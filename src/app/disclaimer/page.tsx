@@ -117,7 +117,7 @@ export default function DisclaimerPage() {
           </p>
           <div className="bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 mt-4 neon-border">
             <p className="font-semibold text-white">Report an Issue:</p>
-            <p className="text-sm mt-2">Email: <a href="mailto:avector134@gmail.com" className="text-neon-cyan hover:underline">avector134@gmail.com</a></p>
+            <p className="text-sm mt-2">Email: <a href="mailto:contact@avsurge.com" className="text-neon-cyan hover:underline">contact@avsurge.com</a></p>
             <p className="text-sm">Website: <a href="https://avsurge.com/contact" className="text-neon-cyan hover:underline">Contact Us</a></p>
           </div>
         </section>

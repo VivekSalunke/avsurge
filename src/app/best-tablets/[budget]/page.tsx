@@ -146,14 +146,18 @@ export default async function UnderBudgetTabletsPage({ params }: { params: Promi
         ))}
       </div>
 
-      <div className="mt-12 p-6 bg-[var(--panel)] rounded-2xl border border-[rgba(255,255,255,0.06)]">
-        <h2 className="text-base font-semibold text-white mb-2">
+      <div className="mt-12 p-6 bg-[var(--panel)] rounded-2xl border border-[rgba(255,255,255,0.06)] space-y-4">
+        <h2 className="text-base font-semibold text-white">
           How to pick the best tablet under {budgetLabel}?
         </h2>
         <p className="text-sm text-dim leading-relaxed">
-          When buying a tablet under {budgetLabel}, focus on display size, chipset, RAM, and battery life.
-          Use the <Link href="/compare-tablets" className="text-neon-cyan hover:underline">comparison tool</Link> to compare any two tablets side by side,
-          or try the <Link href="/search" className="text-neon-cyan hover:underline">Search & Discover</Link> to filter by your priorities.
+          Tablets under {budgetLabel} are mostly used for entertainment, online classes, reading and light productivity, so the display matters more than raw performance. Prioritise a sharp panel with a minimum of FHD (1920×1080) resolution and good brightness — a dim or low-resolution screen is the quickest way to regret a tablet purchase. For students, stylus support is worth paying extra for, since it enables note-taking and PDF annotations that a phone simply can&apos;t do.
+        </p>
+        <p className="text-sm text-dim leading-relaxed">
+          For performance, aim for at least 4GB of RAM and a mid-range chipset from MediaTek or Qualcomm. Battery life at this price typically ranges between 8–12 hours, which is plenty for a day of classes and streaming. Storage matters too — 64GB is the comfortable minimum, and check whether the model supports microSD expansion so you can add space later for movies and apps.
+        </p>
+        <p className="text-sm text-dim leading-relaxed">
+          Use our <Link href="/compare-tablets" className="text-neon-cyan hover:underline">comparison tool</Link> to put any two tablets on this list side by side, or try the <Link href="/search" className="text-neon-cyan hover:underline">Search &amp; Discover</Link> page to filter by screen size, RAM and battery. Prices below are indicative — confirm the live price on the retailer&apos;s page, as sale prices frequently drop below {budgetLabel}.
         </p>
       </div>
     </main>

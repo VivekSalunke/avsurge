@@ -74,7 +74,7 @@ export default function AboutPage() {
           <div className="bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 text-sm text-[rgba(255,255,255,0.65)] neon-border">
             <p><strong>AVSurge</strong></p>
             <p>Website: <a href="https://avsurge.com" className="text-neon-cyan hover:underline">avsurge.com</a></p>
-            <p>Email: <a href="mailto:avector134@gmail.com" className="text-neon-cyan hover:underline">avector134@gmail.com</a></p>
+            <p>Email: <a href="mailto:contact@avsurge.com" className="text-neon-cyan hover:underline">contact@avsurge.com</a></p>
             <p className="mt-2 text-xs text-[rgba(255,255,255,0.4)]">Based in India 🇮🇳</p>
           </div>
         </section>

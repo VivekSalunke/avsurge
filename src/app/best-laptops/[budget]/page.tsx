@@ -114,11 +114,16 @@ export default async function UnderBudgetLaptopsPage({ params }: { params: Promi
           </Link>
         ))}
       </div>
-      <div className="mt-12 p-6 bg-[var(--panel)] rounded-2xl border border-[rgba(255,255,255,0.06)]">
-        <h2 className="text-base font-semibold text-white mb-2">How to pick the best laptop under {budgetLabel}?</h2>
+      <div className="mt-12 p-6 bg-[var(--panel)] rounded-2xl border border-[rgba(255,255,255,0.06)] space-y-4">
+        <h2 className="text-base font-semibold text-white">How to pick the best laptop under {budgetLabel}?</h2>
         <p className="text-sm text-dim leading-relaxed">
-          When buying a laptop under {budgetLabel}, focus on the processor, RAM, storage type (SSD vs HDD), display quality, and battery life.
-          Use the <Link href="/compare-laptops" className="text-neon-cyan hover:underline">comparison tool</Link> to compare any two laptops side by side.
+          Under {budgetLabel}, the order of priority should be storage type, RAM, processor and then everything else. An SSD is non-negotiable — a laptop with a 512GB NVMe SSD boots in seconds and feels dramatically faster than any machine with a hard drive, regardless of processor. Pair that with at least 8GB RAM, and the machine will handle everyday multitasking, browser tabs, and office apps without slowdowns for years.
+        </p>
+        <p className="text-sm text-dim leading-relaxed">
+          Processor choice depends on your work. An Intel Core i3, Core i5 or AMD Ryzen 3/5 covers web browsing, documents, streaming and light photo editing. If you plan to do video editing, programming or content creation, step up to a Ryzen 5 or Core i5 with 16GB RAM, since these are the components that actually determine how long the laptop stays usable. Display quality — especially brightness and colour accuracy — matters more than a flashy design, and battery life of 6+ hours is the practical minimum for students and commuters.
+        </p>
+        <p className="text-sm text-dim leading-relaxed">
+          Use the <Link href="/compare-laptops" className="text-neon-cyan hover:underline">comparison tool</Link> to compare any two laptops on this list side by side, or visit the <Link href="/search" className="text-neon-cyan hover:underline">Search &amp; Discover</Link> page to filter by RAM, storage and processor. Prices below are indicative starting prices — confirm the live price on the retailer&apos;s page, since frequent sales can bring models well under {budgetLabel}.
         </p>
       </div>
     </main>

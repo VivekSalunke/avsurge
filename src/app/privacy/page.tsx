@@ -128,7 +128,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-bold text-white mb-3">12. Disclosure for Affiliate Links and Advertising</h2>
+          <h2 className="text-lg font-bold text-white mb-3">11. Disclosure for Affiliate Links and Advertising</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
             AVSurge includes affiliate links to Amazon products. When you purchase through these links, we earn a commission at no extra cost to you. This commission helps us maintain and improve our service. We disclose this to comply with FTC requirements.
           </p>
@@ -138,7 +138,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-bold text-white mb-3">13. Your Opt-Out Options</h2>
+          <h2 className="text-lg font-bold text-white mb-3">12. Your Opt-Out Options</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed mb-3">You have several options to control your data and ads:</p>
           <ul className="list-disc list-inside text-[rgba(255,255,255,0.65)] space-y-2 ml-2">
             <li>Opt out of personalized ads: <a href="https://myaccount.google.com/u/0/data-and-privacy/ad-settings" className="text-neon-cyan hover:underline" target="_blank" rel="noopener noreferrer">Google Ad Settings</a></li>
@@ -149,14 +149,14 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-bold text-white mb-3">14. Contact Us</h2>
+          <h2 className="text-lg font-bold text-white mb-3">13. Contact Us</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
             If you have any questions about this Privacy Policy or how we handle your data, please contact us at:
           </p>
           <div className="mt-3 bg-[var(--panel)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 text-sm text-[rgba(255,255,255,0.65)] neon-border">
             <p><strong>AVSurge</strong></p>
             <p>Website: <a href="https://avsurge.com" className="text-neon-cyan hover:underline">avsurge.com</a></p>
-            <p>Email: <a href="mailto:avector134@gmail.com" className="text-neon-cyan hover:underline">avector134@gmail.com</a></p>
+            <p>Email: <a href="mailto:contact@avsurge.com" className="text-neon-cyan hover:underline">contact@avsurge.com</a></p>
             <p className="text-xs text-[rgba(255,255,255,0.4)] mt-3">Based in India 🇮🇳</p>
           </div>
         </section>

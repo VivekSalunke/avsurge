@@ -147,14 +147,18 @@ export default async function UnderBudgetPage({ params }: { params: Promise<{ bu
         ))}
       </div>
 
-      <div className="mt-12 p-6 bg-[var(--panel)] rounded-2xl border border-[rgba(255,255,255,0.06)]">
-        <h2 className="text-base font-semibold text-white mb-2">
+      <div className="mt-12 p-6 bg-[var(--panel)] rounded-2xl border border-[rgba(255,255,255,0.06)] space-y-4">
+        <h2 className="text-base font-semibold text-white">
           How to pick the best phone under {budgetLabel}?
         </h2>
         <p className="text-sm text-dim leading-relaxed">
-          When buying a phone under {budgetLabel}, focus on the processor (chipset), RAM, battery capacity, and camera quality.
-          Use the <Link href="/compare" className="text-neon-cyan hover:underline">comparison tool</Link> to compare any two phones side by side,
-          or try the <Link href="/search" className="text-neon-cyan hover:underline">Search & Discover</Link> to filter by your priorities.
+          When buying a phone under {budgetLabel}, the chipset is the single most important component because it decides how fast apps open, how smoothly the phone runs for 2–3 years, and how much battery the phone drains. Look for a Snapdragon 7-series or Dimensity mid-range chip at this price, and pair it with at least 6GB of RAM so heavy apps don&apos;t reload constantly. A 120Hz display and a 5000mAh battery make the biggest day-to-day difference at this budget — more than megapixel count alone.
+        </p>
+        <p className="text-sm text-dim leading-relaxed">
+          On the camera side, don&apos;t chase high megapixel numbers in isolation. A 50MP sensor with a bright f/1.8 aperture and good software processing will beat a 108MP sensor with weak processing in most real-world shots. For students and heavy social media users, also check for 5G band support, expandable storage, and how frequently the brand pushes software updates — a phone under {budgetLabel} should comfortably last you 2–3 years before an upgrade makes sense.
+        </p>
+        <p className="text-sm text-dim leading-relaxed">
+          Compare any two phones on this list side by side using our <Link href="/compare" className="text-neon-cyan hover:underline">comparison tool</Link>, or use the <Link href="/search" className="text-neon-cyan hover:underline">Search &amp; Discover</Link> page to filter by your priorities. Prices below are indicative starting prices in India — always confirm the final price on the retailer&apos;s page before buying, since discounts during sales often bring phones well below {budgetLabel}.
         </p>
       </div>
     </main>

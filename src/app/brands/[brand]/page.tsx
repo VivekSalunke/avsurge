@@ -86,6 +86,19 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
         </div>
       </div>
 
+      {/* Brand overview */}
+      <div className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--panel)] p-6 mb-8 space-y-3">
+        <h2 className="text-base font-semibold text-white">About {brandName} devices on AVSurge</h2>
+        <p className="text-sm text-dim leading-relaxed">
+          This page tracks every {brandName} phone{tablets && tablets.length > 0 ? ', tablet' : ''}{laptops && laptops.length > 0 ? ' and laptop' : ''} currently listed on AVSurge — {totalDevices} devices in total
+          {minPrice && maxPrice ? `, with starting prices ranging from ₹${minPrice.toLocaleString('en-IN')} to ₹${maxPrice.toLocaleString('en-IN')}` : ''}.
+          Each listing includes the full specification sheet, indicative India pricing, price history and user reviews, so you can compare {brandName} models side by side before you buy.
+        </p>
+        <p className="text-sm text-dim leading-relaxed">
+          Use the sort and filter options on this page to arrange devices by price, specs or popularity. If you&apos;re deciding between two {brandName} models, open the {brandName} phones, tablets or laptops sections above and use the compare button on any two devices to see their specifications side by side. For personalised picks, try the <Link href="/ai-recommend" className="text-neon-cyan hover:underline">AI Recommender</Link> or browse the <Link href="/best-phones-for/gaming" className="text-neon-cyan hover:underline">best-phones-for</Link> guides to shortlist options in your budget.
+        </p>
+      </div>
+
       {/* Phones section */}
       {(phones?.length || 0) > 0 && (
         <div className="mb-10">
