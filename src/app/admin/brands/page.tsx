@@ -15,6 +15,7 @@ export default function AdminBrandsPage() {
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
   const [editId, setEditId] = useState<number | null>(null)
+  const [showAddForm, setShowAddForm] = useState(false)
 
   useEffect(() => {
     if (loading || profileLoading) return
@@ -55,10 +56,24 @@ export default function AdminBrandsPage() {
     } else {
       const { error } = await supabase.from('brand_logos').upsert({ brand: form.brand, logo_url: form.logo_url }, { onConflict: 'brand' })
       if (error) setMsg('Error: ' + error.message)
-      else { setMsg('Saved!'); setForm({ brand: '', logo_url: '' }) }
+      else { setMsg('Saved!'); setShowAddForm(false); setForm({ brand: '', logo_url: '' }) }
     }
     setSaving(false)
     fetchData()
+  }
+
+  const handleAddNew = () => {
+    setShowAddForm(true)
+    setEditId(null)
+    setForm({ brand: '', logo_url: '' })
+    setMsg('')
+  }
+
+  const cancelForm = () => {
+    setEditId(null)
+    setShowAddForm(false)
+    setForm({ brand: '', logo_url: '' })
+    setMsg('')
   }
 
   const handleEdit = (b: any) => {
@@ -81,7 +96,13 @@ export default function AdminBrandsPage() {
     <main className="max-w-4xl mx-auto px-4 py-8 text-[var(--text)]">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-white">Brand Logos</h1>
-        <Link href="/admin" className="text-sm text-neon-cyan hover:underline">← Admin</Link>
+        <div className="flex items-center gap-4">
+          <button onClick={handleAddNew}
+            className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black font-semibold rounded-xl px-4 py-2 text-sm transition">
+            + Add New Brand
+          </button>
+          <Link href="/admin" className="text-sm text-neon-cyan hover:underline">← Admin</Link>
+        </div>
       </div>
 
       {/* Edit form (shown when editing) */}
@@ -118,7 +139,53 @@ export default function AdminBrandsPage() {
               className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black font-semibold rounded-xl px-5 py-2 text-sm transition disabled:opacity-50">
               {saving ? 'Saving...' : 'Update'}
             </button>
-            <button onClick={() => { setEditId(null); setForm({ brand: '', logo_url: '' }); setMsg('') }}
+            <button onClick={cancelForm}
+              className="border border-[rgba(255,255,255,0.1)] rounded-xl px-4 py-2 text-sm text-dim hover:border-neon-violet hover:text-white transition">
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Add new brand form (shown when adding) */}
+      {showAddForm && (
+        <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-8 neon-border">
+          <h2 className="text-sm font-semibold text-white mb-4">Add New Brand</h2>
+          <div className="grid grid-cols-1 gap-3 mb-4">
+            <div>
+              <label className="text-xs text-dim mb-1 block">Brand Name</label>
+              <input
+                placeholder="e.g. Apple, Samsung, Google..."
+                value={form.brand}
+                onChange={e => setForm(f => ({ ...f, brand: e.target.value }))}
+                className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
+                style={{ color: '#111827', backgroundColor: '#ffffff' }}
+              />
+            </div>
+            <div>
+              <label className="text-xs text-dim mb-1 block">Logo URL (optional)</label>
+              <input
+                placeholder="https://example.com/logo.png"
+                value={form.logo_url}
+                onChange={e => setForm(f => ({ ...f, logo_url: e.target.value }))}
+                className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
+                style={{ color: '#111827', backgroundColor: '#ffffff' }}
+              />
+            </div>
+            {form.logo_url && (
+              <div className="bg-[rgba(255,255,255,0.02)] rounded-xl p-3 flex items-center gap-3">
+                <img src={form.logo_url} alt="Preview" className="h-10 object-contain" onError={e => (e.target as HTMLImageElement).style.display = 'none'} />
+                <span className="text-xs text-[rgba(255,255,255,0.4)]">Logo preview</span>
+              </div>
+            )}
+          </div>
+          {msg && <p className={`text-sm mb-3 ${msg.startsWith('Error') ? 'text-[#f87171]' : 'text-[#34d399]'}`}>{msg}</p>}
+          <div className="flex gap-3">
+            <button onClick={handleSave} disabled={saving || !form.brand}
+              className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black font-semibold rounded-xl px-5 py-2 text-sm transition disabled:opacity-50">
+              {saving ? 'Saving...' : 'Add Brand'}
+            </button>
+            <button onClick={cancelForm}
               className="border border-[rgba(255,255,255,0.1)] rounded-xl px-4 py-2 text-sm text-dim hover:border-neon-violet hover:text-white transition">
               Cancel
             </button>
