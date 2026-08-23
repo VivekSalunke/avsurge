@@ -3,6 +3,7 @@ import BackToTop from '@/components/BackToTop'
 import { Geist } from 'next/font/google'
 import './globals.css'
 import Link from 'next/link'
+import Image from 'next/image'
 import { AuthProvider } from '@/context/AuthContext'
 import Navbar from '@/components/Navbar'
 import { GoogleAnalytics } from '@next/third-parties/google'
@@ -27,9 +28,12 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://avsurge.com'),
   alternates: { canonical: 'https://avsurge.com' },
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
+    icon: [
+      { url: '/icon-192.png', type: 'image/png', sizes: '192x192' },
+      { url: '/avsurge_logo.png', type: 'image/png', sizes: 'any' },
+    ],
+    shortcut: '/icon-192.png',
+    apple: '/icon-192.png',
   },
   openGraph: {
     type: 'website',
@@ -75,7 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="max-w-6xl mx-auto px-4 flex flex-col gap-4">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-gradient-to-r from-neon-cyan to-neon-violet rounded flex items-center justify-center text-black text-xs font-bold">AV</div>
+                  <Image src="/avsurge_logo.png" alt="AVSurge logo" width={24} height={24} className="w-6 h-6 rounded" />
                   <span className="text-sm font-semibold text-white">AVSurge</span>
                   <span className="text-xs text-[rgba(255,255,255,0.65)]">Device specs & prices for India</span>
                 </div>

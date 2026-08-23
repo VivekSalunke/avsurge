@@ -13,7 +13,7 @@ const orgSchema = {
   '@type': 'Organization',
   name: 'AVSurge',
   url: 'https://avsurge.com',
-  logo: 'https://avsurge.com/favicon.svg',
+  logo: 'https://avsurge.com/icon-512.png',
   email: 'contact@avsurge.com',
   description: 'India\'s device comparison platform for phones, tablets and laptops.',
   address: {

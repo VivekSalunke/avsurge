@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 import SearchBar from './SearchBar'
 import NavAuth from './NavAuth'
@@ -124,7 +125,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-5">
           <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)} onMouseEnter={() => setActive(null)}>
-            <div className="w-8 h-8 bg-gradient-to-r from-neon-cyan to-neon-violet rounded-lg flex items-center justify-center text-black text-sm font-bold">AV</div>
+            <Image src="/avsurge_logo.png" alt="AVSurge logo" width={32} height={32} className="w-8 h-8 rounded-lg" preload />
             <span className="font-bold text-white text-lg">AVSurge</span>
           </Link>
           {/* Desktop nav */}
