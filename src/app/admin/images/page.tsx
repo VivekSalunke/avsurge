@@ -1,11 +1,21 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 
 type DeviceType = 'phones' | 'tablets' | 'laptops'
+
+interface AdminImageDevice {
+  id: number
+  name: string
+  brand: string
+  slug: string
+  image_url: string | null
+  price_inr: number | null
+}
 
 const GITHUB_USER = 'VivekSalunke'
 const GITHUB_REPO = 'avsurge-images'
@@ -21,7 +31,7 @@ export default function AdminImagesPage() {
   const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
   const [mode, setMode] = useState<DeviceType>('phones')
-  const [devices, setDevices] = useState<any[]>([])
+  const [devices, setDevices] = useState<AdminImageDevice[]>([])
   const [fetching, setFetching] = useState(false)
   const [saving, setSaving] = useState<number | null>(null)
   const [search, setSearch] = useState('')
@@ -35,18 +45,26 @@ export default function AdminImagesPage() {
     if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading, profileLoading])
+  }, [user, isAdmin, loading, profileLoading, router])
+
+  const queryDevices = useCallback(
+    () => supabase.from(mode).select('id, name, brand, slug, image_url, price_inr').order('brand'),
+    [mode]
+  )
 
   useEffect(() => {
-    if (user && isAdmin) fetchDevices()
-  }, [user, isAdmin, mode])
-
-  const fetchDevices = async () => {
-    setFetching(true)
-    const { data } = await supabase.from(mode).select('id, name, brand, slug, image_url, price_inr').order('brand')
-    setDevices(data || [])
-    setFetching(false)
-  }
+    if (!user || !isAdmin) return
+    let cancelled = false
+    const load = async () => {
+      setFetching(true)
+      const { data } = await queryDevices()
+      if (cancelled) return
+      setDevices((data || []) as AdminImageDevice[])
+      setFetching(false)
+    }
+    load()
+    return () => { cancelled = true }
+  }, [user, isAdmin, queryDevices])
 
   const saveImage = async (id: number) => {
     setSaving(id)
@@ -61,7 +79,7 @@ export default function AdminImagesPage() {
     setSaving(null)
   }
 
-  const applyGithubUrl = async (device: any) => {
+  const applyGithubUrl = async (device: AdminImageDevice) => {
     const url = getRawUrl(mode, device.slug, ext)
     setSaving(device.id)
     const { error } = await supabase.from(mode).update({ image_url: url }).eq('id', device.id)
@@ -81,12 +99,13 @@ export default function AdminImagesPage() {
       await supabase.from(mode).update({ image_url: url }).eq('id', device.id)
     }
     setMsg(`Updated ${filtered.length} devices!`)
-    fetchDevices()
+    const { data } = await queryDevices()
+    setDevices((data || []) as AdminImageDevice[])
     setSaving(null)
     setTimeout(() => setMsg(''), 3000)
   }
 
-  const startEdit = (device: any) => {
+  const startEdit = (device: AdminImageDevice) => {
     setEditingId(device.id)
     setEditUrl(device.image_url || '')
   }
@@ -195,7 +214,7 @@ export default function AdminImagesPage() {
                   <td className="px-4 py-3">
                     <div className="w-12 h-12 bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center overflow-hidden">
                       {device.image_url
-                        ? <img src={device.image_url} alt={device.name} className="object-contain w-full h-full p-1"
+                        ? <Image src={device.image_url} alt={device.name} unoptimized width={48} height={48} className="object-contain w-full h-full p-1"
                             onError={e => { (e.target as HTMLImageElement).src = '' }} />
                         : <span className="text-xl">{emoji}</span>}
                     </div>

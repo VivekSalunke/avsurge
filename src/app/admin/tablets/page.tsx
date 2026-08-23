@@ -4,11 +4,21 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
+
+interface AdminTabletRow {
+  id: string
+  slug: string
+  name: string
+  brand: string
+  price_inr: number | null
+  image_url: string | null
+}
 
 export default function ManageTabletsPage() {
   const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
-  const [tablets, setTablets] = useState<any[]>([])
+  const [tablets, setTablets] = useState<AdminTabletRow[]>([])
   const [fetching, setFetching] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
   const [search, setSearch] = useState('')
@@ -17,17 +27,19 @@ export default function ManageTabletsPage() {
     if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading, profileLoading])
+  }, [user, isAdmin, loading, profileLoading, router])
 
   useEffect(() => {
-    if (isAdmin) fetchTablets()
+    if (!isAdmin) return
+    let cancelled = false
+    supabase.from('tablets').select('*').order('created_at', { ascending: false })
+      .then(({ data }) => {
+        if (cancelled) return
+        setTablets((data || []) as AdminTabletRow[])
+        setFetching(false)
+      })
+    return () => { cancelled = true }
   }, [isAdmin])
-
-  const fetchTablets = async () => {
-    const { data } = await supabase.from('tablets').select('*').order('created_at', { ascending: false })
-    setTablets(data || [])
-    setFetching(false)
-  }
 
   const deleteTablet = async (id: string, name: string) => {
     if (!confirm(`Delete ${name}? This cannot be undone.`)) return
@@ -77,9 +89,9 @@ export default function ManageTabletsPage() {
         {filtered.map(tablet => (
           <div key={tablet.id}
             className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl px-4 py-3 flex items-center gap-4 hover:border-neon-cyan transition">
-            <div className="w-12 h-12 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="w-12 h-12 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 relative">
               {tablet.image_url
-                ? <img src={tablet.image_url} alt={tablet.name} className="object-contain w-full h-full p-1" />
+                ? <Image src={tablet.image_url} alt={tablet.name} fill sizes="48px" className="object-contain w-full h-full p-1" />
                 : <span className="text-2xl">📟</span>}
             </div>
             <div className="flex-1 min-w-0">

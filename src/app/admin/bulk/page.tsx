@@ -17,6 +17,26 @@ const SAMPLE = JSON.stringify([
   }
 ], null, 2)
 
+interface SpecInput {
+  category: string
+  label: string
+  value: string
+}
+
+interface PhoneInput {
+  name: string
+  brand: string
+  price_inr?: number | null
+  released_at?: string | null
+  specs?: SpecInput[]
+}
+
+interface Duplicate {
+  incoming: string
+  existing: string
+  type: 'exact' | 'similar'
+}
+
 function normalize(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]/g, '')
 }
@@ -55,17 +75,17 @@ export default function BulkImportPage() {
   const [status, setStatus] = useState<'idle'|'checking'|'importing'|'success'|'error'>('idle')
   const [message, setMessage] = useState('')
   const [imported, setImported] = useState(0)
-  const [duplicates, setDuplicates] = useState<any[]>([])
-  const [toImport, setToImport] = useState<any[]>([])
+  const [duplicates, setDuplicates] = useState<Duplicate[]>([])
+  const [toImport, setToImport] = useState<PhoneInput[]>([])
   const [showDuplicates, setShowDuplicates] = useState(false)
 
   useEffect(() => {
     if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading, profileLoading])
+  }, [user, isAdmin, loading, profileLoading, router])
 
-  const handleImport = async (skipDupes = false, phonesToImport?: any[]) => {
+  const handleImport = async (skipDupes = false, phonesToImport?: PhoneInput[]) => {
     setStatus('checking'); setMessage(''); setImported(0)
 
     let phones = phonesToImport
@@ -73,16 +93,16 @@ export default function BulkImportPage() {
       try {
         phones = JSON.parse(json)
         if (!Array.isArray(phones)) throw new Error('Must be an array')
-      } catch (e: any) {
-        setMessage('Invalid JSON: ' + e.message); setStatus('error'); return
+      } catch (e) {
+        setMessage('Invalid JSON: ' + (e instanceof Error ? e.message : String(e))); setStatus('error'); return
       }
     }
 
     const { data: existing } = await supabase.from('phones').select('id, name, slug')
     const existingPhones = existing || []
 
-    const dupes: any[] = []
-    const toImportList: any[] = []
+    const dupes: Duplicate[] = []
+    const toImportList: PhoneInput[] = []
 
     for (const p of phones!) {
       const slug = p.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
@@ -121,8 +141,8 @@ export default function BulkImportPage() {
 
       if (e1) { skipped.push(`${p.name} (${e1.message})`); continue }
 
-      if (p.specs?.length > 0) {
-        await supabase.from('phone_specs').insert(p.specs.map((s: any) => ({ phone_id: phone.id, ...s })))
+      if (p.specs && p.specs.length > 0) {
+        await supabase.from('phone_specs').insert(p.specs.map(s => ({ phone_id: phone.id, ...s })))
       }
       count++
       setImported(count)
@@ -175,9 +195,9 @@ export default function BulkImportPage() {
                 <span className={`px-1.5 py-0.5 rounded text-xs font-medium flex-shrink-0 ${d.type === 'exact' ? 'bg-[rgba(239,68,68,0.1)] text-[#f87171]' : 'bg-[rgba(251,146,60,0.1)] text-[#fb923c]'}`}>
                   {d.type === 'exact' ? 'Exact' : 'Similar'}
                 </span>
-                <span className="text-dim truncate">"{d.incoming}"</span>
+                <span className="text-dim truncate">&quot;{d.incoming}&quot;</span>
                 <span className="text-[rgba(255,255,255,0.4)] flex-shrink-0">→</span>
-                <span className="text-[rgba(255,255,255,0.85)] font-medium truncate">"{d.existing}"</span>
+                <span className="text-[rgba(255,255,255,0.85)] font-medium truncate">&quot;{d.existing}&quot;</span>
               </div>
             ))}
           </div>

@@ -1,6 +1,17 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
 import { formatPriceINR } from '@/lib/format'
+
+interface SpecRow {
+  label: string
+  value: string
+}
+
+interface ScoreTarget {
+  price_inr: number | null
+  brand: string
+}
 
 // Chipset tier scoring
 const CHIPSET_TIERS: Record<string, number> = {
@@ -32,10 +43,10 @@ function getCategory(price: number): string {
 }
 
 function scorePhones(
-  target: any,
-  targetSpecs: any[],
-  candidate: any,
-  candidateSpecs: any[],
+  target: ScoreTarget,
+  targetSpecs: SpecRow[],
+  candidate: ScoreTarget,
+  candidateSpecs: SpecRow[],
   viewCount: number
 ): number {
   let score = 0
@@ -154,9 +165,9 @@ export default async function RelatedPhones({ phoneId, brand, priceInr }: {
         {related.map(phone => (
           <Link key={phone.id} href={`/phones/${phone.slug}`}
             className="p-4 text-center hover:bg-[rgba(6,182,212,0.06)] transition group">
-            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden relative">
               {phone.image_url
-                ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full p-2" />
+                ? <Image src={phone.image_url} alt={phone.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-contain w-full h-full p-2" />
                 : <span className="text-3xl">📱</span>}
             </div>
             <p className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{phone.brand}</p>

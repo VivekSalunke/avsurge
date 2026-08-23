@@ -16,6 +16,12 @@ const RATING_EMOJI: Record<string, string> = {
   basic: '📌',
 }
 
+interface ExplainData {
+  rating?: string
+  explanation?: string
+  tip?: string
+}
+
 export default function SpecExplainer({ label, value, phoneName }: {
   label: string
   value: string
@@ -23,7 +29,7 @@ export default function SpecExplainer({ label, value, phoneName }: {
 }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<ExplainData | null>(null)
   const [error, setError] = useState('')
 
   const explain = async () => {
@@ -37,7 +43,7 @@ export default function SpecExplainer({ label, value, phoneName }: {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ label, value, phoneName }),
       })
-      const json = await res.json()
+      const json: ExplainData & { error?: string } = await res.json()
       if (!res.ok) throw new Error(json.error)
       setData(json)
     } catch {

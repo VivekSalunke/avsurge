@@ -21,7 +21,7 @@ export default function NewArticlePage() {
     if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading, profileLoading])
+  }, [user, isAdmin, loading, profileLoading, router])
 
   const autoSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 

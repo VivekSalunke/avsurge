@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 function formatPriceINR(price: number | null): string {
   if (!price) return 'Price unavailable'
@@ -88,11 +89,12 @@ export default function DeviceCard({
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(59,130,246,0.08),transparent_60%)]" />
 
         {device.image_url ? (
-          <img
+          <Image
             src={device.image_url}
             alt={device.name}
-            loading="lazy"
-            className="relative h-full w-full object-contain p-6 transition-transform duration-500 ease-out group-hover:scale-110"
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="object-contain p-6 transition-transform duration-500 ease-out group-hover:scale-110"
           />
         ) : (
           <div className="flex h-full items-center justify-center">

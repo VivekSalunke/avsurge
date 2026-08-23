@@ -44,7 +44,7 @@ export default function DisclaimerPage() {
             Reviews and ratings on AVSurge are submitted by users and represent their personal opinions only. We do not endorse or guarantee the accuracy of user reviews. AVSurge reserves the right to remove reviews that violate our policies, including false, defamatory, or harmful content.
           </p>
           <p className="mt-3">
-            <strong>User reviews are not necessarily representative of the device's actual performance or quality.</strong> We recommend reading multiple reviews and conducting your own research before making purchase decisions.
+            <strong>User reviews are not necessarily representative of the device’s actual performance or quality.</strong> We recommend reading multiple reviews and conducting your own research before making purchase decisions.
           </p>
         </section>
 
@@ -82,7 +82,7 @@ export default function DisclaimerPage() {
         <section>
           <h2 className="text-lg font-bold text-white mb-3">Warranty Disclaimer</h2>
           <p>
-            THE INFORMATION AND MATERIALS ON THIS WEBSITE ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+            THE INFORMATION AND MATERIALS ON THIS WEBSITE ARE PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
           </p>
         </section>
 
@@ -99,7 +99,7 @@ export default function DisclaimerPage() {
             Prices and availability of devices change frequently and are subject to market conditions. Product availability may vary by location and retailer. Prices shown on AVSurge are indicative and may not reflect current prices on retail sites.
           </p>
           <p className="mt-3">
-            Always check the retailer's website for the most current pricing and availability before making a purchase.
+            Always check the retailer’s website for the most current pricing and availability before making a purchase.
           </p>
         </section>
 

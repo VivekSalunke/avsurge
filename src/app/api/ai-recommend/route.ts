@@ -1,4 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit'
+
+interface RecommendPhone {
+  name: string
+  brand: string
+  price_inr?: number | null
+  specs: Record<string, string>
+}
 
 const FREE_MODELS = [
   'openai/gpt-oss-20b:free',
@@ -27,10 +35,18 @@ async function callOpenRouter(model: string, prompt: string) {
 }
 
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req)
+  if (!checkRateLimit(`ai-recommend:${ip}`, 20, 60 * 60 * 1000)) {
+    return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+  }
+
   const { query, phones } = await req.json()
 
   if (!query || !phones) {
     return NextResponse.json({ error: 'Missing query or phones' }, { status: 400 })
+  }
+  if (typeof query !== 'string' || query.length > 500 || !Array.isArray(phones) || phones.length > 200) {
+    return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
   }
 
   if (!process.env.OPENROUTER_API_KEY) {
@@ -42,7 +58,7 @@ export async function POST(req: NextRequest) {
 
   const limitedPhones = phones.slice(0, 80)
 
-  const phoneSummary = limitedPhones.map((p: any) =>
+  const phoneSummary = limitedPhones.map((p: RecommendPhone) =>
     `${p.name} (${p.brand}) - ₹${p.price_inr?.toLocaleString('en-IN')} - RAM: ${p.specs['RAM'] || 'N/A'}, Camera: ${p.specs['Main camera'] || 'N/A'}, Battery: ${p.specs['Capacity'] || 'N/A'}, Charging: ${p.specs['Charging speed'] || 'N/A'}, 5G: ${p.specs['5G'] || 'N/A'}, Chipset: ${p.specs['Chipset'] || 'N/A'}`
   ).join('\n')
 

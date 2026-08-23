@@ -1,6 +1,7 @@
 'use client'
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import AILogo from '@/components/AILogo'
@@ -16,6 +17,10 @@ const ICONS: Record<string, string> = {
 }
 
 interface Laptop { id: number; name: string; brand: string; slug: string; price_inr: number | null; image_url: string | null }
+
+interface SpecRow { category: string; label: string; value: string }
+
+interface AiSummary { verdict: string; buy_a_if: string; buy_b_if: string; key_differences?: string }
 
 function LaptopSelector({ side, laptop, laptops, onSelect, onRemove }: {
   side: 'a' | 'b'; laptop: Laptop | null; laptops: Laptop[]
@@ -44,8 +49,8 @@ function LaptopSelector({ side, laptop, laptops, onSelect, onRemove }: {
       </div>
       {laptop ? (
         <div className="text-center">
-          <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden">
-            {laptop.image_url ? <img src={laptop.image_url} alt={laptop.name} className="object-contain w-full h-full p-4" /> : <span className="text-5xl">💻</span>}
+          <div className="relative w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+            {laptop.image_url ? <Image src={laptop.image_url} alt={laptop.name} fill sizes="(max-width: 1024px) 50vw, 500px" className="object-contain w-full h-full p-4" /> : <span className="text-5xl">💻</span>}
           </div>
           <p className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{laptop.brand}</p>
           <p className="text-sm font-semibold text-white mb-1">{laptop.name}</p>
@@ -60,9 +65,9 @@ function LaptopSelector({ side, laptop, laptops, onSelect, onRemove }: {
 }
 
 
-function AICompareSummary({ deviceA, deviceB, specsA, specsB }: { deviceA: any, deviceB: any, specsA: any[], specsB: any[] }) {
+function AICompareSummary({ deviceA, deviceB, specsA, specsB }: { deviceA: Laptop, deviceB: Laptop, specsA: SpecRow[], specsB: SpecRow[] }) {
   const [loading, setLoading] = useState(false)
-  const [summary, setSummary] = useState<any>(null)
+  const [summary, setSummary] = useState<AiSummary | null>(null)
   const [error, setError] = useState('')
   const getSummary = async () => {
     setLoading(true); setError(''); setSummary(null)
@@ -127,8 +132,21 @@ function CompareLaptopsContent() {
   const [laptops, setLaptops] = useState<Laptop[]>([])
   const [laptopA, setLaptopA] = useState<Laptop | null>(null)
   const [laptopB, setLaptopB] = useState<Laptop | null>(null)
-  const [specsA, setSpecsA] = useState<any[]>([])
-  const [specsB, setSpecsB] = useState<any[]>([])
+  const [specsA, setSpecsA] = useState<SpecRow[]>([])
+  const [specsB, setSpecsB] = useState<SpecRow[]>([])
+
+  const fetchSpecs = useCallback(async (id: number): Promise<SpecRow[]> => {
+    const { data } = await supabase.from('laptop_specs').select('*').eq('laptop_id', id).order('id')
+    return data || []
+  }, [])
+
+  const handleSelect = useCallback(async (laptop: Laptop, side: 'a' | 'b') => {
+    const specs = await fetchSpecs(laptop.id)
+    if (side === 'a') { setLaptopA(laptop); setSpecsA(specs) } else { setLaptopB(laptop); setSpecsB(specs) }
+    const params = new URLSearchParams(searchParams.toString())
+    params.set(side, laptop.slug)
+    router.replace(`/compare-laptops?${params.toString()}`)
+  }, [fetchSpecs, router, searchParams])
 
   useEffect(() => {
     supabase.from('laptops').select('*').order('brand').then(({ data }) => {
@@ -138,20 +156,7 @@ function CompareLaptopsContent() {
       if (slugA) { const f = (data || []).find(l => l.slug === slugA); if (f) handleSelect(f, 'a') }
       if (slugB) { const f = (data || []).find(l => l.slug === slugB); if (f) handleSelect(f, 'b') }
     })
-  }, [])
-
-  const fetchSpecs = async (id: number) => {
-    const { data } = await supabase.from('laptop_specs').select('*').eq('laptop_id', id).order('id')
-    return data || []
-  }
-
-  const handleSelect = async (laptop: Laptop, side: 'a' | 'b') => {
-    const specs = await fetchSpecs(laptop.id)
-    if (side === 'a') { setLaptopA(laptop); setSpecsA(specs) } else { setLaptopB(laptop); setSpecsB(specs) }
-    const params = new URLSearchParams(searchParams.toString())
-    params.set(side, laptop.slug)
-    router.replace(`/compare-laptops?${params.toString()}`)
-  }
+  }, [handleSelect, searchParams])
 
   const handleRemove = (side: 'a' | 'b') => {
     if (side === 'a') { setLaptopA(null); setSpecsA([]) } else { setLaptopB(null); setSpecsB([]) }

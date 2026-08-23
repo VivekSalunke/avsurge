@@ -1,25 +1,38 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
+
+interface ImportResult {
+  imported: number
+  duplicates: number
+  duplicateNames: string[]
+  errors?: string[]
+}
 
 export default function ImportTabletsPage() {
   const [json, setJson] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<ImportResult | null>(null)
 
   const handleImport = async () => {
     setStatus('loading')
     try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) { setStatus('error'); return }
       const tablets = JSON.parse(json)
       const res = await fetch('/api/tablets/import', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({ tablets }),
       })
       const data = await res.json()
       setResult(data)
       setStatus('done')
-    } catch (e) {
+    } catch {
       setStatus('error')
     }
   }
@@ -66,7 +79,7 @@ export default function ImportTabletsPage() {
                 </div>
               </div>
             )}
-            {result.errors?.length > 0 && (
+            {result.errors && result.errors.length > 0 && (
               <div className="bg-[rgba(239,68,68,0.06)] border border-[rgba(239,68,68,0.2)] rounded-xl p-4">
                 <p className="text-[#f87171] text-sm font-semibold mb-1">❌ {result.errors.length} errors:</p>
                 {result.errors.map((e: string, i: number) => (

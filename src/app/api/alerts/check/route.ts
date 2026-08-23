@@ -1,5 +1,23 @@
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin as supabase } from '@/lib/supabaseAdmin'
 import { NextRequest, NextResponse } from 'next/server'
+
+interface AlertPhone {
+  id: number
+  name: string
+  slug: string
+  price_inr: number | null
+  image_url: string | null
+}
+
+interface PriceAlertRow {
+  id: number
+  email: string
+  target_price: number
+  last_notified_at: string | null
+  phones: AlertPhone | null
+}
+
+const NOTIFY_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000
 
 export async function GET(req: NextRequest) {
   // Secure with a secret token
@@ -8,21 +26,30 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  if (!process.env.RESEND_API_KEY) {
+    return NextResponse.json({ error: 'RESEND_API_KEY not configured' }, { status: 503 })
+  }
+
   // Get all active alerts
-  const { data: alerts } = await supabase
+  const { data } = await supabase
     .from('price_alerts')
     .select('*, phones(id, name, slug, price_inr, image_url)')
     .eq('is_active', true)
 
-  if (!alerts || alerts.length === 0) {
+  if (!data || data.length === 0) {
     return NextResponse.json({ message: 'No active alerts' })
   }
+
+  const alerts = data as PriceAlertRow[]
 
   let sent = 0
 
   for (const alert of alerts) {
-    const phone = alert.phones as any
+    const phone = alert.phones
     if (!phone || !phone.price_inr) continue
+
+    // Skip if we already notified this alert within the cooldown window
+    if (alert.last_notified_at && Date.now() - new Date(alert.last_notified_at).getTime() < NOTIFY_COOLDOWN_MS) continue
 
     // Check if current price is at or below target
     if (phone.price_inr <= alert.target_price) {

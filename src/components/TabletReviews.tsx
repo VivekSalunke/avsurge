@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 
@@ -21,16 +21,19 @@ export default function TabletReviews({ tabletId }: { tabletId: number }) {
   const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
 
-  useEffect(() => { fetchReviews() }, [tabletId])
+  const queryReviews = useCallback(() => supabase
+    .from('tablet_reviews')
+    .select('*')
+    .eq('tablet_id', tabletId)
+    .order('created_at', { ascending: false }), [tabletId])
 
-  const fetchReviews = async () => {
-    const { data } = await supabase
-      .from('tablet_reviews')
-      .select('*')
-      .eq('tablet_id', tabletId)
-      .order('created_at', { ascending: false })
-    setReviews(data || [])
-  }
+  useEffect(() => {
+    let cancelled = false
+    queryReviews().then(({ data }) => {
+      if (!cancelled) setReviews(((data || []) as Review[]))
+    })
+    return () => { cancelled = true }
+  }, [queryReviews])
 
   const avgRating = reviews.length
     ? (reviews.reduce((a, r) => a + r.rating, 0) / reviews.length).toFixed(1)
@@ -54,12 +57,12 @@ export default function TabletReviews({ tabletId }: { tabletId: number }) {
     setStatus('success')
     setRating(0); setBody('')
     setShowForm(false)
-    fetchReviews()
+    queryReviews().then(({ data }) => setReviews((data || []) as Review[]))
   }
 
   const deleteReview = async (id: number) => {
     await supabase.from('tablet_reviews').delete().eq('id', id)
-    fetchReviews()
+    queryReviews().then(({ data }) => setReviews((data || []) as Review[]))
   }
 
   const stars = (n: number, size = 'text-xl') => (

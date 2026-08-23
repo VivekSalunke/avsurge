@@ -32,17 +32,34 @@ async function verifyCaptcha(token: string): Promise<boolean> {
   return data.success === true
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function sanitizeEmailSubject(s: string): string {
+  return s.replace(/[\r\n]+/g, ' ')
+}
+
 function buildContactHtml(name: string, email: string, subject: string, message: string) {
+  const safeName = escapeHtml(name)
+  const safeEmail = escapeHtml(email)
+  const safeSubject = escapeHtml(subject)
+  const safeMessage = escapeHtml(message)
   return `
     <div style="font-family:sans-serif;max-width:520px;margin:0 auto;">
       <div style="background:#2563eb;padding:24px;border-radius:12px 12px 0 0;">
-        <h1 style="color:white;margin:0;font-size:18px;">📩 New contact query — ${subject}</h1>
+        <h1 style="color:white;margin:0;font-size:18px;">📩 New contact query — ${safeSubject}</h1>
       </div>
       <div style="background:#f9fafb;padding:24px;border-radius:0 0 12px 12px;border:1px solid #e5e7eb;">
-        <p style="color:#6b7280;margin:0 0 4px;font-size:13px;"><strong style="color:#111827;">Name:</strong> ${name}</p>
-        <p style="color:#6b7280;margin:0 0 4px;font-size:13px;"><strong style="color:#111827;">Email:</strong> <a href="mailto:${email}" style="color:#2563eb;">${email}</a></p>
-        <p style="color:#6b7280;margin:0 0 16px;font-size:13px;"><strong style="color:#111827;">Subject:</strong> ${subject}</p>
-        <div style="background:white;border:1px solid #e5e7eb;border-radius:10px;padding:16px;color:#374151;font-size:14px;line-height:1.6;white-space:pre-wrap;">${message}</div>
+        <p style="color:#6b7280;margin:0 0 4px;font-size:13px;"><strong style="color:#111827;">Name:</strong> ${safeName}</p>
+        <p style="color:#6b7280;margin:0 0 4px;font-size:13px;"><strong style="color:#111827;">Email:</strong> <a href="mailto:${safeEmail}" style="color:#2563eb;">${safeEmail}</a></p>
+        <p style="color:#6b7280;margin:0 0 16px;font-size:13px;"><strong style="color:#111827;">Subject:</strong> ${safeSubject}</p>
+        <div style="background:white;border:1px solid #e5e7eb;border-radius:10px;padding:16px;color:#374151;font-size:14px;line-height:1.6;white-space:pre-wrap;">${safeMessage}</div>
         <p style="color:#9ca3af;font-size:12px;margin-top:20px;">Sent from the AVSurge contact form — avsurge.com</p>
       </div>
     </div>
@@ -82,6 +99,10 @@ export async function POST(req: NextRequest) {
 
   const html = buildContactHtml(name.trim(), email.trim(), subject.trim(), message.trim())
 
+  const safeName = escapeHtml(name.trim())
+  const safeSubject = escapeHtml(subject.trim())
+  const toEmail = email.trim()
+
   const results = await Promise.allSettled([
     fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -89,8 +110,8 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         from: FROM_EMAIL,
         to: CONTACT_EMAIL,
-        reply_to: email.trim(),
-        subject: `[AVSurge Contact] ${subject.trim()}`,
+        reply_to: toEmail,
+        subject: sanitizeEmailSubject(`[AVSurge Contact] ${subject.trim()}`),
         html,
       }),
     }),
@@ -99,16 +120,16 @@ export async function POST(req: NextRequest) {
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from: FROM_EMAIL,
-        to: email.trim(),
+        to: toEmail,
         subject: `We received your message — AVSurge`,
         html: `
           <div style="font-family:sans-serif;max-width:480px;margin:0 auto;">
             <div style="background:#2563eb;padding:24px;border-radius:12px 12px 0 0;">
-              <h1 style="color:white;margin:0;font-size:18px;">Thanks for reaching out, ${name.trim()}!</h1>
+              <h1 style="color:white;margin:0;font-size:18px;">Thanks for reaching out, ${safeName}!</h1>
             </div>
             <div style="background:#f9fafb;padding:24px;border-radius:0 0 12px 12px;border:1px solid #e5e7eb;">
               <p style="color:#374151;margin-top:0;">We've received your message and usually reply within 1–2 business days.</p>
-              <p style="color:#6b7280;font-size:13px;margin:0 0 16px;">Your query: <strong>${subject.trim()}</strong></p>
+              <p style="color:#6b7280;font-size:13px;margin:0 0 16px;">Your query: <strong>${safeSubject}</strong></p>
               <a href="https://avsurge.com" style="display:inline-block;background:#2563eb;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:13px;">Visit AVSurge →</a>
             </div>
           </div>

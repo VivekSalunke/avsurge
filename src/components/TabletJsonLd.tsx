@@ -1,4 +1,17 @@
-export default function TabletJsonLd({ tablet, specs }: { tablet: any, specs: any[] }) {
+interface TabletLike {
+  name: string
+  brand: string
+  slug: string
+  image_url?: string | null
+  price_inr?: number | null
+}
+
+interface SpecEntry {
+  label: string
+  value: string
+}
+
+export default function TabletJsonLd({ tablet, specs }: { tablet: TabletLike, specs: SpecEntry[] }) {
   const getSpec = (label: string) => specs.find(s => s.label === label)?.value || null
   const jsonLd = {
     '@context': 'https://schema.org',

@@ -40,43 +40,45 @@ export default function AdminDashboard() {
   const [searching, setSearching] = useState(false)
 
   useEffect(() => {
-    loadAll()
+    let cancelled = false
+    const load = async () => {
+      const count = async (table: string) => {
+        const { count } = await supabase.from(table).select('*', { count: 'exact', head: true })
+        return count || 0
+      }
+      const [phones, tablets, laptops, news] = await Promise.all([
+        count('phones'), count('tablets'), count('laptops'), count('news'),
+      ])
+      const [ph, tph, lph] = await Promise.all([
+        count('price_history'), count('tablet_price_history'), count('laptop_price_history'),
+      ])
+
+      const [phoneBrands, tabletBrands, laptopBrands] = await Promise.all([
+        supabase.from('phones').select('brand'),
+        supabase.from('tablets').select('brand'),
+        supabase.from('laptops').select('brand'),
+      ])
+      const brandSet = new Set<string>()
+      for (const arr of [phoneBrands.data, tabletBrands.data, laptopBrands.data]) {
+        for (const row of (arr || []) as { brand: string }[]) if (row.brand) brandSet.add(row.brand)
+      }
+
+      if (cancelled) return
+      setCounts({ phones, tablets, laptops, news, brands: brandSet.size, priceHistory: ph + tph + lph })
+
+      const recentPhones = ((await supabase.from('phones').select('name, brand, slug, price_inr, created_at').order('created_at', { ascending: false }).limit(5)).data || []) as Omit<RecentDevice, 'type'>[]
+      const recentTablets = ((await supabase.from('tablets').select('name, brand, slug, price_inr, created_at').order('created_at', { ascending: false }).limit(5)).data || []) as Omit<RecentDevice, 'type'>[]
+      const recentLaptops = ((await supabase.from('laptops').select('name, brand, slug, price_inr, created_at').order('created_at', { ascending: false }).limit(5)).data || []) as Omit<RecentDevice, 'type'>[]
+      const merged: RecentDevice[] = [
+        ...recentPhones.map(d => ({ ...d, type: 'phone' as const })),
+        ...recentTablets.map(d => ({ ...d, type: 'tablet' as const })),
+        ...recentLaptops.map(d => ({ ...d, type: 'laptop' as const })),
+      ].sort((a, b) => (b.created_at || '').localeCompare(a.created_at || '')).slice(0, 6)
+      setRecent(merged)
+    }
+    load()
+    return () => { cancelled = true }
   }, [])
-
-  const loadAll = async () => {
-    const count = async (table: string) => {
-      const { count } = await supabase.from(table).select('*', { count: 'exact', head: true })
-      return count || 0
-    }
-    const [phones, tablets, laptops, news] = await Promise.all([
-      count('phones'), count('tablets'), count('laptops'), count('news'),
-    ])
-    const [ph, tph, lph] = await Promise.all([
-      count('price_history'), count('tablet_price_history'), count('laptop_price_history'),
-    ])
-
-    const [phoneBrands, tabletBrands, laptopBrands] = await Promise.all([
-      supabase.from('phones').select('brand'),
-      supabase.from('tablets').select('brand'),
-      supabase.from('laptops').select('brand'),
-    ])
-    const brandSet = new Set<string>()
-    for (const arr of [phoneBrands.data, tabletBrands.data, laptopBrands.data]) {
-      for (const row of (arr || [])) if (row.brand) brandSet.add(row.brand)
-    }
-
-    setCounts({ phones, tablets, laptops, news, brands: brandSet.size, priceHistory: ph + tph + lph })
-
-    const recentPhones = (await supabase.from('phones').select('name, brand, slug, price_inr, created_at').order('created_at', { ascending: false }).limit(5)).data || []
-    const recentTablets = (await supabase.from('tablets').select('name, brand, slug, price_inr, created_at').order('created_at', { ascending: false }).limit(5)).data || []
-    const recentLaptops = (await supabase.from('laptops').select('name, brand, slug, price_inr, created_at').order('created_at', { ascending: false }).limit(5)).data || []
-    const merged: RecentDevice[] = [
-      ...recentPhones.map((d: any) => ({ ...d, type: 'phone' as const })),
-      ...recentTablets.map((d: any) => ({ ...d, type: 'tablet' as const })),
-      ...recentLaptops.map((d: any) => ({ ...d, type: 'laptop' as const })),
-    ].sort((a, b) => (b.created_at || '').localeCompare(a.created_at || '')).slice(0, 6)
-    setRecent(merged)
-  }
 
   const search = async (q: string) => {
     setQuery(q)
@@ -89,9 +91,9 @@ export default function AdminDashboard() {
       supabase.from('laptops').select('name, brand, slug, price_inr').ilike('name', like).limit(6),
     ])
     const merged: SearchResult[] = [
-      ...(p.data || []).map((d: any) => ({ ...d, type: 'phone' as const, created_at: '' })),
-      ...(t.data || []).map((d: any) => ({ ...d, type: 'tablet' as const, created_at: '' })),
-      ...(l.data || []).map((d: any) => ({ ...d, type: 'laptop' as const, created_at: '' })),
+      ...(p.data as Omit<SearchResult, 'type' | 'created_at'>[] || []).map(d => ({ ...d, type: 'phone' as const, created_at: '' })),
+      ...(t.data as Omit<SearchResult, 'type' | 'created_at'>[] || []).map(d => ({ ...d, type: 'tablet' as const, created_at: '' })),
+      ...(l.data as Omit<SearchResult, 'type' | 'created_at'>[] || []).map(d => ({ ...d, type: 'laptop' as const, created_at: '' })),
     ]
     setResults(merged)
     setSearching(false)

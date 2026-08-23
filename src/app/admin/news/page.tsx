@@ -4,11 +4,23 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
+
+interface AdminArticleRow {
+  id: number
+  slug: string
+  title: string
+  excerpt?: string | null
+  category: string | null
+  image_url: string | null
+  published: boolean
+  created_at: string
+}
 
 export default function AdminNewsPage() {
   const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
-  const [articles, setArticles] = useState<any[]>([])
+  const [articles, setArticles] = useState<AdminArticleRow[]>([])
   const [fetching, setFetching] = useState(true)
   const [search, setSearch] = useState('')
 
@@ -16,17 +28,19 @@ export default function AdminNewsPage() {
     if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading, profileLoading])
+  }, [user, isAdmin, loading, profileLoading, router])
 
   useEffect(() => {
-    if (isAdmin) fetchArticles()
+    if (!isAdmin) return
+    let cancelled = false
+    supabase.from('news').select('*').order('created_at', { ascending: false })
+      .then(({ data }) => {
+        if (cancelled) return
+        setArticles((data || []) as AdminArticleRow[])
+        setFetching(false)
+      })
+    return () => { cancelled = true }
   }, [isAdmin])
-
-  const fetchArticles = async () => {
-    const { data } = await supabase.from('news').select('*').order('created_at', { ascending: false })
-    setArticles(data || [])
-    setFetching(false)
-  }
 
   const togglePublished = async (id: number, published: boolean) => {
     await supabase.from('news').update({ published: !published }).eq('id', id)
@@ -81,7 +95,7 @@ export default function AdminNewsPage() {
           {filtered.map(article => (
             <div key={article.id} className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl px-5 py-4 flex items-center gap-4 hover:border-neon-cyan transition">
               {article.image_url && (
-                <img src={article.image_url} alt={article.title} className="w-16 h-16 object-cover rounded-xl flex-shrink-0" />
+                <Image src={article.image_url} alt={article.title} width={64} height={64} className="w-16 h-16 object-cover rounded-xl flex-shrink-0" />
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">

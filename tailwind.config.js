@@ -10,6 +10,7 @@ module.exports = {
         cyber: '#0a0a0c', // deep slate / pitch black
         'neon-violet': '#8b5cf6',
         'neon-cyan': '#06b6d4',
+        'neon-green': '#39ff14',
         'cyber-muted': '#0f1720',
         'cyber-ink': '#050507',
         'cyber-acc': '#1e293b'

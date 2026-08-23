@@ -4,39 +4,57 @@ import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import Image from 'next/image'
 import Link from 'next/link'
 import { formatPriceINR } from '@/lib/format'
 
 type Tab = 'phones' | 'tablets' | 'laptops'
 
+interface Device {
+  id: number
+  name: string
+  brand: string
+  slug: string
+  price_inr: number | null
+  image_url: string | null
+}
+
+interface PhoneWishlistRow { phone_id: number; phones: Device }
+
+interface TabletWishlistRow { tablet_id: number; tablets: Device }
+
+interface LaptopWishlistRow { laptop_id: number; laptops: Device }
+
 export default function WishlistPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
   const [tab, setTab] = useState<Tab>('phones')
-  const [phones, setPhones] = useState<any[]>([])
-  const [tablets, setTablets] = useState<any[]>([])
-  const [laptops, setLaptops] = useState<any[]>([])
+  const [phones, setPhones] = useState<Device[]>([])
+  const [tablets, setTablets] = useState<Device[]>([])
+  const [laptops, setLaptops] = useState<Device[]>([])
   const [fetching, setFetching] = useState(true)
 
   useEffect(() => {
     if (!loading && !user) router.push('/login')
-  }, [user, loading])
+  }, [user, loading, router])
 
   useEffect(() => {
-    if (user) fetchAll()
+    if (!user) return
+    let cancelled = false
+    ;(async () => {
+      const [{ data: phoneWl }, { data: tabletWl }, { data: laptopWl }] = await Promise.all([
+        supabase.from('wishlist').select('phone_id, phones(*)').eq('user_id', user.id).order('created_at', { ascending: false }),
+        supabase.from('tablet_wishlist').select('tablet_id, tablets(*)').eq('user_id', user.id).order('created_at', { ascending: false }),
+        supabase.from('laptop_wishlist').select('laptop_id, laptops(*)').eq('user_id', user.id).order('created_at', { ascending: false }),
+      ])
+      if (cancelled) return
+      setPhones(((phoneWl || []) as unknown as PhoneWishlistRow[]).map(w => w.phones))
+      setTablets(((tabletWl || []) as unknown as TabletWishlistRow[]).map(w => w.tablets))
+      setLaptops(((laptopWl || []) as unknown as LaptopWishlistRow[]).map(w => w.laptops))
+      setFetching(false)
+    })()
+    return () => { cancelled = true }
   }, [user])
-
-  const fetchAll = async () => {
-    const [{ data: phoneWl }, { data: tabletWl }, { data: laptopWl }] = await Promise.all([
-      supabase.from('wishlist').select('phone_id, phones(*)').eq('user_id', user?.id).order('created_at', { ascending: false }),
-      supabase.from('tablet_wishlist').select('tablet_id, tablets(*)').eq('user_id', user?.id).order('created_at', { ascending: false }),
-      supabase.from('laptop_wishlist').select('laptop_id, laptops(*)').eq('user_id', user?.id).order('created_at', { ascending: false }),
-    ])
-    setPhones((phoneWl || []).map((w: any) => w.phones))
-    setTablets((tabletWl || []).map((w: any) => w.tablets))
-    setLaptops((laptopWl || []).map((w: any) => w.laptops))
-    setFetching(false)
-  }
 
   const removePhone = async (id: number) => {
     await supabase.from('wishlist').delete().eq('user_id', user?.id).eq('phone_id', id)
@@ -100,12 +118,12 @@ export default function WishlistPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {items.map((item: any) => (
+          {items.map(item => (
             <div key={item.id} className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl overflow-hidden hover:border-neon-cyan hover:glow transition group">
               <Link href={`${itemBase}/${item.slug}`}>
-                <div className="w-full h-48 bg-[rgba(255,255,255,0.02)] flex items-center justify-center overflow-hidden">
+                <div className="relative w-full h-48 bg-[rgba(255,255,255,0.02)] flex items-center justify-center overflow-hidden">
                   {item.image_url
-                    ? <img src={item.image_url} alt={item.name} className="object-contain w-full h-full p-4" />
+                    ? <Image src={item.image_url} alt={item.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-contain w-full h-full p-4" />
                     : <span className="text-6xl">{itemEmoji}</span>}
                 </div>
                 <div className="p-4">

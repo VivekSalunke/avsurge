@@ -1,25 +1,37 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { computeSpecScore } from '@/lib/specScore'
+import { computeSpecScore, SpecRow } from '@/lib/specScore'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
+import Image from 'next/image'
 
 const CATEGORIES = ['General','Display','Performance','Camera','Battery','Connectivity','Storage','Build']
+
+interface AdminPhoneDetail {
+  id: string
+  name: string
+  brand: string
+  slug: string
+  price_inr: number | null
+  image_url: string | null
+  released_at: string | null
+  spec_score_override: number | null
+}
 
 export default function EditPhonePage() {
   const router = useRouter()
   const params = useParams()
   const { user, isAdmin, loading: authLoading } = useAuth()
-  const [phone, setPhone] = useState<any>(null)
+  const [phone, setPhone] = useState<AdminPhoneDetail | null>(null)
   const [name, setName] = useState('')
   const [brand, setBrand] = useState('')
   const [price, setPrice] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [releasedAt, setReleasedAt] = useState('')
   const [specScoreOverride, setSpecScoreOverride] = useState('')
-  const [specs, setSpecs] = useState<any[]>([])
+  const [specs, setSpecs] = useState<SpecRow[]>([])
   const [status, setStatus] = useState<'idle'|'saving'|'success'|'error'>('idle')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -27,22 +39,23 @@ export default function EditPhonePage() {
   useEffect(() => {
     if (!authLoading && !user) router.push('/login')
     if (!authLoading && user && !isAdmin) router.push('/')
-  }, [user, isAdmin, authLoading])
+  }, [user, isAdmin, authLoading, router])
 
   useEffect(() => {
     const load = async () => {
       const slug = params?.slug as string
       const { data: p } = await supabase.from('phones').select('*').eq('slug', slug).single()
       if (!p) { setLoading(false); return }
-      setPhone(p)
-      setName(p.name)
-      setBrand(p.brand)
-      setPrice(p.price_inr?.toString() || '')
-      setImageUrl(p.image_url || '')
-      setReleasedAt(p.released_at || '')
-      setSpecScoreOverride(p.spec_score_override?.toString() ?? '')
-      const { data: s } = await supabase.from('phone_specs').select('*').eq('phone_id', p.id).order('id')
-      setSpecs(s || [])
+      const row = p as AdminPhoneDetail
+      setPhone(row)
+      setName(row.name)
+      setBrand(row.brand)
+      setPrice(row.price_inr?.toString() || '')
+      setImageUrl(row.image_url || '')
+      setReleasedAt(row.released_at || '')
+      setSpecScoreOverride(row.spec_score_override?.toString() ?? '')
+      const { data: s } = await supabase.from('phone_specs').select('*').eq('phone_id', row.id).order('id')
+      setSpecs((s || []) as SpecRow[])
       setLoading(false)
     }
     if (!authLoading && isAdmin) load()
@@ -52,6 +65,7 @@ export default function EditPhonePage() {
     setSpecs(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: val } : s))
 
   const handleSave = async () => {
+    if (!phone) return
     if (!name.trim() || !brand.trim()) { setError('Name and brand required'); setStatus('error'); return }
     setStatus('saving'); setError('')
 
@@ -152,7 +166,7 @@ export default function EditPhonePage() {
             <input className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
               value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
             {imageUrl && (
-              <img src={imageUrl} alt="preview" className="mt-2 h-20 object-contain rounded-lg border border-[rgba(255,255,255,0.04)]" />
+              <Image src={imageUrl} alt="preview" unoptimized width={160} height={80} className="mt-2 h-20 w-auto object-contain rounded-lg border border-[rgba(255,255,255,0.04)]" />
             )}
           </div>
         </div>

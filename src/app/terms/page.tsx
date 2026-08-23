@@ -87,7 +87,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-bold text-white mb-3">10. Disclaimer of Warranties</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
-            AVSurge is provided on an "as is" and "as available" basis without any warranties of any kind, either express or implied. We do not warrant that the service will be uninterrupted, error-free, or free of viruses or other harmful components. We disclaim all warranties, including implied warranties of merchantability and fitness for a particular purpose.
+            AVSurge is provided on an “as is” and “as available” basis without any warranties of any kind, either express or implied. We do not warrant that the service will be uninterrupted, error-free, or free of viruses or other harmful components. We disclaim all warranties, including implied warranties of merchantability and fitness for a particular purpose.
           </p>
         </section>
 

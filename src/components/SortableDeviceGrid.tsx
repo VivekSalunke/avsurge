@@ -1,6 +1,7 @@
 'use client'
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { formatPriceINR } from '@/lib/format'
 
 type SortKey = 'price-low' | 'price-high' | 'name-az' | 'name-za' | 'newest' | 'popular'
@@ -73,9 +74,9 @@ export default function SortableDeviceGrid({
         {sorted.map(device => (
           <Link key={device.id} href={`/${basePath}/${device.slug}`}
             className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 text-center hover:border-neon-cyan transition group">
-            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center mb-3 overflow-hidden">
+            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center mb-3 overflow-hidden relative">
               {device.image_url
-                ? <img src={device.image_url} alt={device.name} className="object-contain w-full h-full" />
+                ? <Image src={device.image_url} alt={device.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw" className="object-contain w-full h-full" />
                 : <span className="text-4xl">{fallbackIcon}</span>}
             </div>
             <p className="text-sm font-semibold text-white leading-tight group-hover:text-neon-cyan transition line-clamp-2">{device.name}</p>

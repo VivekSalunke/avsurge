@@ -9,17 +9,17 @@ export default function LaptopWishlistButton({ laptopId }: { laptopId: number })
   const [wishlisted, setWishlisted] = useState(false)
   const [loading, setLoading] = useState(false)
   useEffect(() => {
-    if (user) checkWishlist()
-  }, [user, laptopId])
-  const checkWishlist = async () => {
-    const { data } = await supabase
+    if (!user) return
+    let cancelled = false
+    supabase
       .from('laptop_wishlist')
       .select('id')
-      .eq('user_id', user?.id)
+      .eq('user_id', user.id)
       .eq('laptop_id', laptopId)
       .single()
-    setWishlisted(!!data)
-  }
+      .then(({ data }) => { if (!cancelled) setWishlisted(!!data) })
+    return () => { cancelled = true }
+  }, [user, laptopId])
   const toggle = async () => {
     if (!user) { router.push('/login'); return }
     setLoading(true)

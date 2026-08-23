@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export const metadata = {
@@ -15,9 +16,9 @@ const BrandCard = ({ brand, count, label, href, logoUrl }: {
 }) => (
   <Link href={href}
     className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-5 hover:border-[rgba(6,182,212,0.35)] hover:shadow-sm transition-all duration-200 card-hover hover:glow group text-center">
-    <div className="w-full h-16 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden px-3">
+    <div className="relative w-full h-16 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden px-3">
       {logoUrl ? (
-        <img src={logoUrl} alt={brand} className="object-contain max-h-10 max-w-full" />
+        <Image src={logoUrl} alt={brand} fill sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw" className="object-contain" />
       ) : (
         <span className="text-lg font-bold text-dim">{brand}</span>
       )}

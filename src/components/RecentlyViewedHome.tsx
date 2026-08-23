@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 import { formatPriceINR } from '@/lib/format'
 
@@ -18,36 +19,53 @@ export default function RecentlyViewedHome() {
   const [devices, setDevices] = useState<Device[]>([])
 
   useEffect(() => {
-    loadDevices()
-  }, [])
-
-  const loadDevices = async () => {
+    let cancelled = false
     const phoneSlugs: string[] = JSON.parse(localStorage.getItem('recently_viewed') || '[]')
     const tabletSlugs: string[] = JSON.parse(localStorage.getItem('recently_viewed_tablets') || '[]')
     const laptopSlugs: string[] = JSON.parse(localStorage.getItem('recently_viewed_laptops') || '[]')
 
-    const all: Device[] = []
+    const pick = (slugs: string[], limit: number, rows: unknown) =>
+      slugs.slice(0, limit)
+        .map(slug => ((rows || []) as Device[]).find(d => d.slug === slug))
+        .filter((d): d is Device => Boolean(d))
+
+    const jobs: Promise<Device[]>[] = []
 
     if (phoneSlugs.length > 0) {
-      const { data } = await supabase.from('phones').select('id, name, brand, slug, price_inr, image_url').in('slug', phoneSlugs.slice(0, 4))
-      const sorted = phoneSlugs.slice(0, 4).map(slug => (data || []).find(p => p.slug === slug)).filter(Boolean)
-      all.push(...sorted.map(d => ({ ...d!, type: 'phone' as const })))
+      jobs.push(
+        (async () => {
+          const { data } = await supabase.from('phones').select('id, name, brand, slug, price_inr, image_url').in('slug', phoneSlugs.slice(0, 4))
+          return pick(phoneSlugs, 4, data).map(d => ({ ...d, type: 'phone' as const }))
+        })()
+      )
     }
 
     if (tabletSlugs.length > 0) {
-      const { data } = await supabase.from('tablets').select('id, name, brand, slug, price_inr, image_url').in('slug', tabletSlugs.slice(0, 2))
-      const sorted = tabletSlugs.slice(0, 2).map(slug => (data || []).find(t => t.slug === slug)).filter(Boolean)
-      all.push(...sorted.map(d => ({ ...d!, type: 'tablet' as const })))
+      jobs.push(
+        (async () => {
+          const { data } = await supabase.from('tablets').select('id, name, brand, slug, price_inr, image_url').in('slug', tabletSlugs.slice(0, 2))
+          return pick(tabletSlugs, 2, data).map(d => ({ ...d, type: 'tablet' as const }))
+        })()
+      )
     }
 
     if (laptopSlugs.length > 0) {
-      const { data } = await supabase.from('laptops').select('id, name, brand, slug, price_inr, image_url').in('slug', laptopSlugs.slice(0, 2))
-      const sorted = laptopSlugs.slice(0, 2).map(slug => (data || []).find(l => l.slug === slug)).filter(Boolean)
-      all.push(...sorted.map(d => ({ ...d!, type: 'laptop' as const })))
+      jobs.push(
+        (async () => {
+          const { data } = await supabase.from('laptops').select('id, name, brand, slug, price_inr, image_url').in('slug', laptopSlugs.slice(0, 2))
+          return pick(laptopSlugs, 2, data).map(d => ({ ...d, type: 'laptop' as const }))
+        })()
+      )
     }
 
-    if (all.length > 0) setDevices(all.slice(0, 6))
-  }
+    Promise.all(jobs).then(groups => {
+      if (cancelled) return
+      const all = groups.flat()
+      if (all.length > 0) setDevices(all.slice(0, 6))
+    })
+
+    return () => { cancelled = true }
+  }, [])
 
   if (devices.length === 0) return null
 
@@ -69,9 +87,9 @@ export default function RecentlyViewedHome() {
         {devices.map(device => (
           <Link key={`${device.type}-${device.id}`} href={`/${path(device.type)}/${device.slug}`}
             className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-3 text-center hover:border-neon-cyan hover:glow transition group">
-            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center mb-2 overflow-hidden">
+            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center mb-2 overflow-hidden relative">
               {device.image_url
-                ? <img src={device.image_url} alt={device.name} className="object-contain w-full h-full" />
+                ? <Image src={device.image_url} alt={device.name} fill sizes="(max-width: 640px) 33vw, 17vw" className="object-contain w-full h-full" />
                 : <span className="text-3xl">{emoji(device.type)}</span>}
             </div>
             <p className="text-xs text-dim mb-0.5">{device.brand}</p>

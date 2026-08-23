@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
@@ -97,8 +98,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       )}
 
       {article.image_url && (
-        <div className="w-full h-64 sm:h-96 overflow-hidden rounded-2xl mb-8 bg-[rgba(255,255,255,0.02)]">
-          <img src={article.image_url} alt={article.title} className="w-full h-full object-cover" />
+        <div className="relative w-full h-64 sm:h-96 overflow-hidden rounded-2xl mb-8 bg-[rgba(255,255,255,0.02)]">
+          <Image src={article.image_url} alt={article.title} fill preload sizes="(max-width: 768px) 100vw, 736px" className="object-cover" />
         </div>
       )}
 
@@ -111,7 +112,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             if (imgMatch) {
               return (
                 <div key={i} className="my-6">
-                  <img src={imgMatch[2]} alt={imgMatch[1]} className="w-full rounded-2xl object-cover" />
+                  <Image src={imgMatch[2]} alt={imgMatch[1]} width={1200} height={675} sizes="(max-width: 768px) 100vw, 736px" className="w-full h-auto rounded-2xl object-cover" />
                   {imgMatch[1] && <p className="text-xs text-[rgba(255,255,255,0.4)] text-center mt-2">{imgMatch[1]}</p>}
                 </div>
               )
@@ -141,7 +142,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             {related.map(r => (
               <Link key={r.id} href={`/news/${r.slug}`}
                 className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 hover:border-neon-cyan transition group">
-                {r.image_url && <img src={r.image_url} alt={r.title} className="w-full h-24 object-cover rounded-lg mb-3" />}
+                {r.image_url && (
+                  <div className="relative w-full h-24 overflow-hidden rounded-lg mb-3">
+                    <Image src={r.image_url} alt={r.title} fill sizes="(max-width: 640px) 100vw, 30vw" className="object-cover" />
+                  </div>
+                )}
                 <p className="text-sm font-semibold text-white group-hover:text-neon-cyan transition line-clamp-2">{r.title}</p>
               </Link>
             ))}

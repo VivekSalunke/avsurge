@@ -4,46 +4,62 @@ import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
-import { computeSpecScore } from '@/lib/specScore'
+import { SpecRow } from '@/lib/specScore'
+import Image from 'next/image'
 
 const CATEGORIES = ['General', 'Display', 'Performance', 'Camera', 'Battery', 'Connectivity', 'Storage', 'Audio', 'Build']
+
+interface AdminTabletDetail {
+  id: string
+  name: string
+  brand: string
+  slug: string
+  price_inr: number | null
+  image_url: string | null
+  released_at: string | null
+  spec_score_override: number | null
+}
+
+interface EditableTabletSpec extends SpecRow {
+  id?: number
+  isNew?: boolean
+}
 
 export default function EditTabletPage() {
   const router = useRouter()
   const params = useParams()
   const { user, isAdmin, loading: authLoading, profileLoading } = useAuth()
-  const [tablet, setTablet] = useState<any>(null)
+  const [tablet, setTablet] = useState<AdminTabletDetail | null>(null)
   const [name, setName] = useState('')
   const [brand, setBrand] = useState('')
   const [price, setPrice] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [releasedAt, setReleasedAt] = useState('')
   const [specScoreOverride, setSpecScoreOverride] = useState('')
-  const [specs, setSpecs] = useState<any[]>([])
+  const [specs, setSpecs] = useState<EditableTabletSpec[]>([])
   const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!authLoading && !user) router.push('/login')
     if (!authLoading && user && !isAdmin) router.push('/')
-  }, [user, isAdmin, authLoading])
+  }, [user, isAdmin, authLoading, router])
 
   useEffect(() => {
     const load = async () => {
       const slug = params?.slug as string
       const { data: t } = await supabase.from('tablets').select('*').eq('slug', slug).single()
-      if (!t) { setLoading(false); return }
-      setTablet(t)
-      setName(t.name)
-      setBrand(t.brand)
-      setPrice(t.price_inr?.toString() || '')
-      setImageUrl(t.image_url || '')
-      setReleasedAt(t.released_at || '')
-      setSpecScoreOverride(t.spec_score_override?.toString() ?? '')
-      const { data: s } = await supabase.from('tablet_specs').select('*').eq('tablet_id', t.id).order('id')
-      setSpecs(s || [])
-      setLoading(false)
+      if (!t) return
+      const row = t as AdminTabletDetail
+      setTablet(row)
+      setName(row.name)
+      setBrand(row.brand)
+      setPrice(row.price_inr?.toString() || '')
+      setImageUrl(row.image_url || '')
+      setReleasedAt(row.released_at || '')
+      setSpecScoreOverride(row.spec_score_override?.toString() ?? '')
+      const { data: s } = await supabase.from('tablet_specs').select('*').eq('tablet_id', row.id).order('id')
+      setSpecs((s || []) as EditableTabletSpec[])
     }
     if (!authLoading && isAdmin) load()
   }, [params?.slug, authLoading, isAdmin])
@@ -143,7 +159,7 @@ export default function EditTabletPage() {
         </div>
         {imageUrl && (
           <div className="mt-4 flex justify-center">
-            <img src={imageUrl} alt={name} className="h-32 object-contain rounded-xl border border-[rgba(255,255,255,0.04)]" />
+            <Image src={imageUrl} alt={name} unoptimized width={128} height={128} className="h-32 w-auto object-contain rounded-xl border border-[rgba(255,255,255,0.04)]" />
           </div>
         )}
       </div>

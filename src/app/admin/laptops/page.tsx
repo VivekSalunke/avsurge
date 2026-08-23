@@ -4,11 +4,21 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
+
+interface AdminLaptopRow {
+  id: string
+  slug: string
+  name: string
+  brand: string
+  price_inr: number | null
+  image_url: string | null
+}
 
 export default function ManageLaptopsPage() {
   const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
-  const [laptops, setLaptops] = useState<any[]>([])
+  const [laptops, setLaptops] = useState<AdminLaptopRow[]>([])
   const [fetching, setFetching] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
   const [search, setSearch] = useState('')
@@ -17,17 +27,19 @@ export default function ManageLaptopsPage() {
     if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading, profileLoading])
+  }, [user, isAdmin, loading, profileLoading, router])
 
   useEffect(() => {
-    if (isAdmin) fetchLaptops()
+    if (!isAdmin) return
+    let cancelled = false
+    supabase.from('laptops').select('*').order('created_at', { ascending: false })
+      .then(({ data }) => {
+        if (cancelled) return
+        setLaptops((data || []) as AdminLaptopRow[])
+        setFetching(false)
+      })
+    return () => { cancelled = true }
   }, [isAdmin])
-
-  const fetchLaptops = async () => {
-    const { data } = await supabase.from('laptops').select('*').order('created_at', { ascending: false })
-    setLaptops(data || [])
-    setFetching(false)
-  }
 
   const deleteLaptop = async (id: string, name: string) => {
     if (!confirm(`Delete ${name}? This cannot be undone.`)) return
@@ -77,9 +89,9 @@ export default function ManageLaptopsPage() {
         {filtered.map(laptop => (
           <div key={laptop.id}
             className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl px-4 py-3 flex items-center gap-4 hover:border-neon-cyan transition">
-            <div className="w-12 h-12 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
+            <div className="w-12 h-12 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 relative">
               {laptop.image_url
-                ? <img src={laptop.image_url} alt={laptop.name} className="object-contain w-full h-full p-1" />
+                ? <Image src={laptop.image_url} alt={laptop.name} fill sizes="48px" className="object-contain w-full h-full p-1" />
                 : <span className="text-2xl">💻</span>}
             </div>
             <div className="flex-1 min-w-0">

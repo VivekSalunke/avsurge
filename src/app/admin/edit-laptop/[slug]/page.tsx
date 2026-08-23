@@ -4,6 +4,24 @@ import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
+
+interface AdminLaptopDetail {
+  id: string
+  name: string | null
+  brand: string | null
+  slug: string | null
+  price_inr: number | null
+  image_url: string | null
+  released_at: string | null
+}
+
+interface AdminSpecRow {
+  id: number
+  category: string
+  label: string
+  value: string
+}
 
 export default function EditLaptopPage() {
   const { user, isAdmin, loading, profileLoading } = useAuth()
@@ -11,8 +29,8 @@ export default function EditLaptopPage() {
   const params = useParams()
   const slug = params?.slug as string
 
-  const [laptop, setLaptop] = useState<any>(null)
-  const [specs, setSpecs] = useState<any[]>([])
+  const [laptop, setLaptop] = useState<AdminLaptopDetail | null>(null)
+  const [specs, setSpecs] = useState<AdminSpecRow[]>([])
   const [form, setForm] = useState({ name: '', brand: '', slug: '', price_inr: '', image_url: '', released_at: '' })
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
@@ -22,24 +40,28 @@ export default function EditLaptopPage() {
     if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading, profileLoading])
+  }, [user, isAdmin, loading, profileLoading, router])
 
   useEffect(() => {
-    if (isAdmin && slug) fetchLaptop()
+    if (!isAdmin || !slug) return
+    let cancelled = false
+    supabase.from('laptops').select('*').eq('slug', slug).single()
+      .then(({ data: l }) => {
+        if (cancelled || !l) return
+        const row = l as AdminLaptopDetail
+        setLaptop(row)
+        setForm({
+          name: row.name || '', brand: row.brand || '', slug: row.slug || '',
+          price_inr: row.price_inr?.toString() || '', image_url: row.image_url || '',
+          released_at: row.released_at || ''
+        })
+        supabase.from('laptop_specs').select('*').eq('laptop_id', row.id).order('id')
+          .then(({ data: s }) => {
+            if (!cancelled) setSpecs((s || []) as AdminSpecRow[])
+          })
+      })
+    return () => { cancelled = true }
   }, [isAdmin, slug])
-
-  const fetchLaptop = async () => {
-    const { data: l } = await supabase.from('laptops').select('*').eq('slug', slug).single()
-    if (!l) return
-    setLaptop(l)
-    setForm({
-      name: l.name || '', brand: l.brand || '', slug: l.slug || '',
-      price_inr: l.price_inr?.toString() || '', image_url: l.image_url || '',
-      released_at: l.released_at || ''
-    })
-    const { data: s } = await supabase.from('laptop_specs').select('*').eq('laptop_id', l.id).order('id')
-    setSpecs(s || [])
-  }
 
   const handleSave = async () => {
     if (!laptop) return
@@ -58,15 +80,16 @@ export default function EditLaptopPage() {
   const updateSpec = (id: number, value: string) =>
     setSpecs(prev => prev.map(s => s.id === id ? { ...s, value } : s))
 
-  const saveSpec = async (spec: any) => {
+  const saveSpec = async (spec: AdminSpecRow) => {
     await supabase.from('laptop_specs').update({ value: spec.value }).eq('id', spec.id)
   }
 
   const addSpec = async () => {
+    if (!laptop) return
     const { data } = await supabase.from('laptop_specs').insert({
       laptop_id: laptop.id, category: 'General', label: 'New spec', value: ''
     }).select().single()
-    if (data) setSpecs(prev => [...prev, data])
+    if (data) setSpecs(prev => [...prev, data as AdminSpecRow])
   }
 
   const deleteSpec = async (id: number) => {
@@ -132,7 +155,7 @@ export default function EditLaptopPage() {
         </div>
         {form.image_url && (
           <div className="mb-3 bg-[rgba(255,255,255,0.02)] rounded-xl p-3 flex items-center gap-3">
-            <img src={form.image_url} alt="Preview" className="h-16 object-contain" />
+            <Image src={form.image_url} alt="Preview" unoptimized width={256} height={64} className="h-16 w-auto object-contain" />
             <span className="text-xs text-[rgba(255,255,255,0.4)]">Image preview</span>
           </div>
         )}

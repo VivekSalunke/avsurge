@@ -1,8 +1,10 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 import { formatPriceINR } from '@/lib/format'
+import type { SpecRow } from '@/lib/specScore'
 
 export const dynamicParams = true
 export const revalidate = 3600
@@ -22,6 +24,12 @@ interface Laptop {
   image_url: string | null
 }
 
+interface TrendingRow {
+  slug: string
+  price_inr: number | null
+  view_count: number | null
+}
+
 async function getPair(slugParam: string): Promise<{ laptopA: Laptop; laptopB: Laptop } | null> {
   const parts = slugParam.split('-vs-')
   if (parts.length < 2) return null
@@ -31,8 +39,8 @@ async function getPair(slugParam: string): Promise<{ laptopA: Laptop; laptopB: L
     const slugB = parts.slice(i).join('-vs-')
     const { data } = await supabase.from('laptops').select('*').in('slug', [slugA, slugB])
     if (data && data.length === 2) {
-      const laptopA = data.find((l: any) => l.slug === slugA)
-      const laptopB = data.find((l: any) => l.slug === slugB)
+      const laptopA = data.find((l: Laptop) => l.slug === slugA)
+      const laptopB = data.find((l: Laptop) => l.slug === slugB)
       if (laptopA && laptopB) return { laptopA, laptopB }
     }
   }
@@ -53,7 +61,7 @@ export async function generateStaticParams() {
 
   for (let i = 0; i < list.length; i++) {
     for (let j = i + 1; j < list.length; j++) {
-      const a: any = list[i], b: any = list[j]
+      const a: TrendingRow = list[i], b: TrendingRow = list[j]
       if (!a.price_inr || !b.price_inr) continue
       const ratio = a.price_inr > b.price_inr ? a.price_inr / b.price_inr : b.price_inr / a.price_inr
       if (ratio > 1.6) continue
@@ -95,16 +103,16 @@ export default async function CompareLaptopPairPage({ params }: { params: Promis
 
   const [specsA, specsB] = await Promise.all([getSpecs(laptopA.id), getSpecs(laptopB.id)])
 
-  const allCategories = [...new Set([...specsA, ...specsB].map((s: any) => s.category))]
+  const allCategories = [...new Set([...specsA, ...specsB].map((s: SpecRow) => s.category))]
   const getLabels = (cat: string) => {
     const labels = new Set([
-      ...specsA.filter((s: any) => s.category === cat).map((s: any) => s.label),
-      ...specsB.filter((s: any) => s.category === cat).map((s: any) => s.label),
+      ...specsA.filter((s: SpecRow) => s.category === cat).map((s: SpecRow) => s.label),
+      ...specsB.filter((s: SpecRow) => s.category === cat).map((s: SpecRow) => s.label),
     ])
     return [...labels]
   }
-  const getVal = (specs: any[], cat: string, label: string) =>
-    specs.find((s: any) => s.category === cat && s.label === label)?.value || '—'
+  const getVal = (specs: SpecRow[], cat: string, label: string) =>
+    specs.find((s: SpecRow) => s.category === cat && s.label === label)?.value || '—'
   const isBetter = (valA: string, valB: string) => {
     const numA = parseFloat(valA.replace(/[^0-9.]/g, ''))
     const numB = parseFloat(valB.replace(/[^0-9.]/g, ''))
@@ -142,7 +150,7 @@ export default async function CompareLaptopPairPage({ params }: { params: Promis
           <div key={laptop.id} className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-5 text-center">
             <div className="w-28 h-28 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mx-auto mb-3 overflow-hidden">
               {laptop.image_url
-                ? <img src={laptop.image_url} alt={laptop.name} className="object-contain w-full h-full p-2" />
+                ? <Image src={laptop.image_url} alt={laptop.name} width={112} height={112} className="object-contain w-full h-full p-2" />
                 : <span className="text-5xl">💻</span>}
             </div>
             <p className="font-semibold text-white text-sm">{laptop.name}</p>

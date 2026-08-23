@@ -1,6 +1,7 @@
 'use client'
-import { useState, useEffect, useRef, Suspense } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import AILogo from '@/components/AILogo'
@@ -30,6 +31,19 @@ interface TabletSelectorProps {
   tablets: Tablet[]
   onSelect: (tablet: Tablet, side: 'a' | 'b') => void
   onRemove: (side: 'a' | 'b') => void
+}
+
+interface SpecRow {
+  category: string
+  label: string
+  value: string
+}
+
+interface AiSummary {
+  verdict: string
+  buy_a_if: string
+  buy_b_if: string
+  key_differences?: string
 }
 
 function TabletSelector({ side, tablet, tablets, onSelect, onRemove }: TabletSelectorProps) {
@@ -69,7 +83,7 @@ function TabletSelector({ side, tablet, tablets, onSelect, onRemove }: TabletSel
                 className="w-full text-left px-3 py-2.5 text-sm hover:bg-[rgba(6,182,212,0.06)] transition border-b border-[rgba(255,255,255,0.04)] last:border-0 flex items-center gap-2">
                 <div className="w-7 h-7 bg-[rgba(255,255,255,0.02)] rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
                   {t.image_url
-                    ? <img src={t.image_url} alt={t.name} className="object-contain w-full h-full" />
+                    ? <Image src={t.image_url} alt={t.name} width={28} height={28} className="object-contain w-full h-full" />
                     : <span className="text-xs">📟</span>}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -91,7 +105,7 @@ function TabletSelector({ side, tablet, tablets, onSelect, onRemove }: TabletSel
         <div className="text-center">
           <div className="w-28 h-28 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mx-auto mb-3 overflow-hidden">
             {tablet.image_url
-              ? <img src={tablet.image_url} alt={tablet.name} className="object-contain w-full h-full p-2" />
+              ? <Image src={tablet.image_url} alt={tablet.name} width={112} height={112} className="object-contain w-full h-full p-2" />
               : <span className="text-5xl">📟</span>}
           </div>
           <p className="font-semibold text-white text-sm">{tablet.name}</p>
@@ -115,9 +129,9 @@ function TabletSelector({ side, tablet, tablets, onSelect, onRemove }: TabletSel
 }
 
 
-function AICompareSummary({ deviceA, deviceB, specsA, specsB }: { deviceA: any, deviceB: any, specsA: any[], specsB: any[] }) {
+function AICompareSummary({ deviceA, deviceB, specsA, specsB }: { deviceA: Tablet, deviceB: Tablet, specsA: SpecRow[], specsB: SpecRow[] }) {
   const [loading, setLoading] = useState(false)
-  const [summary, setSummary] = useState<any>(null)
+  const [summary, setSummary] = useState<AiSummary | null>(null)
   const [error, setError] = useState('')
   const getSummary = async () => {
     setLoading(true); setError(''); setSummary(null)
@@ -182,10 +196,16 @@ function CompareTabletsContent() {
   const [tablets, setTablets] = useState<Tablet[]>([])
   const [tabletA, setTabletA] = useState<Tablet | null>(null)
   const [tabletB, setTabletB] = useState<Tablet | null>(null)
-  const [specsA, setSpecsA] = useState<any[]>([])
-  const [specsB, setSpecsB] = useState<any[]>([])
+  const [specsA, setSpecsA] = useState<SpecRow[]>([])
+  const [specsB, setSpecsB] = useState<SpecRow[]>([])
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
+
+  const loadSpecs = useCallback(async (tabletId: number, side: 'a' | 'b') => {
+    const { data } = await supabase.from('tablet_specs').select('*').eq('tablet_id', tabletId).order('id')
+    if (side === 'a') setSpecsA(data || [])
+    else setSpecsB(data || [])
+  }, [])
 
   useEffect(() => {
     supabase.from('tablets').select('*').order('name').then(({ data }) => {
@@ -202,7 +222,7 @@ function CompareTabletsContent() {
         if (t) { setTabletB(t); loadSpecs(t.id, 'b') }
       }
     })
-  }, [])
+  }, [loadSpecs, searchParams])
 
   useEffect(() => {
     if (tabletA || tabletB) {
@@ -211,13 +231,7 @@ function CompareTabletsContent() {
       if (tabletB) params.set('b', tabletB.slug)
       router.replace(`/compare-tablets?${params.toString()}`, { scroll: false })
     }
-  }, [tabletA, tabletB])
-
-  const loadSpecs = async (tabletId: number, side: 'a' | 'b') => {
-    const { data } = await supabase.from('tablet_specs').select('*').eq('tablet_id', tabletId).order('id')
-    if (side === 'a') setSpecsA(data || [])
-    else setSpecsB(data || [])
-  }
+  }, [tabletA, tabletB, router])
 
   const handleSelect = async (tablet: Tablet, side: 'a' | 'b') => {
     setLoading(true)
@@ -248,7 +262,7 @@ function CompareTabletsContent() {
     return [...labels]
   }
 
-  const getVal = (specs: any[], cat: string, label: string) =>
+  const getVal = (specs: SpecRow[], cat: string, label: string) =>
     specs.find(s => s.category === cat && s.label === label)?.value || '—'
 
   const isBetter = (valA: string, valB: string) => {

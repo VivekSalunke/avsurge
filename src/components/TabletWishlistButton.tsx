@@ -11,18 +11,17 @@ export default function TabletWishlistButton({ tabletId }: { tabletId: number })
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (user) checkWishlist()
-  }, [user, tabletId])
-
-  const checkWishlist = async () => {
-    const { data } = await supabase
+    if (!user) return
+    let cancelled = false
+    supabase
       .from('tablet_wishlist')
       .select('id')
-      .eq('user_id', user?.id)
+      .eq('user_id', user.id)
       .eq('tablet_id', tabletId)
       .single()
-    setWishlisted(!!data)
-  }
+      .then(({ data }) => { if (!cancelled) setWishlisted(!!data) })
+    return () => { cancelled = true }
+  }, [user, tabletId])
 
   const toggle = async () => {
     if (!user) { router.push('/login'); return }

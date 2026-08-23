@@ -1,26 +1,38 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 
+interface LaptopReview {
+  id: number
+  rating: number
+  body: string | null
+  user_id: string
+  created_at: string
+  profiles?: { display_name?: string } | null
+}
+
 export default function LaptopReviews({ laptopId }: { laptopId: number }) {
   const { user } = useAuth()
-  const [reviews, setReviews] = useState<any[]>([])
+  const [reviews, setReviews] = useState<LaptopReview[]>([])
   const [rating, setRating] = useState(5)
   const [body, setBody] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [hover, setHover] = useState(0)
 
-  useEffect(() => { fetchReviews() }, [laptopId])
+  const queryReviews = useCallback(() => supabase
+    .from('laptop_reviews')
+    .select('*, profiles(display_name)')
+    .eq('laptop_id', laptopId)
+    .order('created_at', { ascending: false }), [laptopId])
 
-  const fetchReviews = async () => {
-    const { data } = await supabase
-      .from('laptop_reviews')
-      .select('*, profiles(display_name)')
-      .eq('laptop_id', laptopId)
-      .order('created_at', { ascending: false })
-    setReviews(data || [])
-  }
+  useEffect(() => {
+    let cancelled = false
+    queryReviews().then(({ data }) => {
+      if (!cancelled) setReviews(((data || []) as LaptopReview[]))
+    })
+    return () => { cancelled = true }
+  }, [queryReviews])
 
   const submit = async () => {
     if (!user || !rating) return
@@ -28,13 +40,13 @@ export default function LaptopReviews({ laptopId }: { laptopId: number }) {
     const { error } = await supabase.from('laptop_reviews').upsert({
       laptop_id: laptopId, user_id: user.id, rating, body: body.trim() || null
     }, { onConflict: 'laptop_id,user_id' })
-    if (!error) { setBody(''); fetchReviews() }
+    if (!error) { setBody(''); queryReviews().then(({ data }) => setReviews((data || []) as LaptopReview[])) }
     setSubmitting(false)
   }
 
   const deleteReview = async (id: number) => {
     await supabase.from('laptop_reviews').delete().eq('id', id)
-    fetchReviews()
+    queryReviews().then(({ data }) => setReviews((data || []) as LaptopReview[]))
   }
 
   const avgRating = reviews.length

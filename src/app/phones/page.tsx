@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import PhoneFilters from '@/components/PhoneFilters'
-import DeviceCard from '@/components/DeviceCard'
 import { getFinalSpecScore, type SpecRow } from '@/lib/specScore'
 
 export const revalidate = 60
@@ -88,6 +87,8 @@ export default async function PhonesPage({
   }
 
   const { data: phonesData, error: phonesError } = await query
+
+  if (phonesError) console.error(phonesError)
 
   const phones = (phonesData || []) as Phone[]
 
@@ -308,7 +309,7 @@ export default async function PhonesPage({
           </div>
 
           <div className="mt-1 text-xs text-[rgba(255,255,255,0.55)]">
-            Check what's popular now
+            Check what’s popular now
           </div>
         </Link>
 

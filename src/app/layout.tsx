@@ -5,7 +5,6 @@ import './globals.css'
 import Link from 'next/link'
 import { AuthProvider } from '@/context/AuthContext'
 import Navbar from '@/components/Navbar'
-import Script from 'next/script'
 import { GoogleAnalytics } from '@next/third-parties/google'
 
 const geist = Geist({ subsets: ['latin'] })

@@ -1,6 +1,7 @@
 'use client'
-import { useState, useEffect, useRef, Suspense } from 'react'
+import { useState, useEffect, useRef, useCallback, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import AILogo from '@/components/AILogo'
@@ -30,6 +31,22 @@ interface PhoneSelectorProps {
   phones: Phone[]
   onSelect: (phone: Phone, side: 'a' | 'b') => void
   onRemove: (side: 'a' | 'b') => void
+}
+
+interface SpecRow {
+  category: string
+  label: string
+  value: string
+}
+
+interface AiSummary {
+  verdict: string
+  buy_a_if: string
+  buy_b_if: string
+  winner_camera: string
+  winner_battery: string
+  winner_performance: string
+  winner_value: string
 }
 
 function PhoneSelector({ side, phone, phones, onSelect, onRemove }: PhoneSelectorProps) {
@@ -70,7 +87,7 @@ function PhoneSelector({ side, phone, phones, onSelect, onRemove }: PhoneSelecto
                 className="w-full text-left px-3 py-2.5 text-sm hover:bg-[rgba(6,182,212,0.06)] transition border-b border-[rgba(255,255,255,0.04)] last:border-0 flex items-center gap-2">
                 <div className="w-7 h-7 bg-[rgba(255,255,255,0.02)] rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
                   {p.image_url
-                    ? <img src={p.image_url} alt={p.name} className="object-contain w-full h-full" />
+                    ? <Image src={p.image_url} alt={p.name} width={28} height={28} className="object-contain w-full h-full" />
                     : <span className="text-xs">📱</span>}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -92,7 +109,7 @@ function PhoneSelector({ side, phone, phones, onSelect, onRemove }: PhoneSelecto
         <div className="text-center">
           <div className="w-28 h-28 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mx-auto mb-3 overflow-hidden">
             {phone.image_url
-              ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full p-2" />
+              ? <Image src={phone.image_url} alt={phone.name} width={112} height={112} className="object-contain w-full h-full p-2" />
               : <span className="text-5xl">📱</span>}
           </div>
           <p className="font-semibold text-white text-sm">{phone.name}</p>
@@ -121,10 +138,16 @@ function CompareContent() {
   const [phones, setPhones] = useState<Phone[]>([])
   const [phoneA, setPhoneA] = useState<Phone | null>(null)
   const [phoneB, setPhoneB] = useState<Phone | null>(null)
-  const [specsA, setSpecsA] = useState<any[]>([])
-  const [specsB, setSpecsB] = useState<any[]>([])
+  const [specsA, setSpecsA] = useState<SpecRow[]>([])
+  const [specsB, setSpecsB] = useState<SpecRow[]>([])
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
+
+  const loadSpecs = useCallback(async (phoneId: number, side: 'a' | 'b') => {
+    const { data } = await supabase.from('phone_specs').select('*').eq('phone_id', phoneId).order('id')
+    if (side === 'a') setSpecsA(data || [])
+    else setSpecsB(data || [])
+  }, [])
 
   useEffect(() => {
     supabase.from('phones').select('*').order('name').then(({ data }) => {
@@ -141,7 +164,7 @@ function CompareContent() {
         if (p) { setPhoneB(p); loadSpecs(p.id, 'b') }
       }
     })
-  }, [])
+  }, [loadSpecs, searchParams])
 
   useEffect(() => {
     if (phoneA || phoneB) {
@@ -150,13 +173,7 @@ function CompareContent() {
       if (phoneB) params.set('b', phoneB.slug)
       router.replace(`/compare?${params.toString()}`, { scroll: false })
     }
-  }, [phoneA, phoneB])
-
-  const loadSpecs = async (phoneId: number, side: 'a' | 'b') => {
-    const { data } = await supabase.from('phone_specs').select('*').eq('phone_id', phoneId).order('id')
-    if (side === 'a') setSpecsA(data || [])
-    else setSpecsB(data || [])
-  }
+  }, [phoneA, phoneB, router])
 
   const handleSelect = async (phone: Phone, side: 'a' | 'b') => {
     setLoading(true)
@@ -187,7 +204,7 @@ function CompareContent() {
     return [...labels]
   }
 
-  const getVal = (specs: any[], cat: string, label: string) =>
+  const getVal = (specs: SpecRow[], cat: string, label: string) =>
     specs.find(s => s.category === cat && s.label === label)?.value || '—'
 
   const isBetter = (valA: string, valB: string) => {
@@ -305,9 +322,9 @@ export default function CompareClient() {
   )
 }
 
-function AICompareSummary({ phoneA, phoneB, specsA, specsB }: { phoneA: any, phoneB: any, specsA: any[], specsB: any[] }) {
+function AICompareSummary({ phoneA, phoneB, specsA, specsB }: { phoneA: Phone, phoneB: Phone, specsA: SpecRow[], specsB: SpecRow[] }) {
   const [loading, setLoading] = useState(false)
-  const [summary, setSummary] = useState<any>(null)
+  const [summary, setSummary] = useState<AiSummary | null>(null)
   const [error, setError] = useState('')
 
   const getSummary = async () => {
@@ -323,7 +340,7 @@ function AICompareSummary({ phoneA, phoneB, specsA, specsB }: { phoneA: any, pho
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       setSummary(data)
-    } catch (e: any) {
+    } catch {
       setError('Failed to get AI summary. Please try again.')
     } finally {
       setLoading(false)

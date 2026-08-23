@@ -1,14 +1,21 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
+
+interface BrandLogo {
+  id: number
+  brand: string
+  logo_url: string | null
+}
 
 export default function AdminBrandsPage() {
   const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
-  const [brands, setBrands] = useState<any[]>([])
+  const [brands, setBrands] = useState<BrandLogo[]>([])
   const [allBrands, setAllBrands] = useState<string[]>([])
   const [fetching, setFetching] = useState(true)
   const [form, setForm] = useState({ brand: '', logo_url: '' })
@@ -21,26 +28,39 @@ export default function AdminBrandsPage() {
     if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading, profileLoading])
+  }, [user, isAdmin, loading, profileLoading, router])
 
-  useEffect(() => {
-    if (user && isAdmin) fetchData()
-  }, [user, isAdmin])
-
-  const fetchData = async () => {
-    setFetching(true)
+  const loadBrandData = useCallback(async () => {
     const [{ data: logos }, { data: phones }, { data: tablets }, { data: laptops }] = await Promise.all([
       supabase.from('brand_logos').select('*').order('brand'),
       supabase.from('phones').select('brand'),
       supabase.from('tablets').select('brand'),
       supabase.from('laptops').select('brand'),
     ])
-    setBrands(logos || [])
     const all = [...new Set([
-      ...(phones || []).map(p => p.brand),
-      ...(tablets || []).map(t => t.brand),
-      ...(laptops || []).map(l => l.brand),
+      ...((phones || []) as { brand: string }[]).map(p => p.brand),
+      ...((tablets || []) as { brand: string }[]).map(t => t.brand),
+      ...((laptops || []) as { brand: string }[]).map(l => l.brand),
     ])].sort()
+    return { logos: (logos || []) as BrandLogo[], all }
+  }, [])
+
+  useEffect(() => {
+    if (!user || !isAdmin) return
+    let cancelled = false
+    loadBrandData().then(({ logos, all }) => {
+      if (cancelled) return
+      setBrands(logos)
+      setAllBrands(all)
+      setFetching(false)
+    })
+    return () => { cancelled = true }
+  }, [user, isAdmin, loadBrandData])
+
+  const refreshBrands = async () => {
+    setFetching(true)
+    const { logos, all } = await loadBrandData()
+    setBrands(logos)
     setAllBrands(all)
     setFetching(false)
   }
@@ -59,7 +79,7 @@ export default function AdminBrandsPage() {
       else { setMsg('Saved!'); setShowAddForm(false); setForm({ brand: '', logo_url: '' }) }
     }
     setSaving(false)
-    fetchData()
+    refreshBrands()
   }
 
   const handleAddNew = () => {
@@ -76,7 +96,7 @@ export default function AdminBrandsPage() {
     setMsg('')
   }
 
-  const handleEdit = (b: any) => {
+  const handleEdit = (b: { id: number, brand: string, logo_url: string | null }) => {
     setEditId(b.id)
     setForm({ brand: b.brand, logo_url: b.logo_url || '' })
     setMsg('')
@@ -85,7 +105,7 @@ export default function AdminBrandsPage() {
   const handleDelete = async (id: number) => {
     if (!confirm('Delete this brand logo?')) return
     await supabase.from('brand_logos').delete().eq('id', id)
-    fetchData()
+    refreshBrands()
   }
 
   const missingBrands = allBrands.filter(b => !brands.find(bl => bl.brand === b))
@@ -128,7 +148,7 @@ export default function AdminBrandsPage() {
             </div>
             {form.logo_url && (
               <div className="bg-[rgba(255,255,255,0.02)] rounded-xl p-3 flex items-center gap-3">
-                <img src={form.logo_url} alt="Preview" className="h-10 object-contain" onError={e => (e.target as HTMLImageElement).style.display = 'none'} />
+                <Image src={form.logo_url} alt="Preview" unoptimized width={160} height={40} className="h-10 w-auto object-contain" onError={e => (e.target as HTMLImageElement).style.display = 'none'} />
                 <span className="text-xs text-[rgba(255,255,255,0.4)]">Logo preview</span>
               </div>
             )}
@@ -174,7 +194,7 @@ export default function AdminBrandsPage() {
             </div>
             {form.logo_url && (
               <div className="bg-[rgba(255,255,255,0.02)] rounded-xl p-3 flex items-center gap-3">
-                <img src={form.logo_url} alt="Preview" className="h-10 object-contain" onError={e => (e.target as HTMLImageElement).style.display = 'none'} />
+                <Image src={form.logo_url} alt="Preview" unoptimized width={160} height={40} className="h-10 w-auto object-contain" onError={e => (e.target as HTMLImageElement).style.display = 'none'} />
                 <span className="text-xs text-[rgba(255,255,255,0.4)]">Logo preview</span>
               </div>
             )}
@@ -213,7 +233,7 @@ export default function AdminBrandsPage() {
                 <div key={brandName} className="px-5 py-3 flex items-center justify-between hover:bg-[rgba(255,255,255,0.02)] transition">
                   <div className="flex items-center gap-3">
                     {hasLogo ? (
-                      <img src={brandLogo.logo_url} alt={brandName} className="h-6 object-contain" onError={e => (e.target as HTMLImageElement).style.display = 'none'} />
+                      <Image src={brandLogo.logo_url || ''} alt={brandName} unoptimized width={120} height={24} className="h-6 w-auto object-contain" onError={e => (e.target as HTMLImageElement).style.display = 'none'} />
                     ) : (
                       <span className="w-6 h-6 rounded bg-[rgba(251,191,36,0.1)] flex items-center justify-center text-[10px] text-[#fbbf24]">?</span>
                     )}

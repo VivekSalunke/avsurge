@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
 import { formatPriceINR } from '@/lib/format'
 
 function getCategory(price: number): string {
@@ -56,9 +57,9 @@ export default async function RelatedLaptops({ laptopId, brand, priceInr }: {
         {related.map(laptop => (
           <Link key={laptop.id} href={`/laptops/${laptop.slug}`}
             className="p-4 text-center hover:bg-[rgba(6,182,212,0.06)] transition group">
-            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden relative">
               {laptop.image_url
-                ? <img src={laptop.image_url} alt={laptop.name} className="object-contain w-full h-full p-2" />
+                ? <Image src={laptop.image_url} alt={laptop.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-contain w-full h-full p-2" />
                 : <span className="text-3xl">💻</span>}
             </div>
             <p className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{laptop.brand}</p>

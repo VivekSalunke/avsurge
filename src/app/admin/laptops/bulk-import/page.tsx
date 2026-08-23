@@ -55,43 +55,61 @@ function autoSlug(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 }
 
+interface LaptopSpecInput {
+  category: string
+  label: string
+  value: string
+}
+
+interface LaptopInput {
+  name: string
+  brand: string
+  price_inr?: number | null
+  released_at?: string | null
+  image_url?: string | null
+  specs?: LaptopSpecInput[]
+}
+
+interface LaptopDuplicate extends LaptopInput {
+  existingName: string
+}
+
 export default function BulkImportLaptopsPage() {
   const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
   const [json, setJson] = useState(SAMPLE)
   const [status, setStatus] = useState<'idle'|'checking'|'importing'|'success'|'error'>('idle')
   const [message, setMessage] = useState('')
-  const [imported, setImported] = useState(0)
-  const [duplicates, setDuplicates] = useState<any[]>([])
-  const [toImport, setToImport] = useState<any[]>([])
+  const [duplicates, setDuplicates] = useState<LaptopDuplicate[]>([])
+  const [toImport, setToImport] = useState<LaptopInput[]>([])
   const [showDuplicates, setShowDuplicates] = useState(false)
 
   useEffect(() => {
     if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading, profileLoading])
+  }, [user, isAdmin, loading, profileLoading, router])
 
   if (loading) return <div className="flex items-center justify-center min-h-screen text-sm text-[rgba(255,255,255,0.4)]">Loading...</div>
   if (!user || !isAdmin) return null
 
-  const handleImport = async (skipDupes = false, laptopsToImport?: any[]) => {
-    setStatus('checking'); setMessage(''); setImported(0)
+  const handleImport = async (skipDupes = false, laptopsToImport?: LaptopInput[]) => {
+    setStatus('checking'); setMessage('')
     let laptops = laptopsToImport
     if (!laptops) {
       try {
         laptops = JSON.parse(json)
         if (!Array.isArray(laptops)) throw new Error('Must be an array')
-      } catch (e: any) {
-        setMessage('Invalid JSON: ' + e.message); setStatus('error'); return
+      } catch (e) {
+        setMessage('Invalid JSON: ' + (e instanceof Error ? e.message : String(e))); setStatus('error'); return
       }
     }
     const { data: existing } = await supabase.from('laptops').select('id, name, slug')
     const existingNames = (existing || []).map(l => l.name)
     console.log('Existing laptops:', existingNames.length)
     console.log('Laptops to import:', laptops.length)
-    const dupes: any[] = []
-    const fresh: any[] = []
+    const dupes: LaptopDuplicate[] = []
+    const fresh: LaptopInput[] = []
     for (const laptop of laptops) {
       const dup = existingNames.find(n => isDuplicate(laptop.name, n))
       console.log(laptop.name, '->', dup ? 'DUPLICATE of ' + dup : 'FRESH')
@@ -115,12 +133,11 @@ export default function BulkImportLaptopsPage() {
       if (error || !inserted) continue
       if (laptop.specs && laptop.specs.length > 0) {
         await supabase.from('laptop_specs').insert(
-          laptop.specs.map((s: any) => ({ laptop_id: inserted.id, category: s.category, label: s.label, value: s.value }))
+          laptop.specs.map((s: LaptopSpecInput) => ({ laptop_id: inserted.id, category: s.category, label: s.label, value: s.value }))
         )
       }
       count++
     }
-    setImported(count)
     setStatus('success')
     setMessage(`Successfully imported ${count} laptop${count !== 1 ? 's' : ''}`)
     setShowDuplicates(false)
@@ -145,7 +162,7 @@ export default function BulkImportLaptopsPage() {
           <div className="space-y-1 mb-4">
             {duplicates.map((d, i) => (
               <p key={i} className="text-xs text-yellow-300">
-                <strong>{d.name}</strong> → already exists as "{d.existingName}"
+                <strong>{d.name}</strong> → already exists as “{d.existingName}”
               </p>
             ))}
           </div>

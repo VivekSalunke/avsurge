@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
 import AILogo from '@/components/AILogo'
 import { formatPriceINR } from '@/lib/format'
 
@@ -31,7 +32,7 @@ const EXAMPLES: Record<Mode, string[]> = {
   ],
 }
 
-const MODE_CONFIG: Record<Mode, { emoji: string; label: string; table: string; specsTable: string; idKey: string; specLabels: string[] }> = {
+const MODE_CONFIG: Record<Mode, { emoji: string; label: string; table: string; specsTable: string; idKey: 'phone_id' | 'tablet_id' | 'laptop_id'; specLabels: string[] }> = {
   phones: {
     emoji: '📱', label: 'Phone',
     table: 'phones', specsTable: 'phone_specs', idKey: 'phone_id',
@@ -49,11 +50,41 @@ const MODE_CONFIG: Record<Mode, { emoji: string; label: string; table: string; s
   },
 }
 
+interface SpecRow {
+  phone_id?: number
+  tablet_id?: number
+  laptop_id?: number
+  label: string
+  value: string
+}
+
+interface DeviceResult {
+  id: number
+  name: string
+  brand: string
+  slug: string
+  price_inr: number | null
+  image_url: string | null
+  specs: Record<string, string>
+}
+
+interface Recommendation {
+  name: string
+  reason: string
+  item: DeviceResult
+}
+
+interface RecommendResponse {
+  explanation: string
+  recommendations: { name: string; reason: string }[]
+  error: string
+}
+
 export default function AIRecommendClient() {
   const [mode, setMode] = useState<Mode>('phones')
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
-  const [recommendations, setRecommendations] = useState<any[]>([])
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([])
   const [error, setError] = useState('')
   const [explanation, setExplanation] = useState('')
 
@@ -85,7 +116,7 @@ export default function AIRecommendClient() {
         .from(config.specsTable)
         .select('*')
         .in('label', config.specLabels)
-      const specs = specsRaw as any[]
+      const specs = specsRaw as SpecRow[]
 
       if (!items) throw new Error('Failed to fetch data')
 
@@ -96,7 +127,7 @@ export default function AIRecommendClient() {
         specMap[id][s.label] = s.value
       }
 
-      const itemList = items.map(p => ({
+      const itemList: DeviceResult[] = items.map(p => ({
         id: p.id, name: p.name, brand: p.brand,
         slug: p.slug, price_inr: p.price_inr, image_url: p.image_url,
         specs: specMap[p.id] || {},
@@ -108,18 +139,18 @@ export default function AIRecommendClient() {
         body: JSON.stringify({ query, phones: itemList, deviceType: config.label }),
       })
 
-      const parsed = await res.json()
+      const parsed: RecommendResponse = await res.json()
       if (!res.ok) throw new Error(parsed.error)
 
       setExplanation(parsed.explanation)
 
-      const matched = parsed.recommendations.map((rec: any) => {
+      const matched = parsed.recommendations.map(rec => {
         const item = itemList.find(p =>
           p.name.toLowerCase() === rec.name.toLowerCase() ||
           p.name.toLowerCase().includes(rec.name.toLowerCase())
         )
         return { ...rec, item }
-      }).filter((r: any) => r.item)
+      }).filter((r): r is Recommendation => !!r.item)
 
       setRecommendations(matched)
     } catch (e) {
@@ -226,12 +257,12 @@ export default function AIRecommendClient() {
           </h2>
 
           <div className="flex flex-col gap-4">
-            {recommendations.map((rec: any, i: number) => (
+            {recommendations.map((rec, i) => (
               <Link key={i} href={`/${config.table}/${rec.item.slug}`}
                 className="group flex gap-4 rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-5 transition hover:border-neon-violet hover:glow">
                 <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[rgba(255,255,255,0.02)]">
                   {rec.item.image_url
-                    ? <img src={rec.item.image_url} alt={rec.item.name} className="h-full w-full object-contain p-1" />
+                    ? <Image src={rec.item.image_url} alt={rec.item.name} width={80} height={80} className="h-full w-full object-contain p-1" />
                     : <span className="text-3xl">{config.emoji}</span>}
                 </div>
                 <div className="min-w-0 flex-1">

@@ -1,10 +1,40 @@
 'use client'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
 import AILogo from '@/components/AILogo'
+
+interface DeviceInfo {
+  name: string
+  slug: string
+  image_url: string | null
+}
+
+interface ReviewRow {
+  id: number
+  rating: number
+  body: string | null
+  created_at: string
+  phones: DeviceInfo | null
+  tablets: DeviceInfo | null
+  laptops: DeviceInfo | null
+}
+
+interface ReviewItem {
+  id: number
+  rating: number
+  body: string | null
+  created_at: string
+  deviceType: 'phone' | 'tablet' | 'laptop'
+  device: DeviceInfo | null
+}
+
+interface RatingRow {
+  rating: number
+}
 
 export default function ProfilePage() {
   const { user, loading, signOut } = useAuth()
@@ -15,23 +45,10 @@ export default function ProfilePage() {
   const [deleteConfirm, setDeleteConfirm] = useState('')
   const [message, setMessage] = useState('')
   const [showDelete, setShowDelete] = useState(false)
-  const [reviews, setReviews] = useState<any[]>([])
-  const [wishlistCount, setWishlistCount] = useState(0)
+  const [reviews, setReviews] = useState<ReviewItem[]>([])
   const [stats, setStats] = useState({ reviews: 0, wishlist: 0, avgRating: 0 })
 
-  useEffect(() => {
-    if (!loading && !user) router.push('/login')
-  }, [user, loading])
-
-  useEffect(() => {
-    if (user) {
-      setDisplayName(user.user_metadata?.display_name || '')
-      fetchStats()
-      fetchReviews()
-    }
-  }, [user])
-
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     const [{ data: wl }, { data: twl }, { data: lwl }, { data: rv }] = await Promise.all([
       supabase.from('wishlist').select('id').eq('user_id', user?.id),
       supabase.from('tablet_wishlist').select('id').eq('user_id', user?.id),
@@ -39,23 +56,39 @@ export default function ProfilePage() {
       supabase.from('reviews').select('rating').eq('user_id', user?.id),
     ])
     const totalWishlist = (wl?.length || 0) + (twl?.length || 0) + (lwl?.length || 0)
-    const avgRating = rv?.length ? (rv.reduce((a, r) => a + r.rating, 0) / rv.length).toFixed(1) : 0
+    const avgRating = rv?.length ? (rv.reduce((a, r: RatingRow) => a + r.rating, 0) / rv.length).toFixed(1) : 0
     setStats({ reviews: rv?.length || 0, wishlist: totalWishlist, avgRating: Number(avgRating) })
-  }
+  }, [user])
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     const [{ data: phoneReviews }, { data: tabletReviews }, { data: laptopReviews }] = await Promise.all([
       supabase.from('reviews').select('*, phones(name, slug, image_url)').eq('user_id', user?.id).order('created_at', { ascending: false }),
       supabase.from('tablet_reviews').select('*, tablets(name, slug, image_url)').eq('user_id', user?.id).order('created_at', { ascending: false }),
       supabase.from('laptop_reviews').select('*, laptops(name, slug, image_url)').eq('user_id', user?.id).order('created_at', { ascending: false }),
     ])
-    const all = [
-      ...(phoneReviews || []).map(r => ({ ...r, deviceType: 'phone', device: r.phones })),
-      ...(tabletReviews || []).map(r => ({ ...r, deviceType: 'tablet', device: r.tablets })),
-      ...(laptopReviews || []).map(r => ({ ...r, deviceType: 'laptop', device: r.laptops })),
+    const all: ReviewItem[] = [
+      ...(phoneReviews || []).map((r: ReviewRow) => ({ ...r, deviceType: 'phone' as const, device: r.phones })),
+      ...(tabletReviews || []).map((r: ReviewRow) => ({ ...r, deviceType: 'tablet' as const, device: r.tablets })),
+      ...(laptopReviews || []).map((r: ReviewRow) => ({ ...r, deviceType: 'laptop' as const, device: r.laptops })),
     ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     setReviews(all)
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (!loading && !user) router.push('/login')
+  }, [user, loading, router])
+
+  useEffect(() => {
+    if (!user) return
+    let cancelled = false
+    ;(async () => {
+      const { data } = await supabase.auth.getUser()
+      if (!cancelled) setDisplayName(data.user?.user_metadata?.display_name || '')
+      fetchStats()
+      fetchReviews()
+    })()
+    return () => { cancelled = true }
+  }, [user, fetchStats, fetchReviews])
 
   const handleSaveProfile = async () => {
     setStatus('saving'); setMessage('')
@@ -204,7 +237,7 @@ export default function ProfilePage() {
               <div key={review.id} className="flex items-start gap-3 border border-[rgba(255,255,255,0.04)] rounded-xl p-3">
                 <div className="w-10 h-10 bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
                   {review.device?.image_url
-                    ? <img src={review.device.image_url} alt={review.device.name} className="object-contain w-full h-full" />
+                    ? <Image src={review.device.image_url} alt={review.device.name} width={40} height={40} className="object-contain w-full h-full" />
                     : <span>{review.deviceType === 'tablet' ? '📟' : review.deviceType === 'laptop' ? '💻' : '📱'}</span>}
                 </div>
                 <div className="flex-1 min-w-0">

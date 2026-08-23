@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { formatPriceINR } from '@/lib/format'
 
 export interface FeaturedDevice {
@@ -62,9 +63,9 @@ export default function FeaturedDeviceStack({ devices }: { devices: FeaturedDevi
               {isActive ? (
                 <div className="relative h-full w-full">
                   <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(139,92,246,0.1),transparent_60%)]" />
-                  <div className="flex h-full w-full items-center justify-center p-6">
+                  <div className="relative flex h-full w-full items-center justify-center p-6">
                     {device.image_url
-                      ? <img src={device.image_url} alt={device.name} className="h-full w-full object-contain drop-shadow-xl" />
+                      ? <Image src={device.image_url} alt={device.name} fill sizes="(max-width: 640px) 100vw, 60vw" className="object-contain drop-shadow-xl" />
                       : <span className="text-8xl opacity-70">{TYPE_EMOJI[device.type]}</span>}
                   </div>
                   <div className="absolute bottom-3 left-3 right-3 sm:right-auto sm:max-w-[75%]">

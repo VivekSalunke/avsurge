@@ -101,7 +101,7 @@ export default async function TabletsPage({
       {/* Hero */}
       <div className="rounded-2xl p-8 mb-10 text-white shadow-lg border border-[rgba(255,255,255,0.06)] bg-[var(--panel)]">
         <p className="text-dim text-xs mb-3 uppercase tracking-widest font-semibold">
-          India's Tablet Database
+          India’s Tablet Database
         </p>
 
         <h1 className="text-4xl font-extrabold mb-3 leading-tight">

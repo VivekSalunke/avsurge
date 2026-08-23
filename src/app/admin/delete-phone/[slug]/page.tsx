@@ -1,21 +1,30 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function DeletePhonePage({ params }: { params: { slug: string } }) {
+interface PhoneRow {
+  id: string
+  name: string
+}
+
+export default function DeletePhonePage() {
   const router = useRouter()
-  const [phone, setPhone] = useState<any>(null)
+  const params = useParams()
+  const slug = params?.slug as string
+  const [phone, setPhone] = useState<PhoneRow | null>(null)
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
-    supabase.from('phones').select('*').eq('slug', params.slug).single()
+    if (!slug) return
+    supabase.from('phones').select('*').eq('slug', slug).single()
       .then(({ data }) => { setPhone(data); setLoading(false) })
-  }, [params.slug])
+  }, [slug])
 
   const handleDelete = async () => {
+    if (!phone) return
     setDeleting(true)
     await supabase.from('phone_specs').delete().eq('phone_id', phone.id)
     await supabase.from('phones').delete().eq('id', phone.id)

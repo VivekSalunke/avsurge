@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import Reviews from '@/components/Reviews'
 import WishlistButton from '@/components/WishlistButton'
 import RelatedPhones from '@/components/RelatedPhones'
@@ -23,6 +24,21 @@ const ICONS: Record<string, string> = {
   Storage: '💾', General: '📋',
 }
 
+interface PhoneSpecRow {
+  id: string | number
+  phone_id: string | number
+  category: string
+  label: string
+  value: string
+}
+
+interface ComparisonCandidate {
+  slug: string
+  name: string
+  brand: string | null
+  price_inr: number | null
+}
+
 async function getPhone(slug: string) {
   const { data: phone } = await supabase.from('phones').select('*').eq('slug', slug).single()
   if (!phone) return null
@@ -30,7 +46,7 @@ async function getPhone(slug: string) {
   return { phone, specs: specs || [] }
 }
 
-async function getComparisonCandidates(phone: any) {
+async function getComparisonCandidates(phone: { id: string | number; price_inr: number | null }) {
   if (!phone.price_inr) return []
   const minPrice = phone.price_inr / 1.6
   const maxPrice = phone.price_inr * 1.6
@@ -42,7 +58,7 @@ async function getComparisonCandidates(phone: any) {
     .lte('price_inr', maxPrice)
     .not('price_inr', 'is', null)
     .limit(3)
-  return data || []
+  return (data ?? []) as ComparisonCandidate[]
 }
 
 export default async function PhonePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -52,7 +68,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
   const { phone, specs } = data
   const comparisonCandidates = await getComparisonCandidates(phone)
 
-  const grouped = specs.reduce((acc: Record<string, any[]>, s: any) => {
+  const grouped = specs.reduce<Record<string, PhoneSpecRow[]>>((acc, s) => {
     if (!acc[s.category]) acc[s.category] = []
     acc[s.category].push(s)
     return acc
@@ -77,9 +93,9 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
           <div className="bg-[var(--card-bg)] rounded-2xl border border-[rgba(255,255,255,0.06)] p-6 sticky top-20">
-            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-5 text-7xl overflow-hidden">
+            <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-5 text-7xl overflow-hidden relative">
               {phone.image_url
-                ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full p-2" />
+                ? <Image src={phone.image_url} alt={phone.name} fill sizes="(max-width: 1024px) 100vw, 33vw" className="object-contain w-full h-full p-2" />
                 : '📱'}
             </div>
             <h1 className="text-xl font-bold text-white mb-1">{phone.name}</h1>
@@ -139,7 +155,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
             <div className="bg-[var(--card-bg)] rounded-2xl border border-[rgba(255,255,255,0.06)] p-5">
               <h2 className="text-sm font-semibold text-[rgba(255,255,255,0.85)] mb-3">Popular comparisons</h2>
               <div className="flex flex-wrap gap-2">
-                {comparisonCandidates.map((c: any) => (
+                {comparisonCandidates.map(c => (
                   <Link
                     key={c.slug}
                     href={`/compare/${[phone.slug, c.slug].sort().join('-vs-')}`}
@@ -152,7 +168,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
             </div>
           )}
 
-          {Object.entries(grouped).map(([category, catSpecs]: [string, any]) => (
+          {Object.entries(grouped).map(([category, catSpecs]) => (
             <div key={category} className="bg-[var(--card-bg)] rounded-2xl border border-[rgba(255,255,255,0.06)] overflow-hidden">
               <div className="flex items-center gap-2 px-5 py-3 bg-[rgba(255,255,255,0.02)] border-b border-[rgba(255,255,255,0.04)]">
                 <span>{ICONS[category] || '📋'}</span>
@@ -160,7 +176,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
               </div>
               <table className="w-full">
                 <tbody>
-                  {catSpecs.map((spec: any, i: number) => (
+                  {catSpecs.map((spec, i) => (
                     <tr key={i} className={i % 2 === 0 ? 'bg-[var(--card-bg)]' : 'bg-[rgba(255,255,255,0.02)]'}>
                       <td className="px-5 py-3 text-sm text-[rgba(255,255,255,0.4)] w-2/5">{spec.label}</td>
                       <td className="px-5 py-3 text-sm text-white font-medium">

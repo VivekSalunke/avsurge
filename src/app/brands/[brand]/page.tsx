@@ -5,6 +5,11 @@ import SortableDeviceGrid from '@/components/SortableDeviceGrid'
 
 export const revalidate = 60
 
+interface DeviceSummary {
+  name: string
+  slug: string
+}
+
 const brandIcons: Record<string, string> = {
   Samsung: '🔵', Apple: '🍎', OnePlus: '🔴', Google: '🟡',
   Xiaomi: '🟠', Realme: '🟢', Vivo: '🔷', OPPO: '🟣',
@@ -39,9 +44,9 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
     name: `${brandName} Devices on AVSurge`,
     description: `Browse all ${brandName} phones, tablets and laptops available in India.`,
     itemListElement: [
-      ...(phones || []).map((p: any) => ({ url: `https://avsurge.com/phones/${p.slug}`, name: p.name })),
-      ...(tablets || []).map((t: any) => ({ url: `https://avsurge.com/tablets/${t.slug}`, name: t.name })),
-      ...(laptops || []).map((l: any) => ({ url: `https://avsurge.com/laptops/${l.slug}`, name: l.name })),
+      ...(phones || []).map((p: DeviceSummary) => ({ url: `https://avsurge.com/phones/${p.slug}`, name: p.name })),
+      ...(tablets || []).map((t: DeviceSummary) => ({ url: `https://avsurge.com/tablets/${t.slug}`, name: t.name })),
+      ...(laptops || []).map((l: DeviceSummary) => ({ url: `https://avsurge.com/laptops/${l.slug}`, name: l.name })),
     ].slice(0, 50).map((item, idx) => ({
       '@type': 'ListItem',
       position: idx + 1,
@@ -152,7 +157,7 @@ export async function generateMetadata({ params }: { params: Promise<{ brand: st
 }
 
 export async function generateStaticParams() {
-  const [{ data: phones }, { data: tablets }, { data: laptops }] = await Promise.all([
+  const [{ data: phones }, { data: tablets }] = await Promise.all([
     supabase.from('phones').select('brand'),
     supabase.from('tablets').select('brand'),
     supabase.from('laptops').select('brand'),

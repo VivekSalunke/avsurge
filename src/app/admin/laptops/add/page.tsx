@@ -17,7 +17,7 @@ export default function AddLaptopPage() {
     if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading, profileLoading])
+  }, [user, isAdmin, loading, profileLoading, router])
 
   const autoSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
@@ -88,7 +88,7 @@ export default function AddLaptopPage() {
               className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle} />
           </div>
         </div>
-        <p className="text-xs text-[rgba(255,255,255,0.4)] mb-4">After adding, you'll be taken to the edit page to add specs.</p>
+        <p className="text-xs text-[rgba(255,255,255,0.4)] mb-4">After adding, you&apos;ll be taken to the edit page to add specs.</p>
         <button onClick={handleSave} disabled={saving}
           className="bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl px-6 py-2.5 text-sm font-semibold transition hover:brightness-110 disabled:opacity-50">
           {saving ? 'Adding...' : 'Add Laptop'}

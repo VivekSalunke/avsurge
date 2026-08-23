@@ -1,8 +1,18 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 import { formatPriceINR } from '@/lib/format'
+
+interface Phone {
+  id: number | string
+  name: string
+  brand: string
+  slug: string
+  price_inr: number | null
+  image_url: string | null
+}
 
 const USE_CASES: Record<string, {
   title: string
@@ -167,12 +177,12 @@ export default async function BestPhonesForPage({ params }: { params: Promise<{ 
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {phones.map((phone: any) => (
+          {phones.map((phone: Phone) => (
             <Link key={phone.id} href={`/phones/${phone.slug}`}
               className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4 hover:border-[rgba(6,182,212,0.35)] hover:glow transition-all duration-200 card-hover group">
-              <div className="aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+              <div className="relative aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden">
                 {phone.image_url
-                  ? <img src={phone.image_url} alt={phone.name} className="object-contain w-full h-full p-2" />
+                  ? <Image src={phone.image_url} alt={phone.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw" className="object-contain w-full h-full p-2" />
                   : <span className="text-4xl">📱</span>}
               </div>
               <p className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{phone.brand}</p>

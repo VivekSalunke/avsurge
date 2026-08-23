@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
@@ -44,8 +45,8 @@ export default async function NewsPage() {
             <Link key={article.id} href={`/news/${article.slug}`}
               className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl overflow-hidden card-hover hover:border-neon-cyan hover:glow transition group">
               {article.image_url && (
-                <div className="w-full h-48 overflow-hidden bg-[rgba(255,255,255,0.02)]">
-                  <img src={article.image_url} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                <div className="relative w-full h-48 overflow-hidden bg-[rgba(255,255,255,0.02)]">
+                  <Image src={article.image_url} alt={article.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition duration-300" />
                 </div>
               )}
               <div className="p-5">

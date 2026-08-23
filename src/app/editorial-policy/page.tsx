@@ -32,7 +32,7 @@ export default function EditorialPolicyPage() {
         <section>
           <h2 className="text-lg font-bold text-white mb-3">2. How We Source Specifications</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
-            Device specifications published on AVSurge are compiled from official manufacturer sources — brand websites, press materials, and official product listings. We do not publish unconfirmed leaks or rumors as verified specifications. When a device's data is corrected or updated after publication, we update the listing directly rather than leaving outdated information live.
+            Device specifications published on AVSurge are compiled from official manufacturer sources — brand websites, press materials, and official product listings. We do not publish unconfirmed leaks or rumors as verified specifications. When a device’s data is corrected or updated after publication, we update the listing directly rather than leaving outdated information live.
           </p>
         </section>
 
@@ -46,7 +46,7 @@ export default function EditorialPolicyPage() {
         <section>
           <h2 className="text-lg font-bold text-white mb-3">4. Affiliate Disclosure</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
-            AVSurge is a participant in the Amazon Associates Program, an affiliate advertising program. Some links on this site — including "Check on Amazon" buttons on device pages — are affiliate links. If you make a purchase through one of these links, AVSurge may earn a commission at no additional cost to you. This is clearly the case across the site and does not affect the specifications or comparisons shown.
+            AVSurge is a participant in the Amazon Associates Program, an affiliate advertising program. Some links on this site — including “Check on Amazon” buttons on device pages — are affiliate links. If you make a purchase through one of these links, AVSurge may earn a commission at no additional cost to you. This is clearly the case across the site and does not affect the specifications or comparisons shown.
           </p>
         </section>
 
@@ -60,28 +60,28 @@ export default function EditorialPolicyPage() {
         <section>
           <h2 className="text-lg font-bold text-white mb-3">6. Pricing Accuracy</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
-            Prices shown on AVSurge are collected periodically and may not reflect real-time changes on the retailer's site. Always confirm the final price on the retailer's page before completing a purchase. Price history and price drop alerts are provided as a convenience tool and should not be treated as a guarantee of future pricing.
+            Prices shown on AVSurge are collected periodically and may not reflect real-time changes on the retailer’s site. Always confirm the final price on the retailer’s page before completing a purchase. Price history and price drop alerts are provided as a convenience tool and should not be treated as a guarantee of future pricing.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-bold text-white mb-3">7. User Reviews</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
-            User reviews and ratings on device pages are submitted directly by site visitors and reflect their individual opinions and experiences, not AVSurge's own editorial judgment. We reserve the right to remove reviews that are spam, abusive, or clearly not based on genuine product experience.
+            User reviews and ratings on device pages are submitted directly by site visitors and reflect their individual opinions and experiences, not AVSurge’s own editorial judgment. We reserve the right to remove reviews that are spam, abusive, or clearly not based on genuine product experience.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-bold text-white mb-3">8. Corrections</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
-            If you spot an error in a device's specifications, pricing, or any other content on AVSurge, we want to know. We correct confirmed errors as quickly as possible after verification. You can report an issue through our <Link href="/contact" className="text-neon-cyan hover:underline">Contact page</Link>.
+            If you spot an error in a device’s specifications, pricing, or any other content on AVSurge, we want to know. We correct confirmed errors as quickly as possible after verification. You can report an issue through our <Link href="/contact" className="text-neon-cyan hover:underline">Contact page</Link>.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-bold text-white mb-3">9. Who Runs AVSurge</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
-            AVSurge is built and maintained by a small, independent team based in India. We don't have a large newsroom, but every piece of specification data, comparison, and article published on this site is reviewed for accuracy before it goes live. Read more on our <Link href="/about" className="text-neon-cyan hover:underline">About page</Link>.
+            AVSurge is built and maintained by a small, independent team based in India. We don’t have a large newsroom, but every piece of specification data, comparison, and article published on this site is reviewed for accuracy before it goes live. Read more on our <Link href="/about" className="text-neon-cyan hover:underline">About page</Link>.
           </p>
         </section>
 

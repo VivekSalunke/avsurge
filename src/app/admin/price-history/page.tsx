@@ -29,37 +29,39 @@ export default function AdminPriceHistory() {
   const [deleting, setDeleting] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchEntries()
-  }, [type])
+    let cancelled = false
+    const load = async () => {
+      setLoading(true)
+      const fetchFor = async (table: string, deviceType: 'phone' | 'tablet' | 'laptop', deviceTable: string): Promise<Entry[]> => {
+        const { data } = await supabase
+          .from(table)
+          .select(`id, price_inr, store, tracked_at, ${deviceTable}(name, slug)`)
+          .order('tracked_at', { ascending: false })
+          .limit(LIMIT)
+        return (((data || []) as unknown) as Record<string, unknown>[]).map(row => ({
+          id: row.id as number,
+          type: deviceType,
+          price_inr: row.price_inr as number,
+          store: (row.store as string) || 'Amazon',
+          tracked_at: row.tracked_at as string,
+          name: (row[deviceTable] as { name?: string } | null)?.name || 'Unknown device',
+          slug: (row[deviceTable] as { slug?: string } | null)?.slug || '',
+        }))
+      }
 
-  const fetchEntries = async () => {
-    setLoading(true)
-    const fetchFor = async (table: string, deviceType: 'phone' | 'tablet' | 'laptop', deviceTable: string) => {
-      const { data } = await supabase
-        .from(table)
-        .select(`id, price_inr, store, tracked_at, ${deviceTable}(name, slug)`)
-        .order('tracked_at', { ascending: false })
-        .limit(LIMIT)
-      return (data || []).map((row: any) => ({
-        id: row.id,
-        type: deviceType,
-        price_inr: row.price_inr,
-        store: row.store || 'Amazon',
-        tracked_at: row.tracked_at,
-        name: row[deviceTable]?.name || 'Unknown device',
-        slug: row[deviceTable]?.slug || '',
-      }))
+      const jobs: Promise<Entry[]>[] = []
+      if (type !== 'tablet') jobs.push(fetchFor('price_history', 'phone', 'phones'))
+      if (type !== 'laptop') jobs.push(fetchFor('tablet_price_history', 'tablet', 'tablets'))
+      if (type !== 'phone') jobs.push(fetchFor('laptop_price_history', 'laptop', 'laptops'))
+
+      const all = (await Promise.all(jobs)).flat().sort((a, b) => b.tracked_at.localeCompare(a.tracked_at)).slice(0, LIMIT)
+      if (cancelled) return
+      setEntries(all)
+      setLoading(false)
     }
-
-    const jobs: Promise<Entry[]>[] = []
-    if (type !== 'tablet') jobs.push(fetchFor('price_history', 'phone', 'phones'))
-    if (type !== 'laptop') jobs.push(fetchFor('tablet_price_history', 'tablet', 'tablets'))
-    if (type !== 'phone') jobs.push(fetchFor('laptop_price_history', 'laptop', 'laptops'))
-
-    const all = (await Promise.all(jobs)).flat().sort((a, b) => b.tracked_at.localeCompare(a.tracked_at)).slice(0, LIMIT)
-    setEntries(all)
-    setLoading(false)
-  }
+    load()
+    return () => { cancelled = true }
+  }, [type])
 
   const remove = async (entry: Entry) => {
     if (!confirm(`Delete this ${entry.type} price record for ${entry.name}?`)) return

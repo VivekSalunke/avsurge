@@ -1,8 +1,18 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 import { formatPriceINR } from '@/lib/format'
+
+interface Tablet {
+  id: number | string
+  name: string
+  brand: string
+  slug: string
+  price_inr: number | null
+  image_url: string | null
+}
 
 const USE_CASES: Record<string, {
   title: string
@@ -166,12 +176,12 @@ export default async function BestTabletsForPage({ params }: { params: Promise<{
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {tablets.map((tablet: any) => (
+          {tablets.map((tablet: Tablet) => (
             <Link key={tablet.id} href={`/tablets/${tablet.slug}`}
               className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4 hover:border-[rgba(6,182,212,0.35)] hover:glow transition-all duration-200 card-hover group">
-              <div className="aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+              <div className="relative aspect-square bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center mb-3 overflow-hidden">
                 {tablet.image_url
-                  ? <img src={tablet.image_url} alt={tablet.name} className="object-contain w-full h-full p-2" />
+                  ? <Image src={tablet.image_url} alt={tablet.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw" className="object-contain w-full h-full p-2" />
                   : <span className="text-4xl">📟</span>}
               </div>
               <p className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{tablet.brand}</p>

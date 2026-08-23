@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { formatPriceINR } from '@/lib/format'
 
 const TYPE_ICON: Record<string, string> = {
@@ -140,9 +141,9 @@ export default function SearchBar() {
           {results.map(item => (
             <button key={`${item.type}-${item.id}`} onClick={() => go(item)}
               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[rgba(255,255,255,0.03)] transition text-left border-b border-[rgba(255,255,255,0.04)] last:border-0">
-              <div className="w-9 h-9 bg-[rgba(255,255,255,0.03)] rounded-lg flex items-center justify-center text-xl flex-shrink-0 overflow-hidden">
+              <div className="w-9 h-9 bg-[rgba(255,255,255,0.03)] rounded-lg flex items-center justify-center text-xl flex-shrink-0 overflow-hidden relative">
                 {item.image_url
-                  ? <img src={item.image_url} alt={item.name} className="object-contain w-full h-full" />
+                  ? <Image src={item.image_url} alt={item.name} fill sizes="36px" className="object-contain w-full h-full" />
                   : TYPE_ICON[item.type]}
               </div>
               <div className="flex-1 min-w-0">

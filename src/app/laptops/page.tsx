@@ -1,11 +1,23 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
 import { formatPriceINR } from '@/lib/format'
 export const revalidate = 60
 export const metadata = {
   title: 'Laptops Price List in India 2026 | AVSurge',
   alternates: { canonical: 'https://avsurge.com/laptops' },
   description: 'Browse all laptops available in India. Compare laptop specs, prices and reviews. Find the best laptop for your budget.',
+}
+interface Laptop {
+  id: number
+  name: string
+  brand: string
+  slug: string
+  price_inr: number | null
+  image_url: string | null
+}
+interface BrandRow {
+  brand: string
 }
 export default async function LaptopsPage({ searchParams }: { searchParams: Promise<{ brand?: string }> }) {
   const params = await searchParams
@@ -14,7 +26,7 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
   if (brand) query = query.ilike('brand', brand)
   const { data: laptops } = await query
   const { data: brandsRaw } = await supabase.from('laptops').select('brand')
-  const brands = [...new Set((brandsRaw || []).map((b: any) => b.brand))].sort()
+  const brands = [...new Set((brandsRaw || []).map((b: BrandRow) => b.brand))].sort()
   const brandIcons: Record<string, string> = {
     Apple: '🍎', Dell: '🔵', HP: '🔷', Lenovo: '🔲',
     ASUS: '🟥', Acer: '🟢', Microsoft: '🪟', Samsung: '🔵',
@@ -26,7 +38,7 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
     '@type': 'ItemList',
     name: brand ? `${brand} Laptops` : 'All Laptops',
     description: 'Browse laptops available in India with specs, prices and reviews.',
-    itemListElement: laptops.slice(0, 50).map((laptop: any, idx: number) => ({
+    itemListElement: laptops.slice(0, 50).map((laptop: Laptop, idx: number) => ({
       '@type': 'ListItem',
       position: idx + 1,
       url: `https://avsurge.com/laptops/${laptop.slug}`,
@@ -41,7 +53,7 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
       )}
 
       <div className="rounded-2xl p-8 mb-8 text-white border border-[rgba(255,255,255,0.06)] bg-[var(--panel)]">
-        <p className="text-dim text-xs mb-2 uppercase tracking-widest font-medium">India's laptop database</p>
+        <p className="text-dim text-xs mb-2 uppercase tracking-widest font-medium">India’s laptop database</p>
         <h1 className="text-3xl font-bold mb-2">Find your perfect laptop</h1>
         <p className="text-[rgba(255,255,255,0.65)] mb-6 max-w-md">Specs, prices and comparisons for every laptop in India.</p>
         <div className="flex flex-wrap gap-3">
@@ -112,7 +124,7 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
           className={`px-3 py-1.5 rounded-full text-sm border transition ${!brand ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm' : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'}`}>
           All
         </Link>
-        {brands.map((b: any) => (
+        {brands.map((b: string) => (
           <Link key={b} href={`/laptops?brand=${b}`}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition ${brand === b ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm' : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'}`}>
             <span>{brandIcons[b] || '💻'}</span>{b}
@@ -132,12 +144,12 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {laptops.map((laptop: any) => (
+          {laptops.map((laptop: Laptop) => (
             <div key={laptop.id} className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 text-center hover:border-[rgba(6,182,212,0.35)] hover:glow transition-all duration-200 group card-hover">
               <Link href={`/laptops/${laptop.slug}`}>
-              <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center mb-3 overflow-hidden">
+              <div className="relative w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center mb-3 overflow-hidden">
                 {laptop.image_url
-                  ? <img src={laptop.image_url} alt={laptop.name} className="object-contain w-full h-full" />
+                  ? <Image src={laptop.image_url} alt={laptop.name} fill sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, 50vw" className="object-contain w-full h-full" />
                   : <span className="text-4xl">💻</span>}
               </div>
               <p className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{laptop.brand}</p>

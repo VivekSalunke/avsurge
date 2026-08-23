@@ -1,5 +1,12 @@
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { NextRequest, NextResponse } from 'next/server'
+
+interface TabletSpecInput {
+  category: string
+  label: string
+  value: string
+}
 
 function similarity(a: string, b: string): number {
   a = a.toLowerCase().trim()
@@ -16,12 +23,36 @@ function similarity(a: string, b: string): number {
 }
 
 export async function POST(req: NextRequest) {
+  const authHeader = req.headers.get('authorization')
+  if (!authHeader?.startsWith('Bearer ')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const supabaseAuthed = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { global: { headers: { Authorization: authHeader } } }
+  )
+  const { data: { user } } = await supabaseAuthed.auth.getUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', user.id)
+    .single()
+  if (!profile?.is_admin) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   const { tablets } = await req.json()
   if (!tablets || !Array.isArray(tablets)) {
     return NextResponse.json({ error: 'Invalid data' }, { status: 400 })
   }
 
-  const { data: existingTablets } = await supabase.from('tablets').select('id, name, slug')
+  const { data: existingTablets } = await supabaseAdmin.from('tablets').select('id, name, slug')
   const existing = existingTablets || []
 
   let imported = 0
@@ -50,7 +81,7 @@ export async function POST(req: NextRequest) {
       continue
     }
 
-    const { data: newTablet, error } = await supabase
+    const { data: newTablet, error } = await supabaseAdmin
       .from('tablets')
       .insert({
         name: tablet.name,
@@ -69,8 +100,8 @@ export async function POST(req: NextRequest) {
     }
 
     if (tablet.specs && tablet.specs.length > 0) {
-      await supabase.from('tablet_specs').insert(
-        tablet.specs.map((s: any) => ({
+      await supabaseAdmin.from('tablet_specs').insert(
+        tablet.specs.map((s: TabletSpecInput) => ({
           tablet_id: newTablet.id,
           category: s.category,
           label: s.label,

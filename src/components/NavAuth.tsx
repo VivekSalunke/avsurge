@@ -25,7 +25,7 @@ export default function NavAuth() {
   if (!user) {
     return (
       <Link href="/login"
-        className="text-xs bg-gradient-to-r from-neon-violet to-neon-cyan text-black px-3 py-1.5 rounded-lg transition font-medium">
+        className="text-xs bg-gradient-to-r from-neon-violet to-neon-cyan text-neon-green px-3 py-1.5 rounded-lg transition font-medium">
         Sign in
       </Link>
     )

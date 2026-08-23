@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
 import RecentlyViewedHome from '@/components/RecentlyViewedHome'
 import FeaturedDeviceStack from '@/components/FeaturedDeviceStack'
 import AILogo from '@/components/AILogo'
@@ -17,19 +18,32 @@ const cardBase =
   'group flex h-full flex-col rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] ' +
   'transition-all duration-300 card-hover hover:border-[rgba(139,92,246,0.3)] hover:glow'
 
+interface Device {
+  id: number
+  name: string
+  brand: string
+  slug: string
+  price_inr: number | null
+  image_url: string | null
+}
+
+interface BrandRow {
+  brand: string
+}
+
 const deviceImage = (url: string | null, name: string, fallback: string) => (
   <div className="relative flex aspect-[4/4.5] items-center justify-center overflow-hidden bg-[linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.02))]">
     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(139,92,246,0.06),transparent_60%)]" />
     {url ? (
-      <img src={url} alt={name} loading="lazy"
-        className="relative h-full w-full object-contain p-6 transition-transform duration-500 ease-out group-hover:scale-110" />
+      <Image src={url} alt={name} loading="lazy" fill sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+        className="h-full w-full object-contain p-6 transition-transform duration-500 ease-out group-hover:scale-110" />
     ) : (
       <span className="text-3xl opacity-60">{fallback}</span>
     )}
   </div>
 )
 
-function DeviceCard({ device, href, fallback }: { device: any, href: string, fallback: string }) {
+function DeviceCard({ device, href, fallback }: { device: Device, href: string, fallback: string }) {
   return (
     <Link href={href} className={cardBase}>
       {deviceImage(device.image_url, device.name, fallback)}
@@ -147,7 +161,7 @@ export default async function HomePage() {
     })
     .slice(0, 6)
 
-  const brands = [...new Set((brandsRaw || []).map((b: any) => b.brand))].sort()
+  const brands = [...new Set((brandsRaw || []).map((b: BrandRow) => b.brand))].sort()
 
   const stats = [
     { label: 'Phones', value: (allPhones?.length || 0) + '+', icon: 'M7 18c-1.26 0-2-1-2-2V7M17 6c1.26 0 2 1 2 2v9' },
@@ -157,9 +171,9 @@ export default async function HomePage() {
   ]
 
   const featuredDevices = [
-    ...(latestPhones || []).slice(0, 2).map((p: any) => ({ ...p, type: 'phones' })),
-    ...(latestTablets || []).slice(0, 1).map((t: any) => ({ ...t, type: 'tablets' })),
-    ...(latestLaptops || []).slice(0, 1).map((l: any) => ({ ...l, type: 'laptops' })),
+    ...(latestPhones || []).slice(0, 2).map((p: Device) => ({ ...p, type: 'phones' as const })),
+    ...(latestTablets || []).slice(0, 1).map((t: Device) => ({ ...t, type: 'tablets' as const })),
+    ...(latestLaptops || []).slice(0, 1).map((l: Device) => ({ ...l, type: 'laptops' as const })),
   ]
 
   return (
@@ -269,7 +283,7 @@ export default async function HomePage() {
       <section className="mb-14">
         <SectionHeader title="Latest phones" badge="New" href="/phones" />
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          {(latestPhones || []).map((phone: any) => (
+          {(latestPhones || []).map((phone: Device) => (
             <DeviceCard key={phone.id} device={phone} href={`/phones/${phone.slug}`} fallback="📱" />
           ))}
         </div>
@@ -280,7 +294,7 @@ export default async function HomePage() {
         <section className="mb-14">
           <SectionHeader title="Top rated" badge="Rated" href="/phones" />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {topRated.map((phone: any) => (
+            {topRated.map((phone: Device) => (
               <DeviceCard key={phone.id} device={phone} href={`/phones/${phone.slug}`} fallback="📱" />
             ))}
           </div>
@@ -292,7 +306,7 @@ export default async function HomePage() {
         <section>
           <SectionHeader title="Best under ₹40K" badge="Budget" href="/phones?maxPrice=40000" />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {(budgetPhones || []).map((phone: any) => (
+            {(budgetPhones || []).map((phone: Device) => (
               <DeviceCard key={phone.id} device={phone} href={`/phones/${phone.slug}`} fallback="📱" />
             ))}
           </div>
@@ -300,7 +314,7 @@ export default async function HomePage() {
         <section>
           <SectionHeader title="Premium phones" badge="Flagship" href="/phones?minPrice=80000" />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {(premiumPhones || []).map((phone: any) => (
+            {(premiumPhones || []).map((phone: Device) => (
               <DeviceCard key={phone.id} device={phone} href={`/phones/${phone.slug}`} fallback="📱" />
             ))}
           </div>
@@ -312,7 +326,7 @@ export default async function HomePage() {
         <section className="mb-14">
           <SectionHeader title="Latest tablets" badge="New" href="/tablets" />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {(latestTablets || []).map((tablet: any) => (
+            {(latestTablets || []).map((tablet: Device) => (
               <DeviceCard key={tablet.id} device={tablet} href={`/tablets/${tablet.slug}`} fallback="📟" />
             ))}
           </div>
@@ -324,7 +338,7 @@ export default async function HomePage() {
         <section className="mb-14">
           <SectionHeader title="Latest laptops" badge="New" href="/laptops" />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {(latestLaptops || []).map((laptop: any) => (
+            {(latestLaptops || []).map((laptop: Device) => (
               <DeviceCard key={laptop.id} device={laptop} href={`/laptops/${laptop.slug}`} fallback="💻" />
             ))}
           </div>
@@ -410,7 +424,7 @@ export default async function HomePage() {
         <section>
           <SectionHeader title="Browse by brand" href="/brands" />
           <div className="flex flex-wrap gap-2">
-            {brands.map((brand: any) => (
+            {brands.map(brand => (
               <Link key={brand} href={`/brands/${encodeURIComponent(brand)}`}
                 className="group flex items-center gap-2 rounded-xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] px-4 py-2 text-sm font-medium text-[rgba(255,255,255,0.75)] transition-all duration-200 hover:border-[rgba(6,182,212,0.4)] hover:text-neon-cyan hover:glow">
                 <span className="text-base">{BRAND_ICONS[brand] || '▫'}</span>

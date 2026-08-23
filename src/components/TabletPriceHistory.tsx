@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { formatPriceINR } from '@/lib/format'
 
@@ -13,16 +13,19 @@ interface PriceEntry {
 export default function TabletPriceHistory({ tabletId, currentPrice }: { tabletId: number, currentPrice: number | null }) {
   const [history, setHistory] = useState<PriceEntry[]>([])
 
-  useEffect(() => { fetchHistory() }, [tabletId])
+  const queryHistory = useCallback(() => supabase
+    .from('tablet_price_history')
+    .select('*')
+    .eq('tablet_id', tabletId)
+    .order('tracked_at', { ascending: true }), [tabletId])
 
-  const fetchHistory = async () => {
-    const { data, error } = await supabase
-      .from('tablet_price_history')
-      .select('*')
-      .eq('tablet_id', tabletId)
-      .order('tracked_at', { ascending: true })
-    if (!error && data) setHistory(data)
-  }
+  useEffect(() => {
+    let cancelled = false
+    queryHistory().then(({ data }) => {
+      if (!cancelled && data) setHistory(data as PriceEntry[])
+    })
+    return () => { cancelled = true }
+  }, [queryHistory])
 
   if (history.length === 0) return null
 

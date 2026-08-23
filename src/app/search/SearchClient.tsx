@@ -1,8 +1,9 @@
 'use client'
 // metadata handled by layout
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Suspense } from 'react'
 import AILogo from '@/components/AILogo'
@@ -32,7 +33,6 @@ const BUDGET_PRESETS = {
 }
 
 const RAM_OPTIONS = ['4GB', '6GB', '8GB', '12GB', '16GB', '32GB']
-const STORAGE_OPTIONS = ['64GB', '128GB', '256GB', '512GB', '1TB']
 const SORT_OPTIONS = [
   { label: 'Relevance', value: 'relevance' },
   { label: 'Price: Low to High', value: 'price_asc' },
@@ -41,6 +41,40 @@ const SORT_OPTIONS = [
 ]
 
 type Mode = 'phones' | 'tablets' | 'laptops'
+
+interface ProductRow {
+  id: number
+  slug: string
+  name: string
+  brand: string
+  price_inr: number | null
+  image_url: string | null
+}
+
+interface BrandRow {
+  brand: string
+}
+
+interface SpecRow {
+  phone_id?: number
+  tablet_id?: number
+  laptop_id?: number
+  label: string
+  value: string
+}
+
+interface AiRecommendation {
+  name: string
+  reason: string
+}
+
+type AiItem = ProductRow & { specs: Record<string, string> }
+
+interface AiResult {
+  name: string
+  reason: string
+  item: AiItem
+}
 
 const AI_EXAMPLES: Record<Mode, string[]> = {
   phones: ['Best camera phone under ₹30,000', 'Gaming phone with 5G under ₹50,000', 'Long battery phone under ₹20,000'],
@@ -55,7 +89,7 @@ function SearchContent() {
 
   const [mode, setMode] = useState<Mode>('phones')
   const [query, setQuery] = useState(initialQ)
-  const [results, setResults] = useState<any[]>([])
+  const [results, setResults] = useState<ProductRow[]>([])
   const [brands, setBrands] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
@@ -66,7 +100,6 @@ function SearchContent() {
   const [maxBudget, setMaxBudget] = useState(300000)
   const [only5G, setOnly5G] = useState(false)
   const [minRAM, setMinRAM] = useState('')
-  const [minStorage, setMinStorage] = useState('')
   const [sort, setSort] = useState('relevance')
   const [showFilters, setShowFilters] = useState(false)
 
@@ -74,25 +107,18 @@ function SearchContent() {
   const [aiMode, setAiMode] = useState(false)
   const [aiQuery, setAiQuery] = useState('')
   const [aiLoading, setAiLoading] = useState(false)
-  const [aiResults, setAiResults] = useState<any[]>([])
+  const [aiResults, setAiResults] = useState<AiResult[]>([])
   const [aiExplanation, setAiExplanation] = useState('')
   const [aiError, setAiError] = useState('')
 
-  useEffect(() => {
-    loadBrands()
-    if (initialQ) doSearch(initialQ)
-  }, [mode])
-
-  const loadBrands = async () => {
-    const { data } = await supabase.from(mode).select('brand')
-    const b = [...new Set((data || []).map((p: any) => p.brand))].sort()
-    setBrands(b as string[])
+  const [prevMode, setPrevMode] = useState(mode)
+  if (prevMode !== mode) {
+    setPrevMode(mode)
     setSelectedBrand('')
     setMinBudget(0)
     setMaxBudget(300000)
     setOnly5G(false)
     setMinRAM('')
-    setMinStorage('')
     setSort('relevance')
     setResults([])
     setSearched(false)
@@ -116,14 +142,14 @@ function SearchContent() {
     else queryBuilder = queryBuilder.order('name', { ascending: true })
 
     const { data } = await queryBuilder.limit(50)
-    let items = data || []
+    let items: ProductRow[] = data || []
 
     if (only5G && mode !== 'laptops') {
       const specsTable = mode === 'phones' ? 'phone_specs' : 'tablet_specs'
       const idKey = mode === 'phones' ? 'phone_id' : 'tablet_id'
       const ids = items.map(p => p.id)
       const { data: specs } = await supabase.from(specsTable).select(idKey).in(idKey, ids).eq('label', '5G').eq('value', 'Yes')
-      const fiveGIds = new Set((specs || []).map((s: any) => s[idKey]))
+      const fiveGIds = new Set((((specs || []) as unknown) as Record<string, number>[]).map(s => s[idKey]))
       items = items.filter(p => fiveGIds.has(p.id))
     }
 
@@ -133,14 +159,32 @@ function SearchContent() {
       const ids = items.map(p => p.id)
       const { data: specs } = await supabase.from(specsTable).select(`${idKey}, value`).in(idKey, ids).eq('label', 'RAM')
       const ramMap: Record<number, number> = {}
-      for (const s of (specs || []) as any[]) ramMap[s[idKey]] = parseFloat(s.value) || 0
+      for (const s of (specs || []) as SpecRow[]) ramMap[s[idKey] as number] = parseFloat(s.value) || 0
       const minVal = parseFloat(minRAM) || 0
       items = items.filter(p => (ramMap[p.id] || 0) >= minVal)
     }
 
     setResults(items)
     setLoading(false)
-  }, [mode, selectedBrand, minBudget, maxBudget, only5G, minRAM, minStorage, sort])
+  }, [mode, selectedBrand, minBudget, maxBudget, only5G, minRAM, sort])
+
+  const doSearchRef = useRef(doSearch)
+  useEffect(() => {
+    doSearchRef.current = doSearch
+  })
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      const { data } = await supabase.from(mode).select('brand')
+      if (!cancelled) setBrands([...new Set((data || []).map((p: BrandRow) => p.brand))].sort())
+    })()
+    return () => { cancelled = true }
+  }, [mode])
+
+  useEffect(() => {
+    if (initialQ) doSearchRef.current(initialQ)
+  }, [initialQ])
 
   const handleSearch = () => {
     router.push(`/search?q=${encodeURIComponent(query)}`)
@@ -165,7 +209,7 @@ function SearchContent() {
 
       const { data: items } = await supabase.from(mode).select('id, name, brand, slug, price_inr, image_url').not('price_inr', 'is', null).order('price_inr', { ascending: true })
       const { data: specsRaw } = await supabase.from(specsTable).select('*').in('label', specLabels)
-      const specs = specsRaw as any[]
+      const specs = specsRaw as SpecRow[]
 
       const specMap: Record<number, Record<string, string>> = {}
       for (const s of specs || []) {
@@ -174,7 +218,7 @@ function SearchContent() {
         specMap[id][s.label] = s.value
       }
 
-      const itemList = (items || []).map(p => ({ ...p, specs: specMap[p.id] || {} }))
+      const itemList = (items || []).map((p: ProductRow) => ({ ...p, specs: specMap[p.id] || {} }))
 
       const res = await fetch('/api/ai-recommend', {
         method: 'POST',
@@ -186,10 +230,10 @@ function SearchContent() {
       if (!res.ok) throw new Error(parsed.error)
 
       setAiExplanation(parsed.explanation)
-      const matched = parsed.recommendations.map((rec: any) => {
+      const matched = (parsed.recommendations as AiRecommendation[]).map(rec => {
         const item = itemList.find(p => p.name.toLowerCase() === rec.name.toLowerCase() || p.name.toLowerCase().includes(rec.name.toLowerCase()))
         return { ...rec, item }
-      }).filter((r: any) => r.item)
+      }).filter((r): r is AiResult => Boolean(r.item))
       setAiResults(matched)
     } catch {
       setAiError('AI search failed. Try again.')
@@ -269,12 +313,12 @@ function SearchContent() {
 
           {aiResults.length > 0 && (
             <div className="flex flex-col gap-4">
-              {aiResults.map((rec: any, i: number) => (
+              {aiResults.map((rec, i) => (
                 <Link key={i} href={`${itemBase}/${rec.item.slug}`}
                   className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-5 hover:border-neon-violet hover:glow transition group flex gap-4">
                   <div className="w-20 h-20 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
                     {rec.item.image_url
-                      ? <img src={rec.item.image_url} alt={rec.item.name} className="object-contain w-full h-full p-1" />
+                      ? <Image src={rec.item.image_url} alt={rec.item.name} width={80} height={80} className="object-contain w-full h-full p-1" />
                       : <span className="text-3xl">{itemEmoji}</span>}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -419,9 +463,9 @@ function SearchContent() {
                 {results.map(item => (
                   <Link key={item.id} href={`${itemBase}/${item.slug}`}
                     className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 text-center hover:border-neon-cyan hover:glow transition group">
-                    <div className="w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center mb-3 overflow-hidden">
+                    <div className="relative w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center mb-3 overflow-hidden">
                       {item.image_url
-                        ? <img src={item.image_url} alt={item.name} className="object-contain w-full h-full" />
+                        ? <Image src={item.image_url} alt={item.name} fill sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 210px" className="object-contain" />
                         : <span className="text-4xl">{itemEmoji}</span>}
                     </div>
                     <p className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{item.brand}</p>

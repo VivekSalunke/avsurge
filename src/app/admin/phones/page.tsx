@@ -4,11 +4,21 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
+
+interface AdminPhoneRow {
+  id: string
+  slug: string
+  name: string
+  brand: string
+  price_inr: number | null
+  image_url: string | null
+}
 
 export default function ManagePhonesPage() {
   const { user, isAdmin, loading, profileLoading } = useAuth()
   const router = useRouter()
-  const [phones, setPhones] = useState<any[]>([])
+  const [phones, setPhones] = useState<AdminPhoneRow[]>([])
   const [fetching, setFetching] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
   const [search, setSearch] = useState('')
@@ -17,17 +27,19 @@ export default function ManagePhonesPage() {
     if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading, profileLoading])
+  }, [user, isAdmin, loading, profileLoading, router])
 
   useEffect(() => {
-    if (isAdmin) fetchPhones()
+    if (!isAdmin) return
+    let cancelled = false
+    supabase.from('phones').select('*').order('created_at', { ascending: false })
+      .then(({ data }) => {
+        if (cancelled) return
+        setPhones((data || []) as AdminPhoneRow[])
+        setFetching(false)
+      })
+    return () => { cancelled = true }
   }, [isAdmin])
-
-  const fetchPhones = async () => {
-    const { data } = await supabase.from('phones').select('*').order('created_at', { ascending: false })
-    setPhones(data || [])
-    setFetching(false)
-  }
 
   const deletePhone = async (id: string, name: string) => {
     if (!confirm(`Delete ${name}? This cannot be undone.`)) return
@@ -78,9 +90,9 @@ export default function ManagePhonesPage() {
           {filtered.map((phone, i) => (
             <div key={phone.id} className={`flex items-center justify-between px-5 py-4 ${i !== filtered.length - 1 ? 'border-b border-[rgba(255,255,255,0.04)]' : ''}`}>
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center overflow-hidden">
+                <div className="w-10 h-10 bg-[rgba(255,255,255,0.02)] rounded-xl flex items-center justify-center overflow-hidden relative">
                   {phone.image_url
-                    ? <img src={phone.image_url} alt={phone.name} className="w-full h-full object-contain" />
+                    ? <Image src={phone.image_url} alt={phone.name} fill sizes="40px" className="w-full h-full object-contain" />
                     : <span className="text-lg">📱</span>
                   }
                 </div>

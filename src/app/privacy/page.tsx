@@ -25,7 +25,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-lg font-bold text-white mb-3">1. Introduction</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
-            Welcome to AVSurge ("we", "our", or "us"). AVSurge is a device comparison and discovery platform for the Indian market, available at avsurge.com. We are committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you visit our website.
+            Welcome to AVSurge (“we”, “our”, or “us”). AVSurge is a device comparison and discovery platform for the Indian market, available at avsurge.com. We are committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you visit our website.
           </p>
         </section>
 
@@ -63,7 +63,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-lg font-bold text-white mb-3">4. Cookies and Tracking</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
-            We use cookies and similar tracking technologies to enhance your experience on AVSurge. This includes remembering recently viewed devices (stored in your browser's local storage), maintaining your login session, and enabling Google AdSense to display relevant ads. You can control cookie settings through your browser preferences. Disabling cookies may affect some features of the site.
+            We use cookies and similar tracking technologies to enhance your experience on AVSurge. This includes remembering recently viewed devices (stored in your browser’s local storage), maintaining your login session, and enabling Google AdSense to display relevant ads. You can control cookie settings through your browser preferences. Disabling cookies may affect some features of the site.
           </p>
         </section>
 
@@ -71,7 +71,7 @@ export default function PrivacyPage() {
           <h2 className="text-lg font-bold text-white mb-3">5. Third-Party Services and Advertising</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed mb-3">We use the following third-party services that may collect data:</p>
           <ul className="list-disc list-inside text-[rgba(255,255,255,0.65)] space-y-2 ml-2">
-            <li><strong>Google AdSense</strong> — for displaying personalized advertisements. Google may use cookies and other tracking technologies to serve ads based on your browsing history on our site and across the web. For more details, see Google's <a href="https://policies.google.com/privacy" className="text-neon-cyan hover:underline" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</li>
+            <li><strong>Google AdSense</strong> — for displaying personalized advertisements. Google may use cookies and other tracking technologies to serve ads based on your browsing history on our site and across the web. For more details, see Google’s <a href="https://policies.google.com/privacy" className="text-neon-cyan hover:underline" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</li>
             <li><strong>Google Analytics</strong> — for analyzing website traffic and user behavior to help us improve our service. Google Analytics may set cookies on your browser.</li>
             <li><strong>Supabase</strong> — our backend database provider, which stores your account data and preferences securely.</li>
             <li><strong>Resend</strong> — our email delivery service, used to send price alert notifications.</li>
@@ -80,7 +80,7 @@ export default function PrivacyPage() {
             <li><strong>hCaptcha</strong> — for bot prevention and security validation on forms.</li>
           </ul>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed mt-3">
-            We are not responsible for the privacy practices of these third-party services. We encourage you to review their privacy policies. You can opt out of personalized advertising through <a href="https://myaccount.google.com/u/0/data-and-privacy/ad-settings" className="text-neon-cyan hover:underline" target="_blank" rel="noopener noreferrer">Google's Ad Settings</a>.
+            We are not responsible for the privacy practices of these third-party services. We encourage you to review their privacy policies. You can opt out of personalized advertising through <a href="https://myaccount.google.com/u/0/data-and-privacy/ad-settings" className="text-neon-cyan hover:underline" target="_blank" rel="noopener noreferrer">Google’s Ad Settings</a>.
           </p>
         </section>
 
@@ -114,7 +114,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-bold text-white mb-3">9. Children's Privacy</h2>
+          <h2 className="text-lg font-bold text-white mb-3">9. Children’s Privacy</h2>
           <p className="text-[rgba(255,255,255,0.65)] leading-relaxed">
             AVSurge is not directed at children under the age of 13. We do not knowingly collect personal information from children. If you believe a child has provided us with personal information, please contact us and we will delete it promptly.
           </p>

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit'
 
 const FREE_MODELS = [
   'openai/gpt-oss-20b:free',
@@ -7,11 +8,22 @@ const FREE_MODELS = [
   'nvidia/nemotron-3-super-120b-a12b:free',
 ]
 
+const MAX_PER_HOUR = 20
+
 export async function POST(req: NextRequest) {
+  const ip = getClientIp(req)
+  if (!checkRateLimit(`ai-explain:${ip}`, MAX_PER_HOUR, 60 * 60 * 1000)) {
+    return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+  }
+
   const { label, value, phoneName } = await req.json()
 
   if (!label || !value) {
     return NextResponse.json({ error: 'Missing label or value' }, { status: 400 })
+  }
+  if (typeof label !== 'string' || typeof value !== 'string' || typeof phoneName !== 'string'
+    || label.length > 200 || value.length > 500 || phoneName.length > 200) {
+    return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
   }
 
   if (!process.env.OPENROUTER_API_KEY) {

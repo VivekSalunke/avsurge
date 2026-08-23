@@ -83,28 +83,6 @@ function extractMaxNumber(value: string | null): number | null {
   return Math.max(...nums)
 }
 
-/**
- * Extract the largest camera megapixel value.
- *
- * Example:
- * "50MP + 8MP + 2MP" -> 50
- */
-function extractMaxMP(value: string | null): number | null {
-  if (!value) return null
-
-  const matches = value.match(
-    /(\d+(?:\.\d+)?)\s*MP/gi
-  )
-
-  if (!matches) return null
-
-  const nums = matches.map(match =>
-    parseFloat(match)
-  )
-
-  return Math.max(...nums)
-}
-
 export function parseSpecs(
   specs: SpecRow[]
 ): ParsedSpecs {

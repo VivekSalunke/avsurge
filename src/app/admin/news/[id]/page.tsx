@@ -23,20 +23,20 @@ export default function EditArticlePage() {
     if (loading || profileLoading) return
     if (!user) router.push('/login')
     else if (!isAdmin) router.push('/')
-  }, [user, isAdmin, loading, profileLoading])
+  }, [user, isAdmin, loading, profileLoading, router])
 
   useEffect(() => {
-    if (isAdmin && id) fetchArticle()
+    if (!isAdmin || !id) return
+    const load = async () => {
+      const { data } = await supabase.from('news').select('*').eq('id', id).single()
+      if (data) setForm({
+        title: data.title, slug: data.slug, excerpt: data.excerpt || '',
+        content: data.content || '', image_url: data.image_url || '',
+        category: data.category || 'General', published: data.published
+      })
+    }
+    load()
   }, [isAdmin, id])
-
-  const fetchArticle = async () => {
-    const { data } = await supabase.from('news').select('*').eq('id', id).single()
-    if (data) setForm({
-      title: data.title, slug: data.slug, excerpt: data.excerpt || '',
-      content: data.content || '', image_url: data.image_url || '',
-      category: data.category || 'General', published: data.published
-    })
-  }
 
   const handleSave = async () => {
     setSaving(true)
