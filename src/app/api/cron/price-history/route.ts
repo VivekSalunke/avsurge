@@ -14,12 +14,14 @@ export async function GET(req: NextRequest) {
   ])
 
   let count = 0
+  const errors: Record<string, string> = {}
 
   if (phones && phones.length > 0) {
     const { error } = await supabase.from('price_history').insert(
       phones.map(p => ({ phone_id: p.id, price_inr: p.price_inr, store: 'India' }))
     )
     if (!error) count += phones.length
+    else { console.error('[cron/price-history] phones insert failed:', error.message); errors.phones = error.message }
   }
 
   if (tablets && tablets.length > 0) {
@@ -27,6 +29,7 @@ export async function GET(req: NextRequest) {
       tablets.map(t => ({ tablet_id: t.id, price_inr: t.price_inr, store: 'India' }))
     )
     if (!error) count += tablets.length
+    else { console.error('[cron/price-history] tablets insert failed:', error.message); errors.tablets = error.message }
   }
 
   if (laptops && laptops.length > 0) {
@@ -34,7 +37,13 @@ export async function GET(req: NextRequest) {
       laptops.map(l => ({ laptop_id: l.id, price_inr: l.price_inr, store: 'India' }))
     )
     if (!error) count += laptops.length
+    else { console.error('[cron/price-history] laptops insert failed:', error.message); errors.laptops = error.message }
   }
 
-  return NextResponse.json({ success: true, logged: count, timestamp: new Date().toISOString() })
+  return NextResponse.json({
+    success: Object.keys(errors).length === 0,
+    logged: count,
+    ...(Object.keys(errors).length > 0 && { errors }),
+    timestamp: new Date().toISOString(),
+  })
 }
