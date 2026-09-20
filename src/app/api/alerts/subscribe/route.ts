@@ -1,25 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin as supabase } from '@/lib/supabaseAdmin'
-
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now()
-  const windowMs = 60 * 60 * 1000
-  const maxRequests = 5
-  const entry = rateLimitMap.get(ip)
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + windowMs })
-    return true
-  }
-  if (entry.count >= maxRequests) return false
-  entry.count++
-  return true
-}
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit'
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown'
-  if (!checkRateLimit(ip)) {
+  const ip = getClientIp(req)
+  if (!checkRateLimit(`alerts-subscribe:${ip}`, 5, 60 * 60 * 1000)) {
     return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
   }
   const { email, phone_id, target_price } = await req.json()
