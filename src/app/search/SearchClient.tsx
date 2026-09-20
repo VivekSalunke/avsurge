@@ -382,9 +382,9 @@ function SearchContent() {
                 <p className="text-xs font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-widest mb-2">Brand</p>
                 <select value={selectedBrand} onChange={e => setSelectedBrand(e.target.value)}
                   className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
-                  style={{ color: '#111827', backgroundColor: '#ffffff' }}>
-                  <option value="">All brands</option>
-                  {brands.map(b => <option key={b} value={b}>{b}</option>)}
+                  style={{ color: '#e5e7eb', backgroundColor: '#1a1a2e' }}>
+                  <option value="" style={{ backgroundColor: '#1a1a2e', color: '#e5e7eb' }}>All brands</option>
+                  {brands.map(b => <option key={b} value={b} style={{ backgroundColor: '#1a1a2e', color: '#e5e7eb' }}>{b}</option>)}
                 </select>
               </div>
 
@@ -406,8 +406,8 @@ function SearchContent() {
                 <p className="text-xs font-bold text-[rgba(255,255,255,0.4)] uppercase tracking-widest mb-2">Sort by</p>
                 <select value={sort} onChange={e => setSort(e.target.value)}
                   className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan mb-2"
-                  style={{ color: '#111827', backgroundColor: '#ffffff' }}>
-                  {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  style={{ color: '#e5e7eb', backgroundColor: '#1a1a2e' }}>
+                  {SORT_OPTIONS.map(o => <option key={o.value} value={o.value} style={{ backgroundColor: '#1a1a2e', color: '#e5e7eb' }}>{o.label}</option>)}
                 </select>
                 {mode !== 'laptops' && (
                   <button onClick={() => setOnly5G(!only5G)}
