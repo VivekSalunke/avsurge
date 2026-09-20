@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
@@ -23,6 +23,7 @@ export default function AdminBrandsPage() {
   const [msg, setMsg] = useState('')
   const [editId, setEditId] = useState<number | null>(null)
   const [showAddForm, setShowAddForm] = useState(false)
+  const editFormRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (loading || profileLoading) return
@@ -100,6 +101,7 @@ export default function AdminBrandsPage() {
     setEditId(b.id)
     setForm({ brand: b.brand, logo_url: b.logo_url || '' })
     setMsg('')
+    setTimeout(() => editFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0)
   }
 
   const handleDelete = async (id: number) => {
@@ -127,7 +129,7 @@ export default function AdminBrandsPage() {
 
       {/* Edit form (shown when editing) */}
       {editId && (
-        <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-8 neon-border">
+        <div ref={editFormRef} className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-8 neon-border">
           <h2 className="text-sm font-semibold text-white mb-4">Edit Brand Logo: {form.brand}</h2>
           <div className="grid grid-cols-1 gap-3 mb-4">
             <div>
