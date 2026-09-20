@@ -1,13 +1,15 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
-import Image from 'next/image'
-import { formatPriceINR } from '@/lib/format'
+import LaptopFilters from '@/components/LaptopFilters'
+import { parseLaptopSpecs, getFinalLaptopSpecScore, SpecRow } from '@/lib/laptopSpecScore'
+
 export const revalidate = 60
 export const metadata = {
   title: 'Laptops Price List in India 2026 | AVSurge',
   alternates: { canonical: 'https://avsurge.com/laptops' },
   description: 'Browse all laptops available in India. Compare laptop specs, prices and reviews. Find the best laptop for your budget.',
 }
+
 interface Laptop {
   id: number
   name: string
@@ -15,10 +17,14 @@ interface Laptop {
   slug: string
   price_inr: number | null
   image_url: string | null
+  created_at?: string | null
+  view_count?: number | null
+  spec_score_override?: number | null
 }
 interface BrandRow {
   brand: string
 }
+
 export default async function LaptopsPage({ searchParams }: { searchParams: Promise<{ brand?: string }> }) {
   const params = await searchParams
   const brand = params?.brand
@@ -32,6 +38,38 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
     ASUS: '🟥', Acer: '🟢', Microsoft: '🪟', Samsung: '🔵',
     MSI: '🔴', Razer: '🟢', LG: '🟣',
   }
+
+  const laptopIds = (laptops || []).map((l: Laptop) => l.id)
+  const { data: allSpecs } = laptopIds.length > 0
+    ? await supabase.from('laptop_specs').select('laptop_id, category, label, value').in('laptop_id', laptopIds)
+    : { data: [] as (SpecRow & { laptop_id: number })[] }
+
+  const specsByLaptop = new Map<number, SpecRow[]>()
+  for (const spec of allSpecs || []) {
+    const list = specsByLaptop.get(spec.laptop_id) || []
+    list.push({ category: spec.category, label: spec.label, value: spec.value })
+    specsByLaptop.set(spec.laptop_id, list)
+  }
+
+  const enrichedLaptops = (laptops || []).map((laptop: Laptop) => {
+    const specs = specsByLaptop.get(laptop.id) || []
+    const parsed = parseLaptopSpecs(specs)
+    const processorRaw = specs.find(s => s.label.toLowerCase() === 'processor')?.value ?? null
+    return {
+      id: laptop.id,
+      slug: laptop.slug,
+      name: laptop.name,
+      brand: laptop.brand,
+      price_inr: laptop.price_inr,
+      image_url: laptop.image_url,
+      created_at: laptop.created_at,
+      view_count: laptop.view_count,
+      score: getFinalLaptopSpecScore(specs, laptop.spec_score_override),
+      ramGB: parsed.ramGB,
+      storageGB: parsed.storageGB,
+      processorRaw,
+    }
+  })
 
   const itemListSchema = laptops && laptops.length > 0 ? {
     '@context': 'https://schema.org',
@@ -53,7 +91,7 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
       )}
 
       <div className="rounded-2xl p-8 mb-8 text-white border border-[rgba(255,255,255,0.06)] bg-[var(--panel)]">
-        <p className="text-dim text-xs mb-2 uppercase tracking-widest font-medium">India’s laptop database</p>
+        <p className="text-dim text-xs mb-2 uppercase tracking-widest font-medium">India's laptop database</p>
         <h1 className="text-3xl font-bold mb-2">Find your perfect laptop</h1>
         <p className="text-[rgba(255,255,255,0.65)] mb-6 max-w-md">Specs, prices and comparisons for every laptop in India.</p>
         <div className="flex flex-wrap gap-3">
@@ -77,7 +115,6 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
         </Link>
       </div>
 
-      {/* Browse by budget */}
       <div className="mb-8">
         <h2 className="text-base font-bold text-white mb-4">Browse by budget</h2>
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
@@ -98,7 +135,6 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
         </div>
       </div>
 
-      {/* Browse by use case */}
       <div className="mb-8">
         <h2 className="text-sm font-bold text-dim uppercase tracking-widest mb-3">Browse by use case</h2>
         <div className="flex flex-wrap gap-2">
@@ -118,7 +154,6 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
         </div>
       </div>
 
-      {/* Brand filter */}
       <div className="flex flex-wrap gap-2 mb-8">
         <Link href="/laptops"
           className={`px-3 py-1.5 rounded-full text-sm border transition ${!brand ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm' : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'}`}>
@@ -132,39 +167,13 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
         ))}
       </div>
 
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-bold text-white">{brand ? `${brand} laptops` : 'All laptops'}</h2>
-        <span className="text-sm text-[rgba(255,255,255,0.4)]">{laptops?.length || 0} devices</span>
-      </div>
-
       {(!laptops || laptops.length === 0) ? (
         <div className="bg-[var(--card-bg)] border border-dashed border-[rgba(255,255,255,0.06)] rounded-2xl py-20 text-center text-[rgba(255,255,255,0.4)]">
           <div className="text-4xl mb-3">💻</div>
           <p className="text-sm">No laptops yet. Add some from the admin panel.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {laptops.map((laptop: Laptop) => (
-            <div key={laptop.id} className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 text-center hover:border-[rgba(6,182,212,0.35)] hover:glow transition-all duration-200 group card-hover">
-              <Link href={`/laptops/${laptop.slug}`}>
-              <div className="relative w-full aspect-square bg-[rgba(255,255,255,0.02)] rounded-lg flex items-center justify-center mb-3 overflow-hidden">
-                {laptop.image_url
-                  ? <Image src={laptop.image_url} alt={laptop.name} fill sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, 50vw" className="object-contain w-full h-full" />
-                  : <span className="text-4xl">💻</span>}
-              </div>
-              <p className="text-xs text-[rgba(255,255,255,0.4)] mb-0.5">{laptop.brand}</p>
-              <p className="text-sm font-semibold text-white leading-tight group-hover:text-neon-cyan transition line-clamp-2">{laptop.name}</p>
-              {laptop.price_inr && (
-                <p className="text-xs text-neon-cyan font-medium mt-1">{formatPriceINR(laptop.price_inr)}</p>
-              )}
-              </Link>
-              <Link href={`/compare-laptops?a=${laptop.slug}`}
-                className="mt-2 w-full flex items-center justify-center gap-1 text-xs text-[rgba(255,255,255,0.4)] hover:text-neon-cyan hover:bg-[rgba(6,182,212,0.06)] rounded-lg py-1.5 transition border border-transparent hover:border-neon-cyan">
-                ⚖️ Compare
-              </Link>
-            </div>
-          ))}
-        </div>
+        <LaptopFilters devices={enrichedLaptops} />
       )}
     </main>
   )
