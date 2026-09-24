@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
-const CATEGORIES = ['General', 'Phones', 'Tablets', 'Laptops', 'Reviews', 'Tips', 'Industry News']
+const DEFAULT_CATEGORIES = ['General', 'Phones', 'Tablets', 'Laptops', 'Reviews', 'Tips', 'Industry News']
 
 export default function EditArticlePage() {
   const { user, isAdmin, loading, profileLoading } = useAuth()
@@ -15,6 +15,7 @@ export default function EditArticlePage() {
   const [form, setForm] = useState({
     title: '', slug: '', excerpt: '', content: '', image_url: '', category: 'General', published: false
   })
+  const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
   const inputStyle = { color: '#111827', backgroundColor: '#ffffff' }
@@ -38,12 +39,20 @@ export default function EditArticlePage() {
     load()
   }, [isAdmin, id])
 
+  useEffect(() => {
+    supabase.from('news').select('category').then(({ data }) => {
+      const used = Array.from(new Set((data || []).map(r => r.category).filter(Boolean))) as string[]
+      const merged = Array.from(new Set([...DEFAULT_CATEGORIES, ...used])).sort()
+      setCategories(merged)
+    })
+  }, [])
+
   const handleSave = async () => {
     setSaving(true)
     const { error } = await supabase.from('news').update({
       title: form.title, slug: form.slug, excerpt: form.excerpt,
       content: form.content, image_url: form.image_url || null,
-      category: form.category, published: form.published,
+      category: form.category.trim() || 'General', published: form.published,
       updated_at: new Date().toISOString(),
     }).eq('id', id)
     if (error) setMsg('Error: ' + error.message)
@@ -79,11 +88,12 @@ export default function EditArticlePage() {
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-dim mb-1 block">Category</label>
-            <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle}>
-              {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-            </select>
+            <label className="text-xs text-dim mb-1 block">Category <span className="text-[rgba(255,255,255,0.3)]">(pick existing or type a new one)</span></label>
+            <input list="category-options" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle} />
+            <datalist id="category-options">
+              {categories.map(c => <option key={c} value={c} />)}
+            </datalist>
           </div>
           <div>
             <label className="text-xs text-dim mb-1 block">Cover Image URL</label>

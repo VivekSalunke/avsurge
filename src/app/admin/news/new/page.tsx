@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
-const CATEGORIES = ['General', 'Phones', 'Tablets', 'Laptops', 'Reviews', 'Tips', 'Industry News']
+const DEFAULT_CATEGORIES = ['General', 'Phones', 'Tablets', 'Laptops', 'Reviews', 'Tips', 'Industry News']
 
 export default function NewArticlePage() {
   const { user, isAdmin, loading, profileLoading } = useAuth()
@@ -13,6 +13,7 @@ export default function NewArticlePage() {
   const [form, setForm] = useState({
     title: '', slug: '', excerpt: '', content: '', image_url: '', category: 'General', published: false
   })
+  const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
   const inputStyle = { color: '#111827', backgroundColor: '#ffffff' }
@@ -23,6 +24,14 @@ export default function NewArticlePage() {
     else if (!isAdmin) router.push('/')
   }, [user, isAdmin, loading, profileLoading, router])
 
+  useEffect(() => {
+    supabase.from('news').select('category').then(({ data }) => {
+      const used = Array.from(new Set((data || []).map(r => r.category).filter(Boolean))) as string[]
+      const merged = Array.from(new Set([...DEFAULT_CATEGORIES, ...used])).sort()
+      setCategories(merged)
+    })
+  }, [])
+
   const autoSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
   const handleSave = async (publish = false) => {
@@ -31,7 +40,7 @@ export default function NewArticlePage() {
     const { data, error } = await supabase.from('news').insert({
       title: form.title, slug: form.slug, excerpt: form.excerpt,
       content: form.content, image_url: form.image_url || null,
-      category: form.category, published: publish,
+      category: form.category.trim() || 'General', published: publish,
     }).select().single()
     if (error) { setMsg('Error: ' + error.message); setSaving(false); return }
     router.push(`/admin/news/${data.id}`)
@@ -61,11 +70,12 @@ export default function NewArticlePage() {
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-dim mb-1 block">Category</label>
-            <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-              className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle}>
-              {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-            </select>
+            <label className="text-xs text-dim mb-1 block">Category <span className="text-[rgba(255,255,255,0.3)]">(pick existing or type a new one)</span></label>
+            <input list="category-options" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
+              placeholder="e.g. General" className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan" style={inputStyle} />
+            <datalist id="category-options">
+              {categories.map(c => <option key={c} value={c} />)}
+            </datalist>
           </div>
           <div>
             <label className="text-xs text-dim mb-1 block">Cover Image URL</label>
