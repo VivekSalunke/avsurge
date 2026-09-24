@@ -67,8 +67,12 @@ export default function AdminPriceHistory() {
     if (!confirm(`Delete this ${entry.type} price record for ${entry.name}?`)) return
     setDeleting(`${entry.type}-${entry.id}`)
     const table = entry.type === 'phone' ? 'price_history' : entry.type === 'tablet' ? 'tablet_price_history' : 'laptop_price_history'
-    await supabase.from(table).delete().eq('id', entry.id)
-    setEntries(prev => prev.filter(e => !(e.type === entry.type && e.id === entry.id)))
+    const { error } = await supabase.from(table).delete().eq('id', entry.id)
+    if (error) {
+      alert(`Failed to delete: ${error.message}`)
+    } else {
+      setEntries(prev => prev.filter(e => !(e.type === entry.type && e.id === entry.id)))
+    }
     setDeleting(null)
   }
 
