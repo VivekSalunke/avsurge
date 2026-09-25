@@ -1,9 +1,10 @@
 'use client'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter, useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import ContentToolbar from '@/components/ContentToolbar'
 
 const DEFAULT_CATEGORIES = ['General', 'Phones', 'Tablets', 'Laptops', 'Reviews', 'Tips', 'Industry News']
 
@@ -16,6 +17,7 @@ export default function EditArticlePage() {
     title: '', slug: '', excerpt: '', content: '', image_url: '', category: 'General', published: false
   })
   const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES)
+  const contentRef = useRef<HTMLTextAreaElement>(null)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
   const inputStyle = { color: '#111827', backgroundColor: '#ffffff' }
@@ -108,7 +110,8 @@ export default function EditArticlePage() {
         </div>
         <div>
           <label className="text-xs text-dim mb-1 block">Content</label>
-          <textarea value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
+          <ContentToolbar textareaRef={contentRef} value={form.content} onChange={v => setForm(f => ({ ...f, content: v }))} />
+          <textarea ref={contentRef} value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
             rows={16} className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan resize-none font-mono" style={inputStyle} />
         </div>
         <div className="flex items-center gap-4 pt-2">

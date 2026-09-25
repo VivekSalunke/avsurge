@@ -124,11 +124,35 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             if (para.startsWith('# ')) {
               return <h1 key={i} className="text-2xl font-bold text-white mt-8 mb-3">{para.slice(2)}</h1>
             }
-            // Bold: **text**
-            const boldParts = para.split(/\*\*([^*]+)\*\*/g)
+            // Bold: **text**  |  Link: [text](url)
+            const tokenRegex = /\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)]+)\)/g
+            const nodes: React.ReactNode[] = []
+            let lastIndex = 0
+            let match: RegExpExecArray | null
+            let key = 0
+            while ((match = tokenRegex.exec(para)) !== null) {
+              if (match.index > lastIndex) {
+                nodes.push(para.slice(lastIndex, match.index))
+              }
+              if (match[1] !== undefined) {
+                // bold match
+                nodes.push(<strong key={key++}>{match[1]}</strong>)
+              } else {
+                // link match: match[2] = text, match[3] = url
+                nodes.push(
+                  <a key={key++} href={match[3]} target="_blank" rel="noopener noreferrer" className="text-neon-cyan hover:underline">
+                    {match[2]}
+                  </a>
+                )
+              }
+              lastIndex = tokenRegex.lastIndex
+            }
+            if (lastIndex < para.length) {
+              nodes.push(para.slice(lastIndex))
+            }
             return (
               <p key={i} className="text-[rgba(255,255,255,0.85)] leading-relaxed mb-4">
-                {boldParts.map((part, j) => j % 2 === 1 ? <strong key={j}>{part}</strong> : part)}
+                {nodes}
               </p>
             )
           })}
