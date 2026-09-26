@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import DOMPurify from 'isomorphic-dompurify'
 
 export const revalidate = 60
 
@@ -104,59 +105,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       )}
 
       {article.content && (
-        <div className="prose prose-gray max-w-none">
-          {article.content.split('\n').map((para: string, i: number) => {
-            if (!para.trim()) return null
-            // Image syntax: ![alt](url)
-            const imgMatch = para.match(/^!\[([^\]]*)\]\(([^)]+)\)$/)
-            if (imgMatch) {
-              return (
-                <div key={i} className="my-6">
-                  <Image src={imgMatch[2]} alt={imgMatch[1]} width={1200} height={675} sizes="(max-width: 768px) 100vw, 736px" className="w-full h-auto rounded-2xl object-cover" />
-                  {imgMatch[1] && <p className="text-xs text-[rgba(255,255,255,0.4)] text-center mt-2">{imgMatch[1]}</p>}
-                </div>
-              )
-            }
-            // Heading syntax: ## Heading
-            if (para.startsWith('## ')) {
-              return <h2 key={i} className="text-xl font-bold text-white mt-8 mb-3">{para.slice(3)}</h2>
-            }
-            if (para.startsWith('# ')) {
-              return <h1 key={i} className="text-2xl font-bold text-white mt-8 mb-3">{para.slice(2)}</h1>
-            }
-            // Bold: **text**  |  Link: [text](url)
-            const tokenRegex = /\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)]+)\)/g
-            const nodes: React.ReactNode[] = []
-            let lastIndex = 0
-            let match: RegExpExecArray | null
-            let key = 0
-            while ((match = tokenRegex.exec(para)) !== null) {
-              if (match.index > lastIndex) {
-                nodes.push(para.slice(lastIndex, match.index))
-              }
-              if (match[1] !== undefined) {
-                // bold match
-                nodes.push(<strong key={key++}>{match[1]}</strong>)
-              } else {
-                // link match: match[2] = text, match[3] = url
-                nodes.push(
-                  <a key={key++} href={match[3]} target="_blank" rel="noopener noreferrer" className="text-neon-cyan hover:underline">
-                    {match[2]}
-                  </a>
-                )
-              }
-              lastIndex = tokenRegex.lastIndex
-            }
-            if (lastIndex < para.length) {
-              nodes.push(para.slice(lastIndex))
-            }
-            return (
-              <p key={i} className="text-[rgba(255,255,255,0.85)] leading-relaxed mb-4">
-                {nodes}
-              </p>
-            )
-          })}
-        </div>
+        <div
+          className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-[rgba(255,255,255,0.85)] prose-a:text-neon-cyan prose-img:rounded-2xl"
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(article.content, {
+              ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'strong', 'em', 'u', 's', 'a', 'img', 'ul', 'ol', 'li', 'br', 'span'],
+              ALLOWED_ATTR: ['href', 'src', 'alt', 'target', 'rel', 'style', 'class'],
+            }),
+          }}
+        />
       )}
 
       {related && related.length > 0 && (

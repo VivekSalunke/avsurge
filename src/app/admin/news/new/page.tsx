@@ -1,10 +1,10 @@
 'use client'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
-import ContentToolbar from '@/components/ContentToolbar'
+import NewsEditor from '@/components/NewsEditor'
 
 const DEFAULT_CATEGORIES = ['General', 'Phones', 'Tablets', 'Laptops', 'Reviews', 'Tips', 'Industry News']
 
@@ -15,7 +15,6 @@ export default function NewArticlePage() {
     title: '', slug: '', excerpt: '', content: '', image_url: '', category: 'General', published: false
   })
   const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES)
-  const contentRef = useRef<HTMLTextAreaElement>(null)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
   const inputStyle = { color: '#111827', backgroundColor: '#ffffff' }
@@ -93,10 +92,7 @@ export default function NewArticlePage() {
         </div>
         <div>
           <label className="text-xs text-dim mb-1 block">Content</label>
-          <ContentToolbar textareaRef={contentRef} value={form.content} onChange={v => setForm(f => ({ ...f, content: v }))} />
-          <textarea ref={contentRef} value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
-            placeholder="Write your article content here... (use the toolbar above, or type Markdown-style syntax directly)" rows={16}
-            className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan resize-none font-mono" style={inputStyle} />
+          <NewsEditor content={form.content} onChange={html => setForm(f => ({ ...f, content: html }))} />
         </div>
         <div className="flex gap-3 pt-2">
           <button onClick={() => handleSave(true)} disabled={saving}
