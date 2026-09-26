@@ -37,10 +37,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false)
     })
 
+    let knownUserId: string | null = null
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
-      if (session?.user) fetchProfile(session.user.id)
-      else setIsAdmin(false)
+      if (session?.user) {
+        // Only re-fetch (and thus re-trigger profileLoading) when the signed-in user actually
+        // changes. Supabase fires this event on token refresh too (e.g. on tab focus), which
+        // would otherwise flip profileLoading -> true repeatedly and unmount pages that gate
+        // on it, wiping their local state (open edit forms, etc.) for no real reason.
+        if (session.user.id !== knownUserId) {
+          knownUserId = session.user.id
+          fetchProfile(session.user.id)
+        }
+      } else {
+        knownUserId = null
+        setIsAdmin(false)
+      }
     })
 
     return () => subscription.unsubscribe()
