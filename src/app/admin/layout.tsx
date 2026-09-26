@@ -3,6 +3,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', exact: true },
@@ -43,7 +44,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="sticky top-[61px] z-40 border-b border-[rgba(255,255,255,0.08)] bg-[rgba(13,15,20,0.92)] backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-4 py-2">
           <Link href="/admin" className="mr-2 flex shrink-0 items-center gap-1.5 font-bold text-white">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-r from-neon-cyan to-neon-violet text-xs font-bold text-black">AV</span>
+            <Image src="/avsurge_logo.png" alt="AVSurge logo" width={24} height={24} className="w-6 h-6 rounded-md" />
             <span className="text-sm">Admin</span>
           </Link>
           {NAV.map(item => (
