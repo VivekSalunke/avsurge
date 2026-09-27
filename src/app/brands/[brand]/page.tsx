@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import SortableDeviceGrid from '@/components/SortableDeviceGrid'
 
@@ -21,10 +22,11 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
   const { brand } = await params
   const brandName = decodeURIComponent(brand)
 
-  const [{ data: phones }, { data: tablets }, { data: laptops }] = await Promise.all([
+  const [{ data: phones }, { data: tablets }, { data: laptops }, { data: brandInfo }] = await Promise.all([
     supabase.from('phones').select('*').ilike('brand', brandName).order('price_inr', { ascending: true }),
     supabase.from('tablets').select('*').ilike('brand', brandName).order('price_inr', { ascending: true }),
     supabase.from('laptops').select('*').ilike('brand', brandName).order('price_inr', { ascending: true }),
+    supabase.from('brand_logos').select('logo_url, description').ilike('brand', brandName).single(),
   ])
 
   if ((!phones || phones.length === 0) && (!tablets || tablets.length === 0) && (!laptops || laptops.length === 0)) notFound()
@@ -73,8 +75,12 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
       {/* Brand header */}
       <div className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-6 mb-8 neon-border">
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-16 h-16 bg-[rgba(6,182,212,0.06)] rounded-2xl flex items-center justify-center text-4xl">
-            {brandIcons[brandName] || '📱'}
+          <div className="w-16 h-16 bg-[rgba(6,182,212,0.06)] rounded-2xl flex items-center justify-center text-4xl overflow-hidden">
+            {brandInfo?.logo_url ? (
+              <Image src={brandInfo.logo_url} alt={`${brandName} logo`} unoptimized width={48} height={48} className="w-10 h-10 object-contain" />
+            ) : (
+              brandIcons[brandName] || '📱'
+            )}
           </div>
           <div>
             <h1 className="text-2xl font-bold text-white">{brandName} Devices in India</h1>
@@ -84,6 +90,9 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
             </p>
           </div>
         </div>
+        {brandInfo?.description && (
+          <p className="text-sm text-[rgba(255,255,255,0.65)] leading-relaxed mb-4">{brandInfo.description}</p>
+        )}
         <div className="flex gap-4 text-sm text-dim">
           {(phones?.length || 0) > 0 && <span>📱 {phones?.length} phones</span>}
           {(tablets?.length || 0) > 0 && <span>📟 {tablets?.length} tablets</span>}
