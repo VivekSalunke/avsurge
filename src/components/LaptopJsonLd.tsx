@@ -22,7 +22,7 @@ export default function LaptopJsonLd({ laptop, specs }: { laptop: LaptopLike, sp
       name: laptop.brand,
     },
     description: `${laptop.name} full specifications and price in India. ${getSpec('Processor') ? `Powered by ${getSpec('Processor')}.` : ''} ${getSpec('RAM') ? `${getSpec('RAM')} RAM.` : ''} ${getSpec('Battery Life') ? `${getSpec('Battery Life')} battery life.` : ''}`.trim(),
-    image: laptop.image_url || undefined,
+    image: laptop.image_url || 'https://avsurge.com/avsurge_logo.png',
     url: `https://avsurge.com/laptops/${laptop.slug}`,
     ...(laptop.price_inr && {
       offers: {

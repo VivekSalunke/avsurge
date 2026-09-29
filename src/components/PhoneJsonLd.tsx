@@ -23,7 +23,7 @@ export default function PhoneJsonLd({ phone, specs }: { phone: PhoneLike, specs:
       name: phone.brand,
     },
     description: `${phone.name} full specifications and price in India. ${getSpec('Chipset') ? `Powered by ${getSpec('Chipset')}.` : ''} ${getSpec('Main camera') ? `${getSpec('Main camera')} camera.` : ''} ${getSpec('Capacity') ? `${getSpec('Capacity')} battery.` : ''}`.trim(),
-    image: phone.image_url || undefined,
+    image: phone.image_url || 'https://avsurge.com/avsurge_logo.png',
     url: `https://avsurge.com/phones/${phone.slug}`,
     ...(phone.price_inr && {
       offers: {

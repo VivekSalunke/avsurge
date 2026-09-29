@@ -22,7 +22,7 @@ export default function TabletJsonLd({ tablet, specs }: { tablet: TabletLike, sp
       name: tablet.brand,
     },
     description: `${tablet.name} full specifications and price in India. ${getSpec('Chipset') ? `Powered by ${getSpec('Chipset')}.` : ''} ${getSpec('Display') ? `${getSpec('Display')} display.` : ''} ${getSpec('Capacity') ? `${getSpec('Capacity')} battery.` : ''}`.trim(),
-    image: tablet.image_url || undefined,
+    image: tablet.image_url || 'https://avsurge.com/avsurge_logo.png',
     url: `https://avsurge.com/tablets/${tablet.slug}`,
     ...(tablet.price_inr && {
       offers: {
