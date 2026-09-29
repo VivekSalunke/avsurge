@@ -11,8 +11,20 @@ interface SpecEntry {
   value: string
 }
 
-export default function PhoneJsonLd({ phone, specs }: { phone: PhoneLike, specs: SpecEntry[] }) {
+interface ReviewEntry {
+  rating: number
+  body: string | null
+  user_email: string | null
+  created_at: string
+}
+
+export default function PhoneJsonLd({ phone, specs, reviews = [] }: { phone: PhoneLike, specs: SpecEntry[], reviews?: ReviewEntry[] }) {
   const getSpec = (label: string) => specs.find(s => s.label === label)?.value || null
+
+  const reviewCount = reviews.length
+  const averageRating = reviewCount > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount
+    : null
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -25,6 +37,27 @@ export default function PhoneJsonLd({ phone, specs }: { phone: PhoneLike, specs:
     description: `${phone.name} full specifications and price in India. ${getSpec('Chipset') ? `Powered by ${getSpec('Chipset')}.` : ''} ${getSpec('Main camera') ? `${getSpec('Main camera')} camera.` : ''} ${getSpec('Capacity') ? `${getSpec('Capacity')} battery.` : ''}`.trim(),
     image: phone.image_url || 'https://avsurge.com/avsurge_logo.png',
     url: `https://avsurge.com/phones/${phone.slug}`,
+    ...(averageRating !== null && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: Math.round(averageRating * 10) / 10,
+        reviewCount,
+      },
+      review: reviews.slice(0, 10).map(r => ({
+        '@type': 'Review',
+        reviewRating: {
+          '@type': 'Rating',
+          ratingValue: r.rating,
+          bestRating: 5,
+        },
+        author: {
+          '@type': 'Person',
+          name: r.user_email ? r.user_email.split('@')[0] : 'Anonymous',
+        },
+        datePublished: r.created_at,
+        ...(r.body && { reviewBody: r.body }),
+      })),
+    }),
     ...(phone.price_inr && {
       offers: {
         '@type': 'Offer',

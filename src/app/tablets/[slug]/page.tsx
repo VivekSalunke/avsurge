@@ -43,7 +43,8 @@ async function getTablet(slug: string) {
   const { data: tablet } = await supabase.from('tablets').select('*').eq('slug', slug).single()
   if (!tablet) return null
   const { data: specs } = await supabase.from('tablet_specs').select('*').eq('tablet_id', tablet.id).order('id')
-  return { tablet, specs: specs || [] }
+  const { data: reviews } = await supabase.from('tablet_reviews').select('rating, body, user_email, created_at').eq('tablet_id', tablet.id).order('created_at', { ascending: false })
+  return { tablet, specs: specs || [], reviews: reviews || [] }
 }
 
 async function getComparisonCandidates(tablet: { id: string | number; price_inr: number | null }) {
@@ -65,7 +66,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
   const { slug } = await params
   const data = await getTablet(slug)
   if (!data) notFound()
-  const { tablet, specs } = data
+  const { tablet, specs, reviews } = data
   const comparisonCandidates = await getComparisonCandidates(tablet)
 
   const grouped = specs.reduce<Record<string, TabletSpecRow[]>>((acc, s) => {
@@ -79,7 +80,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
   return (
     <main className="max-w-5xl mx-auto px-4 py-8 text-[var(--text)]">
       <TabletTracker deviceId={tablet.id} />
-      <TabletJsonLd tablet={tablet} specs={specs} />
+      <TabletJsonLd tablet={tablet} specs={specs} reviews={reviews} />
       <TabletViewTracker slug={tablet.slug} />
       <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-neon-cyan">Home</Link>

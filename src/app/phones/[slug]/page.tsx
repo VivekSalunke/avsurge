@@ -43,7 +43,8 @@ async function getPhone(slug: string) {
   const { data: phone } = await supabase.from('phones').select('*').eq('slug', slug).single()
   if (!phone) return null
   const { data: specs } = await supabase.from('phone_specs').select('*').eq('phone_id', phone.id).order('id')
-  return { phone, specs: specs || [] }
+  const { data: reviews } = await supabase.from('reviews').select('rating, body, user_email, created_at').eq('phone_id', phone.id).order('created_at', { ascending: false })
+  return { phone, specs: specs || [], reviews: reviews || [] }
 }
 
 async function getComparisonCandidates(phone: { id: string | number; price_inr: number | null }) {
@@ -65,7 +66,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
   const { slug } = await params
   const data = await getPhone(slug)
   if (!data) notFound()
-  const { phone, specs } = data
+  const { phone, specs, reviews } = data
   const comparisonCandidates = await getComparisonCandidates(phone)
 
   const grouped = specs.reduce<Record<string, PhoneSpecRow[]>>((acc, s) => {
@@ -79,7 +80,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
   return (
     <main className="max-w-5xl mx-auto px-4 py-8 text-[var(--text)]">
       <PhoneTracker deviceId={phone.id} />
-      <PhoneJsonLd phone={phone} specs={specs} />
+      <PhoneJsonLd phone={phone} specs={specs} reviews={reviews} />
       <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-neon-cyan">Home</Link>
         <span>&rsaquo;</span>

@@ -47,7 +47,8 @@ async function getLaptop(slug: string) {
   const { data: laptop } = await supabase.from('laptops').select('*').eq('slug', slug).single()
   if (!laptop) return null
   const { data: specs } = await supabase.from('laptop_specs').select('*').eq('laptop_id', laptop.id).order('id')
-  return { laptop, specs: specs || [] }
+  const { data: reviews } = await supabase.from('laptop_reviews').select('rating, body, created_at').eq('laptop_id', laptop.id).order('created_at', { ascending: false })
+  return { laptop, specs: specs || [], reviews: reviews || [] }
 }
 
 async function getComparisonCandidates(laptop: Laptop): Promise<ComparisonCandidate[]> {
@@ -69,7 +70,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
   const { slug } = await params
   const data = await getLaptop(slug)
   if (!data) notFound()
-  const { laptop, specs } = data
+  const { laptop, specs, reviews } = data
   const comparisonCandidates = await getComparisonCandidates(laptop)
   const grouped = specs.reduce((acc: Record<string, LaptopSpec[]>, s: LaptopSpec) => {
     if (!acc[s.category]) acc[s.category] = []
@@ -80,7 +81,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
   return (
     <main className="max-w-5xl mx-auto px-4 py-8 text-[var(--text)]">
       <LaptopTracker deviceId={laptop.id} />
-      <LaptopJsonLd laptop={laptop} specs={specs} />
+      <LaptopJsonLd laptop={laptop} specs={specs} reviews={reviews} />
       <LaptopViewTracker slug={laptop.slug} />
       <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-neon-cyan">Home</Link>
