@@ -14,7 +14,7 @@ interface Tablet {
   image_url: string | null
 }
 
-const VALID_BUDGETS = [10000, 20000, 30000, 50000, 100000, 150000]
+const VALID_BUDGETS = [20000, 30000, 50000, 100000, 150000]
 
 export const dynamicParams = true
 export const revalidate = 3600

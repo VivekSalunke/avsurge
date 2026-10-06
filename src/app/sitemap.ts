@@ -53,7 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const uniqueBrands = [...seenBrands.values()]
 
   const BUDGETS = [10000, 15000, 20000, 30000, 50000, 100000]
-  const TABLET_BUDGETS = [10000, 20000, 30000, 50000, 100000, 150000]
+  const TABLET_BUDGETS = [20000, 30000, 50000, 100000, 150000]
   const LAPTOP_BUDGETS = [30000, 50000, 70000, 100000, 150000, 200000]
 
   const phoneUrls = (phones || []).map(phone => ({
