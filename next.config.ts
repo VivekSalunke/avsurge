@@ -41,6 +41,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'static.realme.net',
       },
+      {
+        protocol: 'https',
+        hostname: 'fdn2.gsmarena.com',
+      },
     ],
   },
 };
