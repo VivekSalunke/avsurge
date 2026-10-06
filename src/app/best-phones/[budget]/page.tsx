@@ -171,6 +171,17 @@ export default async function UnderBudgetPage({ params }: { params: Promise<{ bu
           Compare any two phones on this list side by side using our <Link href="/compare" className="text-neon-cyan hover:underline">comparison tool</Link>, or use the <Link href="/search" className="text-neon-cyan hover:underline">Search &amp; Discover</Link> page to filter by your priorities. Prices below are indicative starting prices in India — always confirm the final price on the retailer&apos;s page before buying, since discounts during sales often bring phones well below {budgetLabel}.
         </p>
       </div>
+      <div className="mt-6 p-6 bg-[var(--panel)] rounded-2xl border border-[rgba(255,255,255,0.06)] space-y-4">
+        <h2 className="text-base font-semibold text-white">
+          Frequently asked questions
+        </h2>
+        {faqSchema.mainEntity.map(item => (
+          <div key={item.name}>
+            <h3 className="text-sm font-semibold text-white mb-1">{item.name}</h3>
+            <p className="text-sm text-dim leading-relaxed">{item.acceptedAnswer.text}</p>
+          </div>
+        ))}
+      </div>
     </main>
   )
 }
