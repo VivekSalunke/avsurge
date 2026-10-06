@@ -156,12 +156,12 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
 
       <div className="flex flex-wrap gap-2 mb-8">
         <Link href="/laptops"
-          className={`px-3 py-1.5 rounded-full text-sm border transition ${!brand ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm' : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'}`}>
+          className={`px-3 py-1.5 rounded-full text-sm border transition ${!brand ? 'border-neon-cyan bg-[rgba(6,182,212,0.15)] text-neon-cyan shadow-sm' : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'}`}>
           All
         </Link>
         {brands.map((b: string) => (
           <Link key={b} href={`/laptops?brand=${b}`}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition ${brand === b ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm' : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'}`}>
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition ${brand === b ? 'border-neon-cyan bg-[rgba(6,182,212,0.15)] text-neon-cyan shadow-sm' : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'}`}>
             <span>{brandIcons[b] || '💻'}</span>{b}
           </Link>
         ))}

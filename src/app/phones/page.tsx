@@ -405,7 +405,7 @@ export default async function PhonesPage({
             href="/phones"
             className={`shrink-0 rounded-lg border px-3.5 py-2 text-xs font-semibold transition ${
               !brand
-                ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm'
+                ? 'border-neon-cyan bg-[rgba(6,182,212,0.15)] text-neon-cyan shadow-sm'
                 : 'border-[rgba(255,255,255,0.04)] bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] hover:border-neon-cyan hover:text-neon-cyan'
             }`}
           >
@@ -418,7 +418,7 @@ export default async function PhonesPage({
               href={`/phones?brand=${encodeURIComponent(b)}`}
               className={`shrink-0 rounded-lg border px-3.5 py-2 text-xs font-semibold transition ${
                 brand === b
-                  ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm'
+                  ? 'border-neon-cyan bg-[rgba(6,182,212,0.15)] text-neon-cyan shadow-sm'
                       : 'border-[rgba(255,255,255,0.04)] bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] hover:border-neon-cyan hover:text-neon-cyan'
               }`}
             >

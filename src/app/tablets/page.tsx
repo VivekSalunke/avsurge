@@ -225,7 +225,7 @@ export default async function TabletsPage({
             href="/tablets"
             className={`px-3.5 py-2 rounded-lg text-sm border transition font-medium ${
               !brand
-                ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm'
+                ? 'border-neon-cyan bg-[rgba(6,182,212,0.15)] text-neon-cyan shadow-sm'
                 : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'
             }`}
           >
@@ -238,7 +238,7 @@ export default async function TabletsPage({
               href={`/tablets?brand=${encodeURIComponent(b)}`}
               className={`px-3.5 py-2 rounded-lg text-sm border transition font-medium ${
                 brand === b
-                  ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm'
+                  ? 'border-neon-cyan bg-[rgba(6,182,212,0.15)] text-neon-cyan shadow-sm'
                   : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'
               }`}
             >

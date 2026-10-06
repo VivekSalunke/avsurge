@@ -164,7 +164,7 @@ export default async function BestTabletsForPage({ params }: { params: Promise<{
       <div className="flex flex-wrap gap-2 mb-8">
         {Object.entries(USE_CASES).map(([key, val]) => (
           <Link key={key} href={`/best-tablets-for/${key}`}
-            className={`px-3 py-1.5 rounded-full text-sm border transition ${key === usecase ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm' : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'}`}>
+            className={`px-3 py-1.5 rounded-full text-sm border transition ${key === usecase ? 'border-neon-cyan bg-[rgba(6,182,212,0.15)] text-neon-cyan shadow-sm' : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'}`}>
             {val.title.replace('Best ', '').replace(' Tablets', '')}
           </Link>
         ))}
