@@ -108,7 +108,7 @@ export default async function UnderBudgetPage({ params }: { params: Promise<{ bu
             href={`/best-phones/${budget}`}
             className={`px-3 py-1.5 rounded-full text-sm border transition ${
               budget === b
-                ? 'border-transparent bg-gradient-to-r from-neon-cyan to-neon-violet text-black shadow-sm'
+                ? 'border-neon-cyan bg-[rgba(6,182,212,0.15)] text-neon-cyan shadow-sm'
                 : 'bg-[var(--card-bg)] text-[rgba(255,255,255,0.85)] border-[rgba(255,255,255,0.06)] hover:border-neon-cyan hover:text-neon-cyan'
             }`}
           >
