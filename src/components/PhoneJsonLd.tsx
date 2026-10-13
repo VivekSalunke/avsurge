@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/lib/jsonLd'
 interface PhoneLike {
   name: string
   brand: string
@@ -92,11 +93,11 @@ export default function PhoneJsonLd({ phone, specs, reviews = [] }: { phone: Pho
     <>
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
     />
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
     />
     </>
   )

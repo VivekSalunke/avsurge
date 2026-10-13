@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/lib/jsonLd'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import PhoneFilters from '@/components/PhoneFilters'
@@ -255,7 +256,7 @@ export default async function PhonesPage({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(itemListSchema),
+            __html: safeJsonLd(itemListSchema),
           }}
         />
       )}

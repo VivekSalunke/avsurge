@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/lib/jsonLd'
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
@@ -73,7 +74,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-8 text-[var(--text)]">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(articleSchema) }} />
 
       <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-neon-cyan">Home</Link>

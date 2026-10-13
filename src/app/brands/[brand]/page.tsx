@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/lib/jsonLd'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -60,7 +61,7 @@ export default async function BrandPage({ params }: { params: Promise<{ brand: s
   return (
     <main className="max-w-6xl mx-auto px-4 py-8 text-[var(--text)]">
       {itemListSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(itemListSchema) }} />
       )}
 
       {/* Breadcrumb */}

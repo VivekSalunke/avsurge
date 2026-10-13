@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/lib/jsonLd'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import ContactForm from '@/components/ContactForm'
@@ -30,7 +31,7 @@ const contactSchema = {
 export default function ContactPage() {
   return (
     <main className="max-w-4xl mx-auto px-4 py-12 text-[var(--text)]">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(contactSchema) }} />
 
       <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-neon-cyan">Home</Link>

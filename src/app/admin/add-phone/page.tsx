@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import DeviceNameAutocomplete from '@/components/admin/DeviceNameAutocomplete'
 
 const CATEGORIES = ['General','Display','Performance','Camera','Battery','Connectivity','Storage','Build']
 const DEFAULT_SPECS = [
@@ -93,8 +94,9 @@ export default function AddPhonePage() {
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2 sm:col-span-1">
             <label className="block text-xs font-medium text-dim mb-1">Phone name *</label>
-            <input className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
-              placeholder="e.g. Samsung Galaxy S26 Ultra" value={name} onChange={e => setName(e.target.value)} />
+            <DeviceNameAutocomplete table="phones" value={name} onChange={setName}
+              className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
+              placeholder="e.g. Samsung Galaxy S26 Ultra" />
             {name && <p className="text-xs text-[rgba(255,255,255,0.4)] mt-1">Slug: {slug}</p>}
           </div>
           <div className="col-span-2 sm:col-span-1">

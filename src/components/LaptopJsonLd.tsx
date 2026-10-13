@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/lib/jsonLd'
 interface LaptopLike {
   name: string
   brand: string
@@ -90,11 +91,11 @@ export default function LaptopJsonLd({ laptop, specs, reviews = [] }: { laptop: 
     <>
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
     />
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
     />
     </>
   )

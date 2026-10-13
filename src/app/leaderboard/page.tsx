@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/lib/jsonLd'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@supabase/supabase-js'
@@ -125,7 +126,7 @@ export default async function LeaderboardPage({
       {devices.length > 0 && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(itemListSchema) }}
         />
       )}
 

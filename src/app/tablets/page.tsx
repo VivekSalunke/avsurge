@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/lib/jsonLd'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import DeviceCard from '@/components/DeviceCard'
@@ -93,7 +94,7 @@ export default async function TabletsPage({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(itemListSchema),
+            __html: safeJsonLd(itemListSchema),
           }}
         />
       )}

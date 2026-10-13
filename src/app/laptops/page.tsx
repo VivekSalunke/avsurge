@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/lib/jsonLd'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import LaptopFilters from '@/components/LaptopFilters'
@@ -87,7 +88,7 @@ export default async function LaptopsPage({ searchParams }: { searchParams: Prom
   return (
     <main className="max-w-6xl mx-auto px-4 py-8 text-[var(--text)]">
       {itemListSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(itemListSchema) }} />
       )}
 
       <div className="rounded-2xl p-8 mb-8 text-white border border-[rgba(255,255,255,0.06)] bg-[var(--panel)]">
