@@ -221,7 +221,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: `${phone.name} — Full Specs & Price`,
       description: `${phone.name} specifications and price in India.`,
-      images: phone.image_url ? [{ url: phone.image_url }] : [],
       url: `https://avsurge.com/phones/${slug}`,
     },
     alternates: { canonical: `https://avsurge.com/phones/${slug}` }
