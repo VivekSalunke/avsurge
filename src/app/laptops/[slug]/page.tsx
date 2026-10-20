@@ -207,6 +207,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       ? `${laptop.name} Price in India (${formatPriceINR(laptop.price_inr)}) | Full Specs`
       : `${laptop.name} Full Specs & Price in India`,
     description: `${laptop.name} full specifications, price in India (${formatPriceINR(laptop.price_inr)}), display, battery, performance and more. Compare models side by side to find the best deal.`,
+    openGraph: {
+      title: `${laptop.name} — Full Specs & Price`,
+      description: `${laptop.name} specifications and price in India.`,
+      url: `https://avsurge.com/laptops/${slug}`,
+    },
     alternates: { canonical: `https://avsurge.com/laptops/${slug}` },
   }
 }

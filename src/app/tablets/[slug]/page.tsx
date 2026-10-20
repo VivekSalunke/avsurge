@@ -223,7 +223,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: `${tablet.name} — Full Specs & Price`,
       description: `${tablet.name} specifications and price in India.`,
-      images: tablet.image_url ? [{ url: tablet.image_url }] : [],
+      url: `https://avsurge.com/tablets/${slug}`,
     }
   }
 }
