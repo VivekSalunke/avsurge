@@ -11,6 +11,7 @@ import LaptopReviews from '@/components/LaptopReviews'
 import LaptopPriceHistory from '@/components/LaptopPriceHistory'
 import LaptopWishlistButton from '@/components/LaptopWishlistButton'
 import LaptopPriceAlertButton from '@/components/LaptopPriceAlertButton'
+import ShareButton from '@/components/ShareButton'
 import LaptopTracker from '@/components/LaptopTracker'
 import { formatPriceINR } from '@/lib/format'
 import { buildAmazonSearchUrl } from '@/lib/affiliate'
@@ -126,6 +127,7 @@ export default async function LaptopPage({ params }: { params: Promise<{ slug: s
               </a>
               <LaptopWishlistButton laptopId={laptop.id} />
               <LaptopPriceAlertButton laptopId={laptop.id} laptopName={laptop.name} currentPrice={laptop.price_inr} />
+              <ShareButton title={laptop.name} url={`https://avsurge.com/laptops/${laptop.slug}`} />
             </div>
           </div>
         </div>

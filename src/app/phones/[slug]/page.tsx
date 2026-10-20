@@ -11,6 +11,7 @@ import SpecExplainer from '@/components/SpecExplainer'
 import PriceHistory from '@/components/PriceHistory'
 import PhoneJsonLd from '@/components/PhoneJsonLd'
 import PriceAlertButton from '@/components/PriceAlertButton'
+import ShareButton from '@/components/ShareButton'
 import PhoneTracker from '@/components/PhoneTracker'
 import SpecScoreBadge from '@/components/SpecScoreBadge'
 import { formatPriceINR } from '@/lib/format'
@@ -127,6 +128,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
               </a>
               <WishlistButton phoneId={phone.id} />
               <PriceAlertButton phoneId={phone.id} phoneName={phone.name} currentPrice={phone.price_inr} />
+              <ShareButton title={phone.name} url={`https://avsurge.com/phones/${phone.slug}`} />
               <Link href={`/compare?a=${phone.slug}`}
                 className="w-full text-center border border-dashed border-[rgba(255,255,255,0.08)] text-dim rounded-xl py-2.5 text-sm hover:border-neon-cyan hover:text-neon-cyan transition">
                 + Add to compare

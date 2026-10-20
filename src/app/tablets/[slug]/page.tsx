@@ -11,6 +11,7 @@ import TabletPriceHistory from '@/components/TabletPriceHistory'
 import RecentlyViewedTablets from '@/components/RecentlyViewedTablets'
 import TabletViewTracker from '@/components/TabletViewTracker'
 import TabletPriceAlertButton from '@/components/TabletPriceAlertButton'
+import ShareButton from '@/components/ShareButton'
 import TabletTracker from '@/components/TabletTracker'
 import SpecScoreBadge from '@/components/SpecScoreBadge'
 import { formatPriceINR } from '@/lib/format'
@@ -128,6 +129,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
               </Link>
               <TabletWishlistButton tabletId={tablet.id} />
               <TabletPriceAlertButton tabletId={tablet.id} tabletName={tablet.name} currentPrice={tablet.price_inr} />
+              <ShareButton title={tablet.name} url={`https://avsurge.com/tablets/${tablet.slug}`} />
               <a href={buildAmazonSearchUrl(tablet.name)} target="_blank"
                 className="w-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] rounded-xl py-2.5 text-sm font-medium hover:border-neon-violet hover:text-white hover:glow transition text-center">
                 Check on Amazon →
