@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
   if (!aiConfigured()) {
     return NextResponse.json(
-      { error: 'AI service is not configured (missing OPENROUTER_API_KEY).' },
+      { error: 'AI service is not configured (no AI provider API key set).' },
       { status: 503 }
     )
   }
