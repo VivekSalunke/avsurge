@@ -22,3 +22,23 @@ export function buildAmazonSearchUrl(
   const config = AFFILIATE_CONFIG[region] ?? AFFILIATE_CONFIG.IN
   return `https://www.${config.domain}/s?k=${encodeURIComponent(deviceName)}&tag=${config.tag}`
 }
+
+/**
+ * Adds the Amazon India affiliate tag to a direct product link,
+ * replacing any tag already on it. Non-Amazon links are returned unchanged.
+ */
+export function withAmazonTag(url: string): string {
+  try {
+    const u = new URL(url)
+    if (!/(^|\.)amazon\.in$/.test(u.hostname)) return url
+    u.searchParams.set('tag', AFFILIATE_CONFIG.IN.tag)
+    return u.toString()
+  } catch {
+    return url
+  }
+}
+
+/** Flipkart search link (no affiliate programme set up yet) */
+export function buildFlipkartSearchUrl(query: string): string {
+  return `https://www.flipkart.com/search?q=${encodeURIComponent(query)}`
+}

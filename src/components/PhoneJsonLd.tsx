@@ -19,7 +19,7 @@ interface ReviewEntry {
   created_at: string
 }
 
-export default function PhoneJsonLd({ phone, specs, reviews = [] }: { phone: PhoneLike, specs: SpecEntry[], reviews?: ReviewEntry[] }) {
+export default function PhoneJsonLd({ phone, specs, reviews = [], variants = [] }: { phone: PhoneLike, specs: SpecEntry[], reviews?: ReviewEntry[], variants?: { price_inr: number }[] }) {
   const getSpec = (label: string) => specs.find(s => s.label === label)?.value || null
 
   const reviewCount = reviews.length
@@ -59,7 +59,17 @@ export default function PhoneJsonLd({ phone, specs, reviews = [] }: { phone: Pho
         ...(r.body && { reviewBody: r.body }),
       })),
     }),
-    ...(phone.price_inr && {
+    ...(variants.length > 1 ? {
+      offers: {
+        '@type': 'AggregateOffer',
+        lowPrice: Math.min(...variants.map(v => v.price_inr)),
+        highPrice: Math.max(...variants.map(v => v.price_inr)),
+        offerCount: variants.length,
+        priceCurrency: 'INR',
+        availability: 'https://schema.org/InStock',
+        url: `https://avsurge.com/phones/${phone.slug}`,
+      },
+    } : phone.price_inr && {
       offers: {
         '@type': 'Offer',
         price: phone.price_inr,
