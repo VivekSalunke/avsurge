@@ -29,8 +29,10 @@ export default function PriceHistory({ phoneId, currentPrice }: { phoneId: numbe
 
   if (history.length === 0) return null
 
-  const minPrice = Math.min(...history.map(h => h.price_inr))
-  const maxPrice = Math.max(...history.map(h => h.price_inr))
+  // Include today's price, so Lowest/Highest can never contradict Current
+  const allPrices = [...history.map(h => h.price_inr), ...(currentPrice ? [currentPrice] : [])]
+  const minPrice = Math.min(...allPrices)
+  const maxPrice = Math.max(...allPrices)
   const firstPrice = history[0]?.price_inr
   const latestPrice = history[history.length - 1]?.price_inr
   const priceChange = latestPrice - firstPrice
