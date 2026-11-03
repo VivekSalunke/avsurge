@@ -1,11 +1,13 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { computeSpecScore, SpecRow } from '@/lib/specScore'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import Image from 'next/image'
+import PhoneVariantsEditor from '@/components/admin/PhoneVariantsEditor'
+import type { PhoneVariant } from '@/lib/variants'
 
 const CATEGORIES = ['General','Display','Performance','Camera','Battery','Connectivity','Storage','Build']
 
@@ -35,6 +37,10 @@ export default function EditPhonePage() {
   const [status, setStatus] = useState<'idle'|'saving'|'success'|'error'>('idle')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
+  const [variants, setVariants] = useState<PhoneVariant[]>([])
+  const hasVariants = variants.length > 0
+  const variantStartingPrice = hasVariants ? Math.min(...variants.map(v => v.price_inr)) : null
+  const handleVariantsChange = useCallback((list: PhoneVariant[]) => setVariants(list), [])
 
   useEffect(() => {
     if (!authLoading && !user) router.push('/login')
@@ -71,8 +77,9 @@ export default function EditPhonePage() {
 
     const newPrice = price ? parseInt(price) : null
 
-    // Log price change if price changed
-    if (newPrice && newPrice !== phone.price_inr) {
+    // Log price change if price changed (only when the price is set by hand;
+    // with variants, the database trigger owns phones.price_inr)
+    if (!hasVariants && newPrice && newPrice !== phone.price_inr) {
       await supabase.from('price_history').insert({
         phone_id: phone.id,
         store: 'Amazon',
@@ -82,7 +89,7 @@ export default function EditPhonePage() {
 
     const { error: e1 } = await supabase.from('phones').update({
       name, brand,
-      price_inr: newPrice,
+      ...(hasVariants ? {} : { price_inr: newPrice }),
       image_url: imageUrl || null,
       released_at: releasedAt || null,
       spec_score_override: specScoreOverride ? parseInt(specScoreOverride) : null,
@@ -145,10 +152,14 @@ export default function EditPhonePage() {
               value={brand} onChange={e => setBrand(e.target.value)} />
           </div>
           <div>
-            <label className="block text-xs font-medium text-dim mb-1">Price (₹)</label>
-            <input type="number" className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
-              value={price} onChange={e => setPrice(e.target.value)} />
-            <p className="text-xs text-[rgba(255,255,255,0.4)] mt-1">Current: ₹{phone.price_inr?.toLocaleString('en-IN') || 'N/A'}</p>
+            <label className="block text-xs font-medium text-dim mb-1">{hasVariants ? 'Starting price (₹, from variants)' : 'Price (₹)'}</label>
+            <input type="number" className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan disabled:opacity-60"
+              value={hasVariants ? String(variantStartingPrice) : price} onChange={e => setPrice(e.target.value)} disabled={hasVariants} />
+            <p className="text-xs text-[rgba(255,255,255,0.4)] mt-1">
+              {hasVariants
+                ? 'Set automatically to the cheapest variant below'
+                : `Current: ₹${phone.price_inr?.toLocaleString('en-IN') || 'N/A'}`}
+            </p>
           </div>
           <div>
             <label className="block text-xs font-medium text-dim mb-1">Release date</label>
@@ -171,6 +182,8 @@ export default function EditPhonePage() {
           </div>
         </div>
       </div>
+
+      <PhoneVariantsEditor phoneId={phone.id} onChange={handleVariantsChange} />
 
       <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
         <h2 className="text-sm font-semibold text-dim uppercase tracking-wide mb-4">Specifications</h2>
