@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import DOMPurify from 'isomorphic-dompurify'
+import { sanitizeArticleHtml } from '@/lib/sanitizeArticle'
 
 export const revalidate = 60
 
@@ -109,10 +109,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         <div
           className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-[rgba(255,255,255,0.85)] prose-a:text-neon-cyan prose-img:rounded-2xl"
           dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(article.content, {
-              ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'strong', 'em', 'u', 's', 'a', 'img', 'ul', 'ol', 'li', 'br', 'span'],
-              ALLOWED_ATTR: ['href', 'src', 'alt', 'target', 'rel', 'style', 'class'],
-            }),
+            __html: sanitizeArticleHtml(article.content),
           }}
         />
       )}
