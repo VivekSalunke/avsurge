@@ -6,8 +6,8 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import Image from 'next/image'
-import PhoneVariantsEditor from '@/components/admin/PhoneVariantsEditor'
-import type { PhoneVariant } from '@/lib/variants'
+import VariantsEditor from '@/components/admin/VariantsEditor'
+import type { DeviceVariant } from '@/lib/variants'
 
 const CATEGORIES = ['General','Display','Performance','Camera','Battery','Connectivity','Storage','Build']
 
@@ -37,10 +37,10 @@ export default function EditPhonePage() {
   const [status, setStatus] = useState<'idle'|'saving'|'success'|'error'>('idle')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
-  const [variants, setVariants] = useState<PhoneVariant[]>([])
+  const [variants, setVariants] = useState<DeviceVariant[]>([])
   const hasVariants = variants.length > 0
   const variantStartingPrice = hasVariants ? Math.min(...variants.map(v => v.price_inr)) : null
-  const handleVariantsChange = useCallback((list: PhoneVariant[]) => setVariants(list), [])
+  const handleVariantsChange = useCallback((list: DeviceVariant[]) => setVariants(list), [])
 
   useEffect(() => {
     if (!authLoading && !user) router.push('/login')
@@ -183,7 +183,7 @@ export default function EditPhonePage() {
         </div>
       </div>
 
-      <PhoneVariantsEditor phoneId={phone.id} onChange={handleVariantsChange} />
+      <VariantsEditor kind="phone" deviceId={phone.id} onChange={handleVariantsChange} />
 
       <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
         <h2 className="text-sm font-semibold text-dim uppercase tracking-wide mb-4">Specifications</h2>

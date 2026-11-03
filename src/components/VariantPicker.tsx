@@ -2,28 +2,28 @@
 import { useState } from 'react'
 import { formatPriceINR } from '@/lib/format'
 import { buildAmazonSearchUrl, buildFlipkartSearchUrl, withAmazonTag } from '@/lib/affiliate'
-import { PhoneVariant, STORE_LABELS, formatVariantLabel } from '@/lib/variants'
+import { DeviceVariant, STORE_LABELS, formatVariantLabel } from '@/lib/variants'
 
-function buyUrl(phoneName: string, v: PhoneVariant): string {
+function buyUrl(deviceName: string, v: DeviceVariant): string {
   if (v.store_url) return v.store === 'amazon' ? withAmazonTag(v.store_url) : v.store_url
-  const query = `${phoneName} ${v.ram_gb}GB ${v.storage_gb}GB`
+  const query = `${deviceName} ${v.ram_gb}GB ${v.storage_gb}GB`
   return v.store === 'amazon' ? buildAmazonSearchUrl(query) : buildFlipkartSearchUrl(query)
 }
 
-export default function PhoneVariantPicker({
-  phoneName,
+export default function VariantPicker({
+  deviceName,
   variants,
 }: {
-  phoneName: string
+  deviceName: string
   /** Already sorted, cheapest first */
-  variants: PhoneVariant[]
+  variants: DeviceVariant[]
 }) {
   const [selectedId, setSelectedId] = useState(variants[0].id)
   const selected = variants.find(v => v.id === selectedId) ?? variants[0]
   const otherStore = selected.store === 'amazon' ? 'flipkart' : 'amazon'
   const otherStoreUrl = otherStore === 'amazon'
-    ? buildAmazonSearchUrl(phoneName)
-    : buildFlipkartSearchUrl(phoneName)
+    ? buildAmazonSearchUrl(deviceName)
+    : buildFlipkartSearchUrl(deviceName)
 
   return (
     <div className="mb-4">
@@ -62,7 +62,7 @@ export default function PhoneVariantPicker({
 
       <div className="flex flex-col gap-2">
         <a
-          href={buyUrl(phoneName, selected)}
+          href={buyUrl(deviceName, selected)}
           target="_blank"
           rel="nofollow sponsored noopener"
           className="w-full rounded-xl py-2.5 text-sm font-semibold text-center text-black transition hover:brightness-110"

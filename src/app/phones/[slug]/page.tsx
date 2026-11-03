@@ -12,8 +12,8 @@ import PriceHistory from '@/components/PriceHistory'
 import PhoneJsonLd from '@/components/PhoneJsonLd'
 import PriceAlertButton from '@/components/PriceAlertButton'
 import ShareButton from '@/components/ShareButton'
-import PhoneVariantPicker from '@/components/PhoneVariantPicker'
-import { PhoneVariant, sortVariants } from '@/lib/variants'
+import VariantPicker from '@/components/VariantPicker'
+import { DeviceVariant, sortVariants } from '@/lib/variants'
 import PhoneTracker from '@/components/PhoneTracker'
 import SpecScoreBadge from '@/components/SpecScoreBadge'
 import { formatPriceINR } from '@/lib/format'
@@ -48,7 +48,7 @@ async function getPhone(slug: string) {
   const { data: specs } = await supabase.from('phone_specs').select('*').eq('phone_id', phone.id).order('id')
   const { data: reviews } = await supabase.from('reviews').select('rating, body, user_email, created_at').eq('phone_id', phone.id).order('created_at', { ascending: false })
   const { data: variants } = await supabase.from('phone_variants').select('*').eq('phone_id', phone.id)
-  return { phone, specs: specs || [], reviews: reviews || [], variants: sortVariants((variants || []) as PhoneVariant[]) }
+  return { phone, specs: specs || [], reviews: reviews || [], variants: sortVariants((variants || []) as DeviceVariant[]) }
 }
 
 async function getComparisonCandidates(phone: { id: string | number; price_inr: number | null }) {
@@ -108,7 +108,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
             <SpecScoreBadge specs={specs} overrideScore={phone.spec_score_override} />
 
             {variants.length > 0 ? (
-              <PhoneVariantPicker phoneName={phone.name} variants={variants} />
+              <VariantPicker deviceName={phone.name} variants={variants} />
             ) : phone.price_inr && (
               <div className="price-tag rounded-xl px-4 py-3 mb-4 text-center">
                 <div className="text-xs text-neon-cyan mb-0.5">Starting price in India</div>

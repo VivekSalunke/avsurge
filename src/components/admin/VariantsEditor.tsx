@@ -2,7 +2,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import {
-  PhoneVariant,
+  DeviceKind,
+  DeviceVariant,
+  VARIANT_TABLES,
   VariantStore,
   STORE_LABELS,
   STORE_URL_PATTERNS,
@@ -21,7 +23,7 @@ interface Row {
 
 const EMPTY_ROW: Row = { id: null, ram_gb: '', storage_gb: '', price_inr: '', store: 'amazon', store_url: '' }
 
-const toRow = (v: PhoneVariant): Row => ({
+const toRow = (v: DeviceVariant): Row => ({
   id: v.id,
   ram_gb: String(v.ram_gb),
   storage_gb: String(v.storage_gb),
@@ -33,13 +35,16 @@ const toRow = (v: PhoneVariant): Row => ({
 const inputClass =
   'w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-neon-cyan'
 
-export default function PhoneVariantsEditor({
-  phoneId,
+export default function VariantsEditor({
+  kind,
+  deviceId,
   onChange,
 }: {
-  phoneId: number | string
-  onChange?: (variants: PhoneVariant[]) => void
+  kind: DeviceKind
+  deviceId: number | string
+  onChange?: (variants: DeviceVariant[]) => void
 }) {
+  const { table, deviceColumn } = VARIANT_TABLES[kind]
   const [rows, setRows] = useState<Row[]>([])
   const [newRow, setNewRow] = useState<Row>(EMPTY_ROW)
   const [busy, setBusy] = useState(false)
@@ -47,17 +52,17 @@ export default function PhoneVariantsEditor({
 
   const reload = useCallback(async () => {
     const { data, error } = await supabase
-      .from('phone_variants')
+      .from(table)
       .select('*')
-      .eq('phone_id', phoneId)
+      .eq(deviceColumn, deviceId)
     if (error) {
       setMessage({ type: 'error', text: `Could not load variants: ${error.message}` })
       return
     }
-    const list = sortVariants((data || []) as PhoneVariant[])
+    const list = sortVariants((data || []) as DeviceVariant[])
     setRows(list.map(toRow))
     onChange?.(list)
-  }, [phoneId, onChange])
+  }, [table, deviceColumn, deviceId, onChange])
 
   useEffect(() => {
     let cancelled = false
@@ -90,7 +95,7 @@ export default function PhoneVariantsEditor({
   })
 
   const friendlyError = (msg: string) =>
-    msg.includes('duplicate key') ? 'This phone already has a variant with that RAM and storage' : msg
+    msg.includes('duplicate key') ? `This ${kind} already has a variant with that RAM and storage` : msg
 
   const run = async (action: () => Promise<{ error: { message: string } | null }>, okText: string) => {
     setBusy(true)
@@ -110,7 +115,7 @@ export default function PhoneVariantsEditor({
     const problem = validate(newRow)
     if (problem) { setMessage({ type: 'error', text: problem }); return }
     const ok = await run(
-      async () => await supabase.from('phone_variants').insert({ phone_id: phoneId, ...payload(newRow) }),
+      async () => await supabase.from(table).insert({ [deviceColumn]: deviceId, ...payload(newRow) }),
       'Variant added'
     )
     if (ok) setNewRow(EMPTY_ROW)
@@ -120,7 +125,7 @@ export default function PhoneVariantsEditor({
     const problem = validate(r)
     if (problem) { setMessage({ type: 'error', text: problem }); return }
     await run(
-      async () => await supabase.from('phone_variants').update(payload(r)).eq('id', r.id!),
+      async () => await supabase.from(table).update(payload(r)).eq('id', r.id!),
       'Variant saved'
     )
   }
@@ -128,7 +133,7 @@ export default function PhoneVariantsEditor({
   const deleteVariant = async (r: Row) => {
     if (!window.confirm(`Delete the ${formatVariantLabel(parseInt(r.ram_gb), parseInt(r.storage_gb))} variant?`)) return
     await run(
-      async () => await supabase.from('phone_variants').delete().eq('id', r.id!),
+      async () => await supabase.from(table).delete().eq('id', r.id!),
       'Variant deleted'
     )
   }
@@ -155,7 +160,7 @@ export default function PhoneVariantsEditor({
     <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
       <h2 className="text-sm font-semibold text-dim uppercase tracking-wide mb-1">Variants</h2>
       <p className="text-xs text-[rgba(255,255,255,0.4)] mb-4">
-        Each RAM + storage combination sold in India. The phone&apos;s starting price is set automatically to the
+        Each RAM + storage combination sold in India. The {kind}&apos;s starting price is set automatically to the
         cheapest variant. Changes here save immediately. 1 TB = 1024. Pick the store that sells it; the link is
         optional (without one, the Buy button searches that store).
       </p>

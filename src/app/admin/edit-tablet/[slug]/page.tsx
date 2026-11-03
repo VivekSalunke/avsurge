@@ -1,11 +1,13 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import { SpecRow } from '@/lib/specScore'
 import Image from 'next/image'
+import VariantsEditor from '@/components/admin/VariantsEditor'
+import type { DeviceVariant } from '@/lib/variants'
 
 const CATEGORIES = ['General', 'Display', 'Performance', 'Camera', 'Battery', 'Connectivity', 'Storage', 'Audio', 'Build']
 
@@ -37,6 +39,10 @@ export default function EditTabletPage() {
   const [releasedAt, setReleasedAt] = useState('')
   const [specScoreOverride, setSpecScoreOverride] = useState('')
   const [specs, setSpecs] = useState<EditableTabletSpec[]>([])
+  const [variants, setVariants] = useState<DeviceVariant[]>([])
+  const hasVariants = variants.length > 0
+  const variantStartingPrice = hasVariants ? Math.min(...variants.map(v => v.price_inr)) : null
+  const handleVariantsChange = useCallback((list: DeviceVariant[]) => setVariants(list), [])
   const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
   const [error, setError] = useState('')
 
@@ -78,7 +84,8 @@ export default function EditTabletPage() {
 
     const { error: updateError } = await supabase.from('tablets').update({
       name, brand,
-      price_inr: price ? parseInt(price) : null,
+      // With variants, the database trigger owns tablets.price_inr
+      ...(hasVariants ? {} : { price_inr: price ? parseInt(price) : null }),
       image_url: imageUrl || null,
       released_at: releasedAt || null,
       spec_score_override: specScoreOverride ? parseInt(specScoreOverride) : null,
@@ -133,16 +140,19 @@ export default function EditTabletPage() {
           {[
             { label: 'Tablet Name', value: name, set: setName },
             { label: 'Brand', value: brand, set: setBrand },
-            { label: 'Price (₹)', value: price, set: setPrice },
+            hasVariants
+              ? { label: 'Starting price (₹, from variants)', value: String(variantStartingPrice), set: setPrice, disabled: true }
+              : { label: 'Price (₹)', value: price, set: setPrice },
             { label: 'Release Date', value: releasedAt, set: setReleasedAt },
             { label: 'Spec Score Override', value: specScoreOverride, set: setSpecScoreOverride },
-          ].map(({ label, value, set }) => (
+          ].map(({ label, value, set, disabled }) => (
             <div key={label}>
               <label className="block text-xs text-dim mb-1">{label}</label>
               <input
                 value={value}
                 onChange={e => set(e.target.value)}
-                className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
+                disabled={disabled}
+                className="w-full border border-[rgba(255,255,255,0.06)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan disabled:opacity-60"
                 style={inputStyle}
               />
             </div>
@@ -165,6 +175,8 @@ export default function EditTabletPage() {
       </div>
 
       {/* Specs */}
+      {tablet && <VariantsEditor kind="tablet" deviceId={tablet.id} onChange={handleVariantsChange} />}
+
       <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold text-white">Specs ({specs.length})</h2>

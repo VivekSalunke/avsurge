@@ -1,6 +1,15 @@
-export interface PhoneVariant {
+export type DeviceKind = 'phone' | 'tablet'
+
+/** Supabase table and foreign-key column for each kind of device */
+export const VARIANT_TABLES: Record<DeviceKind, { table: string; deviceColumn: string }> = {
+  phone: { table: 'phone_variants', deviceColumn: 'phone_id' },
+  tablet: { table: 'tablet_variants', deviceColumn: 'tablet_id' },
+}
+
+export interface DeviceVariant {
   id: number
-  phone_id: number
+  phone_id?: number
+  tablet_id?: number
   ram_gb: number
   storage_gb: number
   price_inr: number
@@ -8,6 +17,9 @@ export interface PhoneVariant {
   store_url: string | null
   sort_order: number
 }
+
+/** Kept so existing imports keep working */
+export type PhoneVariant = DeviceVariant
 
 export type VariantStore = 'amazon' | 'flipkart'
 
@@ -33,7 +45,7 @@ export function formatVariantLabel(ramGb: number, storageGb: number): string {
 }
 
 /** Cheapest first, then by RAM, then by storage */
-export function sortVariants<T extends Pick<PhoneVariant, 'sort_order' | 'price_inr' | 'ram_gb' | 'storage_gb'>>(list: T[]): T[] {
+export function sortVariants<T extends Pick<DeviceVariant, 'sort_order' | 'price_inr' | 'ram_gb' | 'storage_gb'>>(list: T[]): T[] {
   return [...list].sort(
     (a, b) =>
       a.sort_order - b.sort_order ||

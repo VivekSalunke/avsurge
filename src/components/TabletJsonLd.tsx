@@ -19,7 +19,7 @@ interface ReviewEntry {
   created_at: string
 }
 
-export default function TabletJsonLd({ tablet, specs, reviews = [] }: { tablet: TabletLike, specs: SpecEntry[], reviews?: ReviewEntry[] }) {
+export default function TabletJsonLd({ tablet, specs, reviews = [], variants = [] }: { tablet: TabletLike, specs: SpecEntry[], reviews?: ReviewEntry[], variants?: { price_inr: number }[] }) {
   const getSpec = (label: string) => specs.find(s => s.label === label)?.value || null
 
   const reviewCount = reviews.length
@@ -59,7 +59,17 @@ export default function TabletJsonLd({ tablet, specs, reviews = [] }: { tablet: 
         ...(r.body && { reviewBody: r.body }),
       })),
     }),
-    ...(tablet.price_inr && {
+    ...(variants.length > 1 ? {
+      offers: {
+        '@type': 'AggregateOffer',
+        lowPrice: Math.min(...variants.map(v => v.price_inr)),
+        highPrice: Math.max(...variants.map(v => v.price_inr)),
+        offerCount: variants.length,
+        priceCurrency: 'INR',
+        availability: 'https://schema.org/InStock',
+        url: `https://avsurge.com/tablets/${tablet.slug}`,
+      },
+    } : tablet.price_inr && {
       offers: {
         '@type': 'Offer',
         price: tablet.price_inr,

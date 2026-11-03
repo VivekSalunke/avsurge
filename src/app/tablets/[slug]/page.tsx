@@ -12,6 +12,8 @@ import RecentlyViewedTablets from '@/components/RecentlyViewedTablets'
 import TabletViewTracker from '@/components/TabletViewTracker'
 import TabletPriceAlertButton from '@/components/TabletPriceAlertButton'
 import ShareButton from '@/components/ShareButton'
+import VariantPicker from '@/components/VariantPicker'
+import { DeviceVariant, sortVariants } from '@/lib/variants'
 import TabletTracker from '@/components/TabletTracker'
 import SpecScoreBadge from '@/components/SpecScoreBadge'
 import { formatPriceINR } from '@/lib/format'
@@ -45,7 +47,8 @@ async function getTablet(slug: string) {
   if (!tablet) return null
   const { data: specs } = await supabase.from('tablet_specs').select('*').eq('tablet_id', tablet.id).order('id')
   const { data: reviews } = await supabase.from('tablet_reviews').select('rating, body, user_email, created_at').eq('tablet_id', tablet.id).order('created_at', { ascending: false })
-  return { tablet, specs: specs || [], reviews: reviews || [] }
+  const { data: variants } = await supabase.from('tablet_variants').select('*').eq('tablet_id', tablet.id)
+  return { tablet, specs: specs || [], reviews: reviews || [], variants: sortVariants((variants || []) as DeviceVariant[]) }
 }
 
 async function getComparisonCandidates(tablet: { id: string | number; price_inr: number | null }) {
@@ -67,7 +70,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
   const { slug } = await params
   const data = await getTablet(slug)
   if (!data) notFound()
-  const { tablet, specs, reviews } = data
+  const { tablet, specs, reviews, variants } = data
   const comparisonCandidates = await getComparisonCandidates(tablet)
 
   const grouped = specs.reduce<Record<string, TabletSpecRow[]>>((acc, s) => {
@@ -81,7 +84,7 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
   return (
     <main className="max-w-5xl mx-auto px-4 py-8 text-[var(--text)]">
       <TabletTracker deviceId={tablet.id} />
-      <TabletJsonLd tablet={tablet} specs={specs} reviews={reviews} />
+      <TabletJsonLd tablet={tablet} specs={specs} reviews={reviews} variants={variants} />
       <TabletViewTracker slug={tablet.slug} />
       <div className="text-sm text-[rgba(255,255,255,0.4)] mb-6 flex items-center gap-1.5">
         <Link href="/" className="hover:text-neon-cyan">Home</Link>
@@ -105,7 +108,9 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
             <p className="text-sm text-[rgba(255,255,255,0.4)] mb-4">{tablet.brand}</p>
             <SpecScoreBadge specs={specs} overrideScore={tablet.spec_score_override} />
 
-            {tablet.price_inr && (
+            {variants.length > 0 ? (
+              <VariantPicker deviceName={tablet.name} variants={variants} />
+            ) : tablet.price_inr && (
               <div className="price-tag rounded-xl px-4 py-3 mb-4 text-center">
                 <div className="text-xs text-neon-cyan mb-0.5">Starting price in India</div>
                 <div className="text-2xl font-bold text-neon-cyan">{formatPriceINR(tablet.price_inr)}</div>
@@ -119,10 +124,12 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
             )}
 
             <div className="flex flex-col gap-2">
-              <a href={`https://www.flipkart.com/search?q=${encodeURIComponent(tablet.name)}`} target="_blank"
-                className="w-full bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl py-2.5 text-sm font-medium hover:brightness-110 transition text-center">
-                Check on Flipkart →
-              </a>
+              {variants.length === 0 && (
+                <a href={`https://www.flipkart.com/search?q=${encodeURIComponent(tablet.name)}`} target="_blank"
+                  className="w-full bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl py-2.5 text-sm font-medium hover:brightness-110 transition text-center">
+                  Check on Flipkart →
+                </a>
+              )}
               <Link href={`/compare-tablets?a=${tablet.slug}`}
                 className="w-full text-center border border-dashed border-[rgba(255,255,255,0.08)] text-dim rounded-xl py-2.5 text-sm hover:border-neon-cyan hover:text-neon-cyan transition">
                 + Add to compare
@@ -130,10 +137,12 @@ export default async function TabletPage({ params }: { params: Promise<{ slug: s
               <TabletWishlistButton tabletId={tablet.id} />
               <TabletPriceAlertButton tabletId={tablet.id} tabletName={tablet.name} currentPrice={tablet.price_inr} />
               <ShareButton title={tablet.name} url={`https://avsurge.com/tablets/${tablet.slug}`} />
-              <a href={buildAmazonSearchUrl(tablet.name)} target="_blank"
-                className="w-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] rounded-xl py-2.5 text-sm font-medium hover:border-neon-violet hover:text-white hover:glow transition text-center">
-                Check on Amazon →
-              </a>
+              {variants.length === 0 && (
+                <a href={buildAmazonSearchUrl(tablet.name)} target="_blank"
+                  className="w-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)] text-[rgba(255,255,255,0.85)] rounded-xl py-2.5 text-sm font-medium hover:border-neon-violet hover:text-white hover:glow transition text-center">
+                  Check on Amazon →
+                </a>
+              )}
             </div>
           </div>
         </div>
