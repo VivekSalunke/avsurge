@@ -1,36 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit'
+import { aiConfigured, generateJson } from '@/lib/ai'
 
 interface SpecItem {
   label: string
   value: string
 }
 
-const FREE_MODELS = [
-  'openai/gpt-oss-20b:free',
-  'google/gemma-4-26b-a4b-it:free',
-  'qwen/qwen3-next-80b-a3b-instruct:free',
-  'nvidia/nemotron-3-super-120b-a12b:free',
-]
-
-async function callOpenRouter(model: string, prompt: string) {
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://avsurge.com',
-      'X-Title': 'AVSurge',
-    },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 600,
-      temperature: 0.3,
-    }),
-  })
-  return response
+interface CompareVerdict {
+  verdict: string
+  [key: string]: unknown
 }
+
+const isVerdict = (v: unknown): v is CompareVerdict =>
+  typeof v === 'object' && v !== null && typeof (v as CompareVerdict).verdict === 'string'
 
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req)
@@ -50,7 +33,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
   }
 
-  if (!process.env.OPENROUTER_API_KEY) {
+  if (!aiConfigured()) {
     return NextResponse.json(
       { error: 'AI service is not configured (missing OPENROUTER_API_KEY).' },
       { status: 503 }
@@ -79,24 +62,8 @@ Respond ONLY with a JSON object in this exact format, no markdown, no extra text
   "winner_value": "${phoneA.name} or ${phoneB.name}"
 }`
 
-  for (const model of FREE_MODELS) {
-    try {
-      const response = await callOpenRouter(model, prompt)
-      const data = await response.json()
+  const result = await generateJson(prompt, { tag: 'compare', maxTokens: 1200, isValid: isVerdict })
+  if (result) return NextResponse.json(result)
 
-      if (!response.ok || data.error) continue
-
-      const text = data.choices?.[0]?.message?.content || ''
-      const clean = text.replace(/```json|```/g, '').trim()
-      const jsonMatch = clean.match(/\{[\s\S]*\}/)
-      if (!jsonMatch) continue
-
-      const parsed = JSON.parse(jsonMatch[0])
-      if (parsed.verdict) return NextResponse.json(parsed)
-    } catch {
-      continue
-    }
-  }
-
-  return NextResponse.json({ error: 'All models unavailable. Please try again.' }, { status: 503 })
+  return NextResponse.json({ error: 'AI is busy right now. Please try again in a minute.' }, { status: 503 })
 }
