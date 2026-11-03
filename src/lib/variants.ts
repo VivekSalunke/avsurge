@@ -4,8 +4,22 @@ export interface PhoneVariant {
   ram_gb: number
   storage_gb: number
   price_inr: number
-  amazon_url: string | null
+  store: VariantStore
+  store_url: string | null
   sort_order: number
+}
+
+export type VariantStore = 'amazon' | 'flipkart'
+
+export const STORE_LABELS: Record<VariantStore, string> = {
+  amazon: 'Amazon',
+  flipkart: 'Flipkart',
+}
+
+/** The URL a store link must start with, per store */
+export const STORE_URL_PATTERNS: Record<VariantStore, RegExp> = {
+  amazon: /^https:\/\/(www\.)?amazon\.in\//,
+  flipkart: /^https:\/\/(www\.)?flipkart\.com\//,
 }
 
 /** 1024 GB -> "1 TB", 512 -> "512 GB" */

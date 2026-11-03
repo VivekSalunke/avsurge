@@ -1,24 +1,33 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
-import { PhoneVariant, formatVariantLabel, sortVariants } from '@/lib/variants'
+import {
+  PhoneVariant,
+  VariantStore,
+  STORE_LABELS,
+  STORE_URL_PATTERNS,
+  formatVariantLabel,
+  sortVariants,
+} from '@/lib/variants'
 
 interface Row {
   id: number | null
   ram_gb: string
   storage_gb: string
   price_inr: string
-  amazon_url: string
+  store: VariantStore
+  store_url: string
 }
 
-const EMPTY_ROW: Row = { id: null, ram_gb: '', storage_gb: '', price_inr: '', amazon_url: '' }
+const EMPTY_ROW: Row = { id: null, ram_gb: '', storage_gb: '', price_inr: '', store: 'amazon', store_url: '' }
 
 const toRow = (v: PhoneVariant): Row => ({
   id: v.id,
   ram_gb: String(v.ram_gb),
   storage_gb: String(v.storage_gb),
   price_inr: String(v.price_inr),
-  amazon_url: v.amazon_url || '',
+  store: v.store,
+  store_url: v.store_url || '',
 })
 
 const inputClass =
@@ -63,8 +72,11 @@ export default function PhoneVariantsEditor({
     if (!ram || ram <= 0) return 'RAM must be a positive number of GB'
     if (!storage || storage <= 0) return 'Storage must be a positive number of GB (1 TB = 1024)'
     if (!price || price <= 0) return 'Price must be a positive number'
-    if (r.amazon_url.trim() && !/^https:\/\/(www\.)?amazon\.in\//.test(r.amazon_url.trim())) {
-      return 'Amazon link must start with https://www.amazon.in/'
+    const link = r.store_url.trim()
+    if (link && !STORE_URL_PATTERNS[r.store].test(link)) {
+      return r.store === 'amazon'
+        ? 'Amazon link must start with https://www.amazon.in/'
+        : 'Flipkart link must start with https://www.flipkart.com/'
     }
     return null
   }
@@ -73,7 +85,8 @@ export default function PhoneVariantsEditor({
     ram_gb: parseInt(r.ram_gb),
     storage_gb: parseInt(r.storage_gb),
     price_inr: parseInt(r.price_inr),
-    amazon_url: r.amazon_url.trim() || null,
+    store: r.store,
+    store_url: r.store_url.trim() || null,
   })
 
   const friendlyError = (msg: string) =>
@@ -123,12 +136,17 @@ export default function PhoneVariantsEditor({
   const updateRow = (i: number, field: keyof Row, value: string) =>
     setRows(prev => prev.map((r, idx) => (idx === i ? { ...r, [field]: value } : r)))
 
+  const storeOptions = (Object.keys(STORE_LABELS) as VariantStore[]).map(s => (
+    <option key={s} value={s} style={{ backgroundColor: '#152030', color: '#e6eef8' }}>{STORE_LABELS[s]}</option>
+  ))
+
   const header = (
     <div className="grid grid-cols-12 gap-2 text-[10px] uppercase tracking-wide text-[rgba(255,255,255,0.4)] mb-1">
       <div className="col-span-2">RAM (GB)</div>
       <div className="col-span-2">Storage (GB)</div>
       <div className="col-span-2">Price (₹)</div>
-      <div className="col-span-4">Amazon link (optional)</div>
+      <div className="col-span-2">Store</div>
+      <div className="col-span-2">Link (optional)</div>
       <div className="col-span-2" />
     </div>
   )
@@ -138,7 +156,8 @@ export default function PhoneVariantsEditor({
       <h2 className="text-sm font-semibold text-dim uppercase tracking-wide mb-1">Variants</h2>
       <p className="text-xs text-[rgba(255,255,255,0.4)] mb-4">
         Each RAM + storage combination sold in India. The phone&apos;s starting price is set automatically to the
-        cheapest variant. Changes here save immediately. 1 TB = 1024.
+        cheapest variant. Changes here save immediately. 1 TB = 1024. Pick the store that sells it; the link is
+        optional (without one, the Buy button searches that store).
       </p>
 
       {message && (
@@ -163,8 +182,12 @@ export default function PhoneVariantsEditor({
               onChange={e => updateRow(i, 'storage_gb', e.target.value)} />
             <input type="number" min="1" className={`col-span-2 ${inputClass}`} value={r.price_inr}
               onChange={e => updateRow(i, 'price_inr', e.target.value)} />
-            <input className={`col-span-4 ${inputClass}`} value={r.amazon_url} placeholder="https://www.amazon.in/dp/…"
-              onChange={e => updateRow(i, 'amazon_url', e.target.value)} />
+            <select className={`col-span-2 ${inputClass}`} value={r.store}
+              onChange={e => updateRow(i, 'store', e.target.value)}>
+              {storeOptions}
+            </select>
+            <input className={`col-span-2 ${inputClass}`} value={r.store_url} placeholder="https://…"
+              onChange={e => updateRow(i, 'store_url', e.target.value)} />
             <div className="col-span-2 flex gap-2 justify-end">
               <button type="button" disabled={busy} onClick={() => saveVariant(r)}
                 className="text-xs text-neon-cyan hover:underline disabled:opacity-40">Save</button>
@@ -187,8 +210,12 @@ export default function PhoneVariantsEditor({
             onChange={e => setNewRow({ ...newRow, storage_gb: e.target.value })} />
           <input type="number" min="1" placeholder="24999" className={`col-span-2 ${inputClass}`} value={newRow.price_inr}
             onChange={e => setNewRow({ ...newRow, price_inr: e.target.value })} />
-          <input placeholder="https://www.amazon.in/dp/…" className={`col-span-4 ${inputClass}`} value={newRow.amazon_url}
-            onChange={e => setNewRow({ ...newRow, amazon_url: e.target.value })} />
+          <select className={`col-span-2 ${inputClass}`} value={newRow.store}
+            onChange={e => setNewRow({ ...newRow, store: e.target.value as VariantStore })}>
+            {storeOptions}
+          </select>
+          <input placeholder="https://…" className={`col-span-2 ${inputClass}`} value={newRow.store_url}
+            onChange={e => setNewRow({ ...newRow, store_url: e.target.value })} />
           <div className="col-span-2 flex justify-end">
             <button type="button" disabled={busy} onClick={addVariant}
               className="text-xs font-semibold text-black bg-[#06b6d4] hover:bg-[#22d3ee] rounded-lg px-3 py-1.5 disabled:opacity-40">+ Add</button>
