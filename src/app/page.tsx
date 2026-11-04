@@ -6,6 +6,8 @@ import FeaturedDeviceStack from '@/components/FeaturedDeviceStack'
 import { noPriceLabel } from '@/lib/markets'
 import AILogo from '@/components/AILogo'
 import { formatPriceINR } from '@/lib/format'
+import UpcomingStrip from '@/components/UpcomingStrip'
+import { todayIST, type UpcomingLaunch } from '@/lib/upcoming'
 
 export const revalidate = 60
 
@@ -135,6 +137,7 @@ export default async function HomePage() {
     { data: allTablets },
     { data: latestLaptops },
     { data: allLaptops },
+    { data: upcomingRaw },
   ] = await Promise.all([
     supabase.from('phones').select('*').order('created_at', { ascending: false }).limit(6),
     supabase.from('phones').select('*').lte('price_inr', 40000).order('price_inr', { ascending: true }).limit(6),
@@ -146,7 +149,11 @@ export default async function HomePage() {
     supabase.from('tablets').select('id'),
     supabase.from('laptops').select('*').order('created_at', { ascending: false }).limit(6),
     supabase.from('laptops').select('id'),
+    supabase.from('upcoming_launches').select('*').gte('launch_date', todayIST())
+      .order('launch_date', { ascending: true }).limit(3),
   ])
+
+  const upcoming = (upcomingRaw || []) as UpcomingLaunch[]
 
   const ratingMap: Record<number, { total: number; count: number }> = {}
   for (const r of reviews || []) {
@@ -238,6 +245,14 @@ export default async function HomePage() {
           </div>
         ))}
       </div>
+
+      {/* ── Upcoming launches ────────────────────────────── */}
+      {upcoming.length > 0 && (
+        <section className="mb-14">
+          <SectionHeader title="Upcoming launches" badge="Soon" href="/upcoming" />
+          <UpcomingStrip items={upcoming} />
+        </section>
+      )}
 
       <RecentlyViewedHome />
 
