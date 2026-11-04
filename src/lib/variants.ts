@@ -24,7 +24,15 @@ export interface DeviceVariant {
   store_url: string | null
   /** Tablets only */
   connectivity?: Connectivity
+  /** Launch date of this variant (YYYY-MM-DD); the earliest one becomes the device's release date */
+  released_at: string | null
   sort_order: number
+}
+
+/** Earliest launch date among the variants, or null if none has a date */
+export function earliestLaunchDate(list: Pick<DeviceVariant, 'released_at'>[]): string | null {
+  const dates = list.map(v => v.released_at).filter((d): d is string => Boolean(d)).sort()
+  return dates[0] ?? null
 }
 
 /** Kept so existing imports keep working */

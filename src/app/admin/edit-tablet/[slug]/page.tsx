@@ -7,7 +7,7 @@ import { useAuth } from '@/context/AuthContext'
 import { SpecRow } from '@/lib/specScore'
 import Image from 'next/image'
 import VariantsEditor from '@/components/admin/VariantsEditor'
-import type { DeviceVariant } from '@/lib/variants'
+import { earliestLaunchDate, type DeviceVariant } from '@/lib/variants'
 
 const CATEGORIES = ['General', 'Display', 'Performance', 'Camera', 'Battery', 'Connectivity', 'Storage', 'Audio', 'Build']
 
@@ -42,6 +42,7 @@ export default function EditTabletPage() {
   const [variants, setVariants] = useState<DeviceVariant[]>([])
   const hasVariants = variants.length > 0
   const variantStartingPrice = hasVariants ? Math.min(...variants.map(v => v.price_inr)) : null
+  const variantLaunchDate = earliestLaunchDate(variants)
   const handleVariantsChange = useCallback((list: DeviceVariant[]) => setVariants(list), [])
   const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
   const [error, setError] = useState('')
@@ -87,7 +88,8 @@ export default function EditTabletPage() {
       // With variants, the database trigger owns tablets.price_inr
       ...(hasVariants ? {} : { price_inr: price ? parseInt(price) : null }),
       image_url: imageUrl || null,
-      released_at: releasedAt || null,
+      // When variants have launch dates, the database trigger owns tablets.released_at
+      ...(variantLaunchDate ? {} : { released_at: releasedAt || null }),
       spec_score_override: specScoreOverride ? parseInt(specScoreOverride) : null,
     }).eq('id', tablet.id)
 
@@ -133,6 +135,8 @@ export default function EditTabletPage() {
         <h1 className="text-2xl font-bold text-white">Edit Tablet</h1>
       </div>
 
+      {tablet && <VariantsEditor kind="tablet" deviceId={tablet.id} onChange={handleVariantsChange} />}
+
       {/* Basic info */}
       <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
         <h2 className="font-semibold text-white mb-4">Basic Info</h2>
@@ -143,7 +147,9 @@ export default function EditTabletPage() {
             hasVariants
               ? { label: 'Starting price (₹, from variants)', value: String(variantStartingPrice), set: setPrice, disabled: true }
               : { label: 'Price (₹)', value: price, set: setPrice },
-            { label: 'Release Date', value: releasedAt, set: setReleasedAt },
+            variantLaunchDate
+              ? { label: 'Release Date (from variants)', value: variantLaunchDate, set: setReleasedAt, disabled: true }
+              : { label: 'Release Date', value: releasedAt, set: setReleasedAt },
             { label: 'Spec Score Override', value: specScoreOverride, set: setSpecScoreOverride },
           ].map(({ label, value, set, disabled }) => (
             <div key={label}>
@@ -175,7 +181,6 @@ export default function EditTabletPage() {
       </div>
 
       {/* Specs */}
-      {tablet && <VariantsEditor kind="tablet" deviceId={tablet.id} onChange={handleVariantsChange} />}
 
       <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
         <div className="flex items-center justify-between mb-4">

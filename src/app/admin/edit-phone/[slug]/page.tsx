@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import Image from 'next/image'
 import VariantsEditor from '@/components/admin/VariantsEditor'
-import type { DeviceVariant } from '@/lib/variants'
+import { earliestLaunchDate, type DeviceVariant } from '@/lib/variants'
 
 const CATEGORIES = ['General','Display','Performance','Camera','Battery','Connectivity','Storage','Build']
 
@@ -40,6 +40,7 @@ export default function EditPhonePage() {
   const [variants, setVariants] = useState<DeviceVariant[]>([])
   const hasVariants = variants.length > 0
   const variantStartingPrice = hasVariants ? Math.min(...variants.map(v => v.price_inr)) : null
+  const variantLaunchDate = earliestLaunchDate(variants)
   const handleVariantsChange = useCallback((list: DeviceVariant[]) => setVariants(list), [])
 
   useEffect(() => {
@@ -91,7 +92,8 @@ export default function EditPhonePage() {
       name, brand,
       ...(hasVariants ? {} : { price_inr: newPrice }),
       image_url: imageUrl || null,
-      released_at: releasedAt || null,
+      // When variants have launch dates, the database trigger owns phones.released_at
+      ...(variantLaunchDate ? {} : { released_at: releasedAt || null }),
       spec_score_override: specScoreOverride ? parseInt(specScoreOverride) : null,
     }).eq('id', phone.id)
 
@@ -138,6 +140,8 @@ export default function EditPhonePage() {
         <div className="bg-[rgba(239,68,68,0.06)] border border-[rgba(239,68,68,0.2)] text-[#f87171] rounded-xl px-4 py-3 text-sm mb-6">{error}</div>
       )}
 
+      <VariantsEditor kind="phone" deviceId={phone.id} onChange={handleVariantsChange} />
+
       <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
         <h2 className="text-sm font-semibold text-dim uppercase tracking-wide mb-4">Basic info</h2>
         <div className="grid grid-cols-2 gap-4">
@@ -162,9 +166,12 @@ export default function EditPhonePage() {
             </p>
           </div>
           <div>
-            <label className="block text-xs font-medium text-dim mb-1">Release date</label>
-            <input type="date" className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan"
-              value={releasedAt} onChange={e => setReleasedAt(e.target.value)} />
+            <label className="block text-xs font-medium text-dim mb-1">{variantLaunchDate ? 'Release date (from variants)' : 'Release date'}</label>
+            <input type="date" className="w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-neon-cyan disabled:opacity-60"
+              value={variantLaunchDate ?? releasedAt} onChange={e => setReleasedAt(e.target.value)} disabled={Boolean(variantLaunchDate)} />
+            {variantLaunchDate && (
+              <p className="text-xs text-[rgba(255,255,255,0.4)] mt-1">Set automatically to the earliest variant launch date</p>
+            )}
           </div>
           <div>
             <label className="block text-xs font-medium text-dim mb-1">Spec Score Override</label>
@@ -182,8 +189,6 @@ export default function EditPhonePage() {
           </div>
         </div>
       </div>
-
-      <VariantsEditor kind="phone" deviceId={phone.id} onChange={handleVariantsChange} />
 
       <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
         <h2 className="text-sm font-semibold text-dim uppercase tracking-wide mb-4">Specifications</h2>

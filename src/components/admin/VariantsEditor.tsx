@@ -19,13 +19,14 @@ interface Row {
   ram_gb: string
   storage_gb: string
   price_inr: string
+  released_at: string
   connectivity: Connectivity
   store: VariantStore
   store_url: string
 }
 
 const EMPTY_ROW: Row = {
-  id: null, ram_gb: '', storage_gb: '', price_inr: '', connectivity: 'wifi', store: 'amazon', store_url: '',
+  id: null, ram_gb: '', storage_gb: '', price_inr: '', released_at: '', connectivity: 'wifi', store: 'amazon', store_url: '',
 }
 
 const toRow = (v: DeviceVariant): Row => ({
@@ -33,6 +34,7 @@ const toRow = (v: DeviceVariant): Row => ({
   ram_gb: String(v.ram_gb),
   storage_gb: String(v.storage_gb),
   price_inr: String(v.price_inr),
+  released_at: v.released_at ?? '',
   connectivity: v.connectivity ?? 'wifi',
   store: v.store,
   store_url: v.store_url || '',
@@ -40,8 +42,9 @@ const toRow = (v: DeviceVariant): Row => ({
 
 const inputClass =
   'w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-neon-cyan'
-
+const labelClass = 'block text-[10px] uppercase tracking-wide text-[rgba(255,255,255,0.4)] mb-1'
 const optionStyle = { backgroundColor: '#152030', color: '#e6eef8' }
+const dateStyle = { colorScheme: 'dark' as const }
 
 export default function VariantsEditor({
   kind,
@@ -57,9 +60,6 @@ export default function VariantsEditor({
   const [newRow, setNewRow] = useState<Row>(EMPTY_ROW)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<{ type: 'ok' | 'error'; text: string } | null>(null)
-
-  // Tablets get an extra Connectivity column (14-column grid instead of 12)
-  const gridClass = hasConnectivity ? 'grid grid-cols-14 gap-2' : 'grid grid-cols-12 gap-2'
 
   const reload = useCallback(async () => {
     const { data, error } = await supabase
@@ -101,6 +101,7 @@ export default function VariantsEditor({
     ram_gb: parseInt(r.ram_gb),
     storage_gb: parseInt(r.storage_gb),
     price_inr: parseInt(r.price_inr),
+    released_at: r.released_at || null,
     store: r.store,
     store_url: r.store_url.trim() || null,
     // Only tablet_variants has this column
@@ -154,9 +155,6 @@ export default function VariantsEditor({
     )
   }
 
-  const updateRow = (i: number, field: keyof Row, value: string) =>
-    setRows(prev => prev.map((r, idx) => (idx === i ? { ...r, [field]: value } : r)))
-
   const storeOptions = (Object.keys(STORE_LABELS) as VariantStore[]).map(s => (
     <option key={s} value={s} style={optionStyle}>{STORE_LABELS[s]}</option>
   ))
@@ -164,15 +162,48 @@ export default function VariantsEditor({
     <option key={c} value={c} style={optionStyle}>{CONNECTIVITY_LABELS[c]}</option>
   ))
 
-  const header = (
-    <div className={`${gridClass} text-[10px] uppercase tracking-wide text-[rgba(255,255,255,0.4)] mb-1`}>
-      <div className="col-span-2">RAM (GB)</div>
-      <div className="col-span-2">Storage (GB)</div>
-      <div className="col-span-2">Price (₹)</div>
-      {hasConnectivity && <div className="col-span-2">Connectivity</div>}
-      <div className="col-span-2">Store</div>
-      <div className="col-span-2">Link (optional)</div>
-      <div className="col-span-2" />
+  /** One variant's fields, used for existing rows and the "add" row */
+  const fields = (r: Row, set: (field: keyof Row, value: string) => void, isNew: boolean) => (
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <div>
+        <label className={labelClass}>RAM (GB)</label>
+        <input type="number" min="1" placeholder={isNew ? '8' : undefined} className={inputClass}
+          value={r.ram_gb} onChange={e => set('ram_gb', e.target.value)} />
+      </div>
+      <div>
+        <label className={labelClass}>Storage (GB)</label>
+        <input type="number" min="1" placeholder={isNew ? '256' : undefined} className={inputClass}
+          value={r.storage_gb} onChange={e => set('storage_gb', e.target.value)} />
+      </div>
+      <div>
+        <label className={labelClass}>Price (₹)</label>
+        <input type="number" min="1" placeholder={isNew ? '24999' : undefined} className={inputClass}
+          value={r.price_inr} onChange={e => set('price_inr', e.target.value)} />
+      </div>
+      <div>
+        <label className={labelClass}>Launch date</label>
+        <input type="date" className={inputClass} style={dateStyle}
+          value={r.released_at} onChange={e => set('released_at', e.target.value)} />
+      </div>
+      {hasConnectivity && (
+        <div>
+          <label className={labelClass}>Connectivity</label>
+          <select className={inputClass} value={r.connectivity} onChange={e => set('connectivity', e.target.value)}>
+            {connectivityOptions}
+          </select>
+        </div>
+      )}
+      <div>
+        <label className={labelClass}>Store</label>
+        <select className={inputClass} value={r.store} onChange={e => set('store', e.target.value)}>
+          {storeOptions}
+        </select>
+      </div>
+      <div className={hasConnectivity ? 'col-span-2' : 'col-span-2 sm:col-span-3'}>
+        <label className={labelClass}>Link (optional)</label>
+        <input placeholder="https://…" className={inputClass}
+          value={r.store_url} onChange={e => set('store_url', e.target.value)} />
+      </div>
     </div>
   )
 
@@ -180,9 +211,10 @@ export default function VariantsEditor({
     <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
       <h2 className="text-sm font-semibold text-dim uppercase tracking-wide mb-1">Variants</h2>
       <p className="text-xs text-[rgba(255,255,255,0.4)] mb-4">
-        Each RAM + storage combination sold in India{hasConnectivity ? ' (add Wi-Fi and Cellular versions separately)' : ''}.
-        The {kind}&apos;s starting price is set automatically to the cheapest variant. Changes here save immediately.
-        1 TB = 1024. Pick the store that sells it; the link is optional (without one, the Buy button searches that store).
+        Add the base variant first, then later RAM/storage versions or special editions
+        {hasConnectivity ? ' (Wi-Fi and Cellular versions separately)' : ''}. The {kind}&apos;s starting price is the
+        cheapest variant and its release date is the earliest launch date, both set automatically. Changes here save
+        immediately. 1 TB = 1024. Without a link, the Buy button searches the chosen store.
       </p>
 
       {message && (
@@ -197,67 +229,36 @@ export default function VariantsEditor({
         </div>
       )}
 
-      {header}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         {rows.map((r, i) => (
-          <div key={r.id} className={`${gridClass} items-center`}>
-            <input type="number" min="1" className={`col-span-2 ${inputClass}`} value={r.ram_gb}
-              onChange={e => updateRow(i, 'ram_gb', e.target.value)} />
-            <input type="number" min="1" className={`col-span-2 ${inputClass}`} value={r.storage_gb}
-              onChange={e => updateRow(i, 'storage_gb', e.target.value)} />
-            <input type="number" min="1" className={`col-span-2 ${inputClass}`} value={r.price_inr}
-              onChange={e => updateRow(i, 'price_inr', e.target.value)} />
-            {hasConnectivity && (
-              <select className={`col-span-2 ${inputClass}`} value={r.connectivity}
-                onChange={e => updateRow(i, 'connectivity', e.target.value)}>
-                {connectivityOptions}
-              </select>
-            )}
-            <select className={`col-span-2 ${inputClass}`} value={r.store}
-              onChange={e => updateRow(i, 'store', e.target.value)}>
-              {storeOptions}
-            </select>
-            <input className={`col-span-2 ${inputClass}`} value={r.store_url} placeholder="https://…"
-              onChange={e => updateRow(i, 'store_url', e.target.value)} />
-            <div className="col-span-2 flex gap-2 justify-end">
-              <button type="button" disabled={busy} onClick={() => saveVariant(r)}
-                className="text-xs text-neon-cyan hover:underline disabled:opacity-40">Save</button>
-              <button type="button" disabled={busy} onClick={() => deleteVariant(r)}
-                className="text-xs text-red-400 hover:underline disabled:opacity-40">Delete</button>
+          <div key={r.id} className="rounded-xl border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.015)] p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-[rgba(255,255,255,0.75)]">
+                {i === 0 ? 'Base variant' : `Variant ${i + 1}`}
+              </span>
+              <div className="flex gap-3">
+                <button type="button" disabled={busy} onClick={() => saveVariant(r)}
+                  className="text-xs text-[#22d3ee] hover:underline disabled:opacity-40">Save</button>
+                <button type="button" disabled={busy} onClick={() => deleteVariant(r)}
+                  className="text-xs text-red-400 hover:underline disabled:opacity-40">Delete</button>
+              </div>
             </div>
+            {fields(r, (field, value) =>
+              setRows(prev => prev.map((x, idx) => (idx === i ? { ...x, [field]: value } : x))), false)}
           </div>
         ))}
         {rows.length === 0 && (
-          <p className="text-xs text-[rgba(255,255,255,0.4)] py-2">No variants yet. The manual price above is used.</p>
+          <p className="text-xs text-[rgba(255,255,255,0.4)] py-1">No variants yet. The manual price and release date below are used.</p>
         )}
       </div>
 
-      <div className="mt-5 pt-4 border-t border-[rgba(255,255,255,0.06)]">
-        <div className="text-xs font-medium text-dim mb-2">Add a variant</div>
-        <div className={`${gridClass} items-center`}>
-          <input type="number" min="1" placeholder="8" className={`col-span-2 ${inputClass}`} value={newRow.ram_gb}
-            onChange={e => setNewRow({ ...newRow, ram_gb: e.target.value })} />
-          <input type="number" min="1" placeholder="128" className={`col-span-2 ${inputClass}`} value={newRow.storage_gb}
-            onChange={e => setNewRow({ ...newRow, storage_gb: e.target.value })} />
-          <input type="number" min="1" placeholder="24999" className={`col-span-2 ${inputClass}`} value={newRow.price_inr}
-            onChange={e => setNewRow({ ...newRow, price_inr: e.target.value })} />
-          {hasConnectivity && (
-            <select className={`col-span-2 ${inputClass}`} value={newRow.connectivity}
-              onChange={e => setNewRow({ ...newRow, connectivity: e.target.value as Connectivity })}>
-              {connectivityOptions}
-            </select>
-          )}
-          <select className={`col-span-2 ${inputClass}`} value={newRow.store}
-            onChange={e => setNewRow({ ...newRow, store: e.target.value as VariantStore })}>
-            {storeOptions}
-          </select>
-          <input placeholder="https://…" className={`col-span-2 ${inputClass}`} value={newRow.store_url}
-            onChange={e => setNewRow({ ...newRow, store_url: e.target.value })} />
-          <div className="col-span-2 flex justify-end">
-            <button type="button" disabled={busy} onClick={addVariant}
-              className="text-xs font-semibold text-black bg-[#06b6d4] hover:bg-[#22d3ee] rounded-lg px-3 py-1.5 disabled:opacity-40">+ Add</button>
-          </div>
+      <div className="mt-4 pt-4 border-t border-[rgba(255,255,255,0.06)]">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-medium text-dim">{rows.length === 0 ? 'Add the base variant' : 'Add a variant'}</span>
+          <button type="button" disabled={busy} onClick={addVariant}
+            className="text-xs font-semibold text-black bg-[#06b6d4] hover:bg-[#22d3ee] rounded-lg px-3 py-1.5 disabled:opacity-40">+ Add</button>
         </div>
+        {fields(newRow, (field, value) => setNewRow(prev => ({ ...prev, [field]: value })), true)}
       </div>
     </div>
   )
