@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import {
+  Connectivity,
+  CONNECTIVITY_LABELS,
   DeviceKind,
   DeviceVariant,
   VARIANT_TABLES,
@@ -17,23 +19,29 @@ interface Row {
   ram_gb: string
   storage_gb: string
   price_inr: string
+  connectivity: Connectivity
   store: VariantStore
   store_url: string
 }
 
-const EMPTY_ROW: Row = { id: null, ram_gb: '', storage_gb: '', price_inr: '', store: 'amazon', store_url: '' }
+const EMPTY_ROW: Row = {
+  id: null, ram_gb: '', storage_gb: '', price_inr: '', connectivity: 'wifi', store: 'amazon', store_url: '',
+}
 
 const toRow = (v: DeviceVariant): Row => ({
   id: v.id,
   ram_gb: String(v.ram_gb),
   storage_gb: String(v.storage_gb),
   price_inr: String(v.price_inr),
+  connectivity: v.connectivity ?? 'wifi',
   store: v.store,
   store_url: v.store_url || '',
 })
 
 const inputClass =
   'w-full border border-[rgba(255,255,255,0.06)] rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-neon-cyan'
+
+const optionStyle = { backgroundColor: '#152030', color: '#e6eef8' }
 
 export default function VariantsEditor({
   kind,
@@ -44,11 +52,14 @@ export default function VariantsEditor({
   deviceId: number | string
   onChange?: (variants: DeviceVariant[]) => void
 }) {
-  const { table, deviceColumn } = VARIANT_TABLES[kind]
+  const { table, deviceColumn, hasConnectivity } = VARIANT_TABLES[kind]
   const [rows, setRows] = useState<Row[]>([])
   const [newRow, setNewRow] = useState<Row>(EMPTY_ROW)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<{ type: 'ok' | 'error'; text: string } | null>(null)
+
+  // Tablets get an extra Connectivity column (14-column grid instead of 12)
+  const gridClass = hasConnectivity ? 'grid grid-cols-14 gap-2' : 'grid grid-cols-12 gap-2'
 
   const reload = useCallback(async () => {
     const { data, error } = await supabase
@@ -92,10 +103,14 @@ export default function VariantsEditor({
     price_inr: parseInt(r.price_inr),
     store: r.store,
     store_url: r.store_url.trim() || null,
+    // Only tablet_variants has this column
+    ...(hasConnectivity ? { connectivity: r.connectivity } : {}),
   })
 
   const friendlyError = (msg: string) =>
-    msg.includes('duplicate key') ? `This ${kind} already has a variant with that RAM and storage` : msg
+    msg.includes('duplicate key')
+      ? `This ${kind} already has a variant with that RAM${hasConnectivity ? ', storage and connectivity' : ' and storage'}`
+      : msg
 
   const run = async (action: () => Promise<{ error: { message: string } | null }>, okText: string) => {
     setBusy(true)
@@ -131,7 +146,8 @@ export default function VariantsEditor({
   }
 
   const deleteVariant = async (r: Row) => {
-    if (!window.confirm(`Delete the ${formatVariantLabel(parseInt(r.ram_gb), parseInt(r.storage_gb))} variant?`)) return
+    const label = formatVariantLabel(parseInt(r.ram_gb), parseInt(r.storage_gb), hasConnectivity ? r.connectivity : undefined)
+    if (!window.confirm(`Delete the ${label} variant?`)) return
     await run(
       async () => await supabase.from(table).delete().eq('id', r.id!),
       'Variant deleted'
@@ -142,14 +158,18 @@ export default function VariantsEditor({
     setRows(prev => prev.map((r, idx) => (idx === i ? { ...r, [field]: value } : r)))
 
   const storeOptions = (Object.keys(STORE_LABELS) as VariantStore[]).map(s => (
-    <option key={s} value={s} style={{ backgroundColor: '#152030', color: '#e6eef8' }}>{STORE_LABELS[s]}</option>
+    <option key={s} value={s} style={optionStyle}>{STORE_LABELS[s]}</option>
+  ))
+  const connectivityOptions = (Object.keys(CONNECTIVITY_LABELS) as Connectivity[]).map(c => (
+    <option key={c} value={c} style={optionStyle}>{CONNECTIVITY_LABELS[c]}</option>
   ))
 
   const header = (
-    <div className="grid grid-cols-12 gap-2 text-[10px] uppercase tracking-wide text-[rgba(255,255,255,0.4)] mb-1">
+    <div className={`${gridClass} text-[10px] uppercase tracking-wide text-[rgba(255,255,255,0.4)] mb-1`}>
       <div className="col-span-2">RAM (GB)</div>
       <div className="col-span-2">Storage (GB)</div>
       <div className="col-span-2">Price (₹)</div>
+      {hasConnectivity && <div className="col-span-2">Connectivity</div>}
       <div className="col-span-2">Store</div>
       <div className="col-span-2">Link (optional)</div>
       <div className="col-span-2" />
@@ -160,9 +180,9 @@ export default function VariantsEditor({
     <div className="bg-[var(--card-bg)] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 mb-6 neon-border">
       <h2 className="text-sm font-semibold text-dim uppercase tracking-wide mb-1">Variants</h2>
       <p className="text-xs text-[rgba(255,255,255,0.4)] mb-4">
-        Each RAM + storage combination sold in India. The {kind}&apos;s starting price is set automatically to the
-        cheapest variant. Changes here save immediately. 1 TB = 1024. Pick the store that sells it; the link is
-        optional (without one, the Buy button searches that store).
+        Each RAM + storage combination sold in India{hasConnectivity ? ' (add Wi-Fi and Cellular versions separately)' : ''}.
+        The {kind}&apos;s starting price is set automatically to the cheapest variant. Changes here save immediately.
+        1 TB = 1024. Pick the store that sells it; the link is optional (without one, the Buy button searches that store).
       </p>
 
       {message && (
@@ -180,13 +200,19 @@ export default function VariantsEditor({
       {header}
       <div className="flex flex-col gap-2">
         {rows.map((r, i) => (
-          <div key={r.id} className="grid grid-cols-12 gap-2 items-center">
+          <div key={r.id} className={`${gridClass} items-center`}>
             <input type="number" min="1" className={`col-span-2 ${inputClass}`} value={r.ram_gb}
               onChange={e => updateRow(i, 'ram_gb', e.target.value)} />
             <input type="number" min="1" className={`col-span-2 ${inputClass}`} value={r.storage_gb}
               onChange={e => updateRow(i, 'storage_gb', e.target.value)} />
             <input type="number" min="1" className={`col-span-2 ${inputClass}`} value={r.price_inr}
               onChange={e => updateRow(i, 'price_inr', e.target.value)} />
+            {hasConnectivity && (
+              <select className={`col-span-2 ${inputClass}`} value={r.connectivity}
+                onChange={e => updateRow(i, 'connectivity', e.target.value)}>
+                {connectivityOptions}
+              </select>
+            )}
             <select className={`col-span-2 ${inputClass}`} value={r.store}
               onChange={e => updateRow(i, 'store', e.target.value)}>
               {storeOptions}
@@ -208,13 +234,19 @@ export default function VariantsEditor({
 
       <div className="mt-5 pt-4 border-t border-[rgba(255,255,255,0.06)]">
         <div className="text-xs font-medium text-dim mb-2">Add a variant</div>
-        <div className="grid grid-cols-12 gap-2 items-center">
+        <div className={`${gridClass} items-center`}>
           <input type="number" min="1" placeholder="8" className={`col-span-2 ${inputClass}`} value={newRow.ram_gb}
             onChange={e => setNewRow({ ...newRow, ram_gb: e.target.value })} />
           <input type="number" min="1" placeholder="128" className={`col-span-2 ${inputClass}`} value={newRow.storage_gb}
             onChange={e => setNewRow({ ...newRow, storage_gb: e.target.value })} />
           <input type="number" min="1" placeholder="24999" className={`col-span-2 ${inputClass}`} value={newRow.price_inr}
             onChange={e => setNewRow({ ...newRow, price_inr: e.target.value })} />
+          {hasConnectivity && (
+            <select className={`col-span-2 ${inputClass}`} value={newRow.connectivity}
+              onChange={e => setNewRow({ ...newRow, connectivity: e.target.value as Connectivity })}>
+              {connectivityOptions}
+            </select>
+          )}
           <select className={`col-span-2 ${inputClass}`} value={newRow.store}
             onChange={e => setNewRow({ ...newRow, store: e.target.value as VariantStore })}>
             {storeOptions}

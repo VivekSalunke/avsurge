@@ -6,7 +6,8 @@ import { DeviceVariant, STORE_LABELS, formatVariantLabel } from '@/lib/variants'
 
 function buyUrl(deviceName: string, v: DeviceVariant): string {
   if (v.store_url) return v.store === 'amazon' ? withAmazonTag(v.store_url) : v.store_url
-  const query = `${deviceName} ${v.ram_gb}GB ${v.storage_gb}GB`
+  const conn = v.connectivity === 'cellular' ? ' Cellular' : v.connectivity === 'wifi' ? ' WiFi' : ''
+  const query = `${deviceName} ${v.ram_gb}GB ${v.storage_gb}GB${conn}`
   return v.store === 'amazon' ? buildAmazonSearchUrl(query) : buildFlipkartSearchUrl(query)
 }
 
@@ -29,7 +30,7 @@ export default function VariantPicker({
     <div className="mb-4">
       <div className="price-tag rounded-xl px-4 py-3 mb-3 text-center">
         <div className="text-xs mb-0.5" style={{ color: '#22d3ee' }}>
-          Price in India · {formatVariantLabel(selected.ram_gb, selected.storage_gb)}
+          Price in India · {formatVariantLabel(selected.ram_gb, selected.storage_gb, selected.connectivity)}
         </div>
         <div className="text-2xl font-bold" style={{ color: '#22d3ee' }}>{formatPriceINR(selected.price_inr)}</div>
       </div>
@@ -52,7 +53,7 @@ export default function VariantPicker({
                     : { borderColor: 'rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.02)', color: 'rgba(255,255,255,0.7)' }
                 }
               >
-                <div className="font-semibold">{formatVariantLabel(v.ram_gb, v.storage_gb)}</div>
+                <div className="font-semibold">{formatVariantLabel(v.ram_gb, v.storage_gb, v.connectivity)}</div>
                 <div style={{ color: active ? '#22d3ee' : 'rgba(255,255,255,0.45)' }}>{formatPriceINR(v.price_inr)}</div>
               </button>
             )
