@@ -120,7 +120,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: 'https://avsurge.com/compare', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: 'https://avsurge.com/compare-tablets', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: 'https://avsurge.com/compare-laptops', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
-    { url: 'https://avsurge.com/finder', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+    { url: 'https://avsurge.com/search', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: 'https://avsurge.com/brands', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: 'https://avsurge.com/ai-recommend', lastModified: new Date(), changeFrequency: 'weekly', priority: 0.6 },
     { url: 'https://avsurge.com/news', lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
