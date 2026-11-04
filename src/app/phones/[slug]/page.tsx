@@ -13,6 +13,8 @@ import PhoneJsonLd from '@/components/PhoneJsonLd'
 import PriceAlertButton from '@/components/PriceAlertButton'
 import ShareButton from '@/components/ShareButton'
 import VariantPicker from '@/components/VariantPicker'
+import NotSoldInIndia from '@/components/NotSoldInIndia'
+import { isSoldInIndia, type RegionalPrice } from '@/lib/markets'
 import { DeviceVariant, sortVariants } from '@/lib/variants'
 import PhoneTracker from '@/components/PhoneTracker'
 import SpecScoreBadge from '@/components/SpecScoreBadge'
@@ -48,7 +50,18 @@ async function getPhone(slug: string) {
   const { data: specs } = await supabase.from('phone_specs').select('*').eq('phone_id', phone.id).order('id')
   const { data: reviews } = await supabase.from('reviews').select('rating, body, user_email, created_at').eq('phone_id', phone.id).order('created_at', { ascending: false })
   const { data: variants } = await supabase.from('phone_variants').select('*').eq('phone_id', phone.id)
-  return { phone, specs: specs || [], reviews: reviews || [], variants: sortVariants((variants || []) as DeviceVariant[]) }
+  const { data: regionalPrices } = await supabase
+    .from('device_prices')
+    .select('region_code, currency_code, price_amount, retailer')
+    .eq('device_type', 'phone')
+    .eq('device_id', phone.id)
+  return {
+    phone,
+    specs: specs || [],
+    reviews: reviews || [],
+    variants: sortVariants((variants || []) as DeviceVariant[]),
+    regionalPrices: (regionalPrices || []) as RegionalPrice[],
+  }
 }
 
 async function getComparisonCandidates(phone: { id: string | number; price_inr: number | null }) {
@@ -70,7 +83,8 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
   const { slug } = await params
   const data = await getPhone(slug)
   if (!data) notFound()
-  const { phone, specs, reviews, variants } = data
+  const { phone, specs, reviews, variants, regionalPrices } = data
+  const soldInIndia = isSoldInIndia(phone.markets)
   const comparisonCandidates = await getComparisonCandidates(phone)
 
   const grouped = specs.reduce<Record<string, PhoneSpecRow[]>>((acc, s) => {
@@ -107,7 +121,9 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
             <p className="text-sm text-[rgba(255,255,255,0.4)] mb-4">{phone.brand}</p>
             <SpecScoreBadge specs={specs} overrideScore={phone.spec_score_override} />
 
-            {variants.length > 0 ? (
+            {!soldInIndia ? (
+              <NotSoldInIndia markets={phone.markets} prices={regionalPrices} />
+            ) : variants.length > 0 ? (
               <VariantPicker deviceName={phone.name} variants={variants} />
             ) : phone.price_inr && (
               <div className="price-tag rounded-xl px-4 py-3 mb-4 text-center">
@@ -123,7 +139,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
             )}
 
             <div className="flex flex-col gap-2">
-              {variants.length === 0 && (
+              {soldInIndia && variants.length === 0 && (
                 <>
                   <a href={`https://www.flipkart.com/search?q=${encodeURIComponent(phone.name)}`} target="_blank"
                     className="w-full bg-gradient-to-r from-neon-violet to-neon-cyan text-black rounded-xl py-2.5 text-sm font-medium hover:brightness-110 transition text-center">
@@ -136,7 +152,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
                 </>
               )}
               <WishlistButton phoneId={phone.id} />
-              <PriceAlertButton phoneId={phone.id} phoneName={phone.name} currentPrice={phone.price_inr} />
+              {soldInIndia && <PriceAlertButton phoneId={phone.id} phoneName={phone.name} currentPrice={phone.price_inr} />}
               <ShareButton title={phone.name} url={`https://avsurge.com/phones/${phone.slug}`} />
               <Link href={`/compare?a=${phone.slug}`}
                 className="w-full text-center border border-dashed border-[rgba(255,255,255,0.08)] text-dim rounded-xl py-2.5 text-sm hover:border-neon-cyan hover:text-neon-cyan transition">
@@ -209,7 +225,7 @@ export default async function PhonePage({ params }: { params: Promise<{ slug: st
           )}
 
           <RelatedPhones phoneId={phone.id} brand={phone.brand} priceInr={phone.price_inr} />
-          <PriceHistory phoneId={phone.id} currentPrice={phone.price_inr} />
+          {soldInIndia && <PriceHistory phoneId={phone.id} currentPrice={phone.price_inr} />}
           <RecentlyViewed currentSlug={slug} />
           <Reviews phoneId={phone.id} />
           <ViewTracker slug={slug} />
