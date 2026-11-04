@@ -19,18 +19,21 @@ const TOP_ITEMS: { id: Section; label: string }[] = [
 const SECTION_LINKS: Record<Section, { icon: string; title: string; desc: string; href: string }[]> = {
   phones: [
     { icon: '📱', title: 'All Phones', desc: 'Browse all 250+ phones', href: '/phones' },
+    { icon: '🗓️', title: 'Upcoming Launches', desc: 'Confirmed launch dates in India', href: '/upcoming' },
     { icon: '⚖️', title: 'Compare Phones', desc: 'Side-by-side comparison', href: '/compare' },
     { icon: '✨', title: 'AI Recommender', desc: 'Get personalized picks', href: '/ai-recommend' },
     { icon: '🔍', title: 'Search & Discover', desc: 'Filter, find and AI search', href: '/search' },
   ],
   tablets: [
     { icon: '📟', title: 'All Tablets', desc: 'Browse all tablets', href: '/tablets' },
+    { icon: '🗓️', title: 'Upcoming Launches', desc: 'Confirmed launch dates in India', href: '/upcoming' },
     { icon: '⚖️', title: 'Compare Tablets', desc: 'Side-by-side comparison', href: '/compare-tablets' },
     { icon: '✨', title: 'AI Recommender', desc: 'Get personalized picks', href: '/ai-recommend' },
     { icon: '🔍', title: 'Search & Discover', desc: 'Filter, find and AI search', href: '/search' },
   ],
   laptops: [
     { icon: '💻', title: 'All Laptops', desc: 'Browse all laptops', href: '/laptops' },
+    { icon: '🗓️', title: 'Upcoming Launches', desc: 'Confirmed launch dates in India', href: '/upcoming' },
     { icon: '⚖️', title: 'Compare Laptops', desc: 'Side-by-side comparison', href: '/compare-laptops' },
     { icon: '✨', title: 'AI Recommender', desc: 'Get personalized picks', href: '/ai-recommend' },
     { icon: '🔍', title: 'Search & Discover', desc: 'Filter, find and AI search', href: '/search' },

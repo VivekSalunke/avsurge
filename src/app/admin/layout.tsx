@@ -14,6 +14,7 @@ const NAV = [
   { href: '/admin/laptops', label: 'Laptops' },
   { href: '/admin/laptops/add', label: '+ Add Laptop' },
   { href: '/admin/news', label: 'News' },
+  { href: '/admin/upcoming', label: 'Upcoming' },
   { href: '/admin/images', label: 'Images' },
   { href: '/admin/brands', label: 'Brands' },
   { href: '/admin/price-history', label: 'Prices' },
