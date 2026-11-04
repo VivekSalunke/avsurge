@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Editorial Policy | AVSurge',
+  title: 'Editorial Policy',
   alternates: { canonical: 'https://avsurge.com/editorial-policy' },
   description: 'How AVSurge sources, verifies, and presents device specifications, pricing, and recommendations — and how we handle affiliate relationships and corrections.',
   robots: 'index, follow',

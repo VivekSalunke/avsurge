@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | AVSurge',
+  title: 'Privacy Policy',
   alternates: { canonical: 'https://avsurge.com/privacy' },
   description: 'Privacy Policy for AVSurge - Learn how we collect, use and protect your data.',
   robots: 'index, follow',

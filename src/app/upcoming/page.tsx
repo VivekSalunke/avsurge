@@ -10,7 +10,7 @@ export const revalidate = 300
 export async function generateMetadata(): Promise<Metadata> {
   const month = monthLabel(todayIST())
   return {
-    title: `Upcoming Phones, Tablets & Laptops in India — ${month} | AVSurge`,
+    title: `Upcoming Phones, Tablets & Laptops in India — ${month}`,
     description: `Brand-confirmed upcoming smartphone, tablet and laptop launches in India for ${month}, with launch dates and official sources.`,
     alternates: { canonical: 'https://avsurge.com/upcoming' },
     openGraph: {

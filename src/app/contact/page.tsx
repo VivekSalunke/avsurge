@@ -4,7 +4,7 @@ import Link from 'next/link'
 import ContactForm from '@/components/ContactForm'
 
 export const metadata: Metadata = {
-  title: 'Contact Us | AVSurge',
+  title: 'Contact Us',
   description: 'Contact AVSurge for feedback, suggestions or to report incorrect device data. Email us at contact@avsurge.com or use the contact form.',
   alternates: { canonical: 'https://avsurge.com/contact' },
 }

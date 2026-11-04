@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Disclaimer | AVSurge',
+  title: 'Disclaimer',
   alternates: { canonical: 'https://avsurge.com/disclaimer' },
   description: 'Disclaimer for AVSurge - Important information about device specifications and reviews.',
   robots: 'index, follow',

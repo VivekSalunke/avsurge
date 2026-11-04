@@ -7,7 +7,7 @@ import { getFinalSpecScore, type SpecRow } from '@/lib/specScore'
 export const revalidate = 60
 
 export const metadata = {
-  title: 'Phones Price List in India 2026 | AVSurge',
+  title: 'Phones Price List in India 2026',
   description:
     'Browse all smartphones available in India. Compare phone specs, prices, scores and reviews. Find the best phone for your budget.',
   alternates: { canonical: 'https://avsurge.com/phones' },

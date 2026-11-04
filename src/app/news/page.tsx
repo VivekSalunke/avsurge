@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 
 export const revalidate = 60
 export const metadata: Metadata = {
-  title: 'Tech News & Reviews | AVSurge',
+  title: 'Tech News & Reviews',
   description: 'Latest smartphone, tablet and laptop news, reviews and updates from India.',
   alternates: { canonical: 'https://avsurge.com/news' },
 }

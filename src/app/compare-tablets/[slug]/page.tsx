@@ -84,7 +84,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = `${tabletA.name} vs ${tabletB.name}: Compare Specs & Price`
   const description = `Compare ${tabletA.name} and ${tabletB.name} side by side — specs, display, battery and price in India.`
   return {
-    title: `${title} | AVSurge`,
+    title: title,
     description,
     alternates: { canonical: `https://avsurge.com/compare-tablets/${slug}` },
     openGraph: { title, description, url: `https://avsurge.com/compare-tablets/${slug}` },

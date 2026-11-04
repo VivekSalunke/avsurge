@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { data } = await supabase.from('news').select('*').eq('slug', slug).single()
   if (!data) return { title: 'Article not found' }
   return {
-    title: `${data.title} | AVSurge`,
+    title: data.title,
     description: data.excerpt || data.title,
     alternates: { canonical: `https://avsurge.com/news/${slug}` },
     openGraph: {

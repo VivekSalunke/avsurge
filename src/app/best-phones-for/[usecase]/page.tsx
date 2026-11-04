@@ -103,7 +103,7 @@ export async function generateMetadata({ params }: { params: Promise<{ usecase: 
   const uc = USE_CASES[usecase]
   if (!uc) return {}
   return {
-    title: `${uc.title} in India 2026 | AVSurge`,
+    title: `${uc.title} in India 2026`,
     description: uc.desc,
     alternates: { canonical: `https://avsurge.com/best-phones-for/${usecase}` },
   }

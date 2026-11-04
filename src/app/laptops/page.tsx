@@ -6,7 +6,7 @@ import { parseLaptopSpecs, getFinalLaptopSpecScore, SpecRow } from '@/lib/laptop
 
 export const revalidate = 60
 export const metadata = {
-  title: 'Laptops Price List in India 2026 | AVSurge',
+  title: 'Laptops Price List in India 2026',
   alternates: { canonical: 'https://avsurge.com/laptops' },
   description: 'Browse all laptops available in India. Compare laptop specs, prices and reviews. Find the best laptop for your budget.',
 }

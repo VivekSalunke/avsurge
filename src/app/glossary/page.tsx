@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Mobile & Tech Glossary — Phone, Tablet & Laptop Terms Explained | AVSurge',
+  title: 'Mobile & Tech Glossary — Phone, Tablet & Laptop Terms Explained',
   alternates: { canonical: 'https://avsurge.com/glossary' },
   description: 'A plain-English glossary of phone, tablet, and laptop specification terms — display, camera, performance, battery, and connectivity explained.',
   robots: 'index, follow',

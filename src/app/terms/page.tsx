@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Terms and Conditions | AVSurge',
+  title: 'Terms and Conditions',
   alternates: { canonical: 'https://avsurge.com/terms' },
   description: 'Terms and Conditions for using AVSurge - India\'s device comparison platform.',
 }
