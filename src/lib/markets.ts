@@ -1,10 +1,14 @@
-/** Where a device is officially sold. Stored as `markets text[]` on phones/tablets/laptops. */
-export type MarketCode = 'IN' | 'CN' | 'GLOBAL'
+/**
+ * Where a device is officially sold. Stored as `markets text[]` on phones/tablets/laptops.
+ * GLOBAL = sold worldwide including India; INTL = sold internationally but not in India.
+ */
+export type MarketCode = 'IN' | 'CN' | 'GLOBAL' | 'INTL'
 
 export const MARKET_LABELS: Record<MarketCode, string> = {
   IN: 'India',
   CN: 'China',
   GLOBAL: 'Global',
+  INTL: 'international markets',
 }
 
 /** Devices without a markets value are treated as Indian (the site's original default) */
