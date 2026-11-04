@@ -26,7 +26,10 @@ export const metadata: Metadata = {
   creator: 'AVSurge',
   publisher: 'AVSurge',
   metadataBase: new URL('https://avsurge.com'),
-  alternates: { canonical: 'https://avsurge.com' },
+  alternates: {
+    canonical: 'https://avsurge.com',
+    types: { 'application/rss+xml': [{ url: '/news/rss.xml', title: 'AVSurge News' }] },
+  },
   icons: {
     icon: [
       { url: '/icon-192.png', type: 'image/png', sizes: '192x192' },

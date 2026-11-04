@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/profile/', '/api/', '/login/', '/wishlist/'],
       },
     ],
-    sitemap: 'https://avsurge.com/sitemap.xml',
+    sitemap: ['https://avsurge.com/sitemap.xml', 'https://avsurge.com/news-sitemap.xml'],
   }
 }
