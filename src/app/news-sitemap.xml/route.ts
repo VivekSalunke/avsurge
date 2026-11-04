@@ -17,7 +17,20 @@ export async function GET() {
     .limit(1000)
   if (error) console.error('[news sitemap] query failed:', error.message)
 
-  const urls = (data || []).map(a => [
+  // Google rejects a <urlset> with no <url> ("Missing XML tag"), so when nothing is
+  // from the last 2 days, list the single newest article instead.
+  let articles = data || []
+  if (articles.length === 0) {
+    const { data: latest } = await supabase
+      .from('news')
+      .select('title, slug, created_at')
+      .eq('published', true)
+      .order('created_at', { ascending: false })
+      .limit(1)
+    articles = latest || []
+  }
+
+  const urls = articles.map(a => [
     '  <url>',
     `    <loc>${SITE}/news/${a.slug}</loc>`,
     '    <news:news>',
