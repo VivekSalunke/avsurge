@@ -29,6 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ budget: s
   const b = parseInt(budget)
   if (!VALID_BUDGETS.includes(b)) return {}
   return {
+    alternates: { canonical: `https://avsurge.com/best-tablets/${b}` },
     title: `Best Tablets Under ₹${b.toLocaleString('en-IN')} in India (2026)`,
     description: `Top tablets under ₹${b.toLocaleString('en-IN')} in India. Compare specs, display, battery and performance to find the best tablet for your budget.`,
   }
