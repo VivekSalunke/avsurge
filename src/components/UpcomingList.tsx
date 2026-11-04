@@ -26,6 +26,7 @@ function hostOf(url: string): string {
 
 function LaunchCard({ item, launched }: { item: UpcomingLaunch; launched: boolean }) {
   const page = devicePath(item)
+  const expected = item.date_status === 'expected' && !launched
   return (
     <div className="flex gap-4 rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-4">
       <div className="relative h-24 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-[rgba(255,255,255,0.03)]">
@@ -44,8 +45,13 @@ function LaunchCard({ item, launched }: { item: UpcomingLaunch; launched: boolea
         <h3 className="text-base font-bold text-white">
           {page ? <Link href={page} className="hover:underline">{item.name}</Link> : item.name}
         </h3>
-        <div className="mt-1 text-sm font-semibold" style={{ color: '#22d3ee' }}>
-          {launched ? 'Launched ' : 'Launching '}{formatLaunchDate(item.launch_date)}
+        <div className="mt-1 flex flex-wrap items-center gap-2 text-sm font-semibold" style={{ color: expected ? '#fbbf24' : '#22d3ee' }}>
+          <span>{launched ? 'Launched ' : expected ? 'Expected ' : 'Launching '}{formatLaunchDate(item.launch_date)}</span>
+          {expected && (
+            <span className="rounded-full border border-[rgba(251,191,36,0.3)] px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide">
+              Date not confirmed
+            </span>
+          )}
         </div>
         {item.expected_price_note && (
           <div className="mt-1 text-xs text-[rgba(255,255,255,0.7)]">{item.expected_price_note}</div>
@@ -59,7 +65,7 @@ function LaunchCard({ item, launched }: { item: UpcomingLaunch; launched: boolea
         )}
         <div className="mt-2 flex flex-wrap gap-3 text-xs">
           <a href={item.source_url} target="_blank" rel="noopener nofollow" className="text-[rgba(255,255,255,0.5)] hover:text-white hover:underline">
-            Confirmed by {item.brand} ({hostOf(item.source_url)}) ↗
+            {expected ? 'Teased by' : 'Confirmed by'} {item.brand} ({hostOf(item.source_url)}) ↗
           </a>
           {page && (
             <Link href={page} className="font-medium hover:underline" style={{ color: '#22d3ee' }}>

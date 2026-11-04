@@ -32,7 +32,8 @@ async function getLaunches() {
   const all = (data || []) as UpcomingLaunch[]
   return {
     upcoming: all.filter(i => i.launch_date >= today),
-    recent: all.filter(i => i.launch_date < today).reverse(),
+    // an expected date that has passed is not a launch: hide it until the admin confirms or updates it
+    recent: all.filter(i => i.launch_date < today && i.date_status !== 'expected').reverse(),
   }
 }
 
@@ -47,7 +48,7 @@ export default async function UpcomingPage() {
     itemListElement: upcoming.slice(0, 50).map((item, i) => ({
       '@type': 'ListItem',
       position: i + 1,
-      name: `${item.name} — launching ${item.launch_date}`,
+      name: `${item.name} — ${item.date_status === 'expected' ? 'expected' : 'launching'} ${item.launch_date}`,
       ...(item.device_slug ? { url: `https://avsurge.com/${item.category}s/${item.device_slug}` } : {}),
     })),
   }
@@ -57,8 +58,8 @@ export default async function UpcomingPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(itemList) }} />
       <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Upcoming launches in India</h1>
       <p className="text-sm text-[rgba(255,255,255,0.55)] mb-6">
-        Phones, tablets and laptops with launch dates confirmed by the brand. Each entry links to the official
-        announcement. Updated {month}.
+        Phones, tablets and laptops launching in India. Confirmed dates link to the brand&apos;s announcement; dates
+        marked Expected come from reports and may change. Updated {month}.
       </p>
       <UpcomingList upcoming={upcoming} recent={recent} />
     </main>

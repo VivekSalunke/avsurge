@@ -5,6 +5,7 @@ import {
   CATEGORY_LABELS,
   formatLaunchDate,
   todayIST,
+  type DateStatus,
   type UpcomingCategory,
   type UpcomingLaunch,
 } from '@/lib/upcoming'
@@ -15,6 +16,7 @@ interface Form {
   brand: string
   category: UpcomingCategory
   launch_date: string
+  date_status: DateStatus
   source_url: string
   expected_price_note: string
   image_url: string
@@ -23,7 +25,7 @@ interface Form {
 }
 
 const EMPTY: Form = {
-  id: null, name: '', brand: '', category: 'phone', launch_date: '', source_url: '',
+  id: null, name: '', brand: '', category: 'phone', launch_date: '', date_status: 'confirmed', source_url: '',
   expected_price_note: '', image_url: '', highlights: '', device_slug: '',
 }
 
@@ -38,6 +40,7 @@ const toForm = (i: UpcomingLaunch): Form => ({
   brand: i.brand,
   category: i.category,
   launch_date: i.launch_date,
+  date_status: i.date_status ?? 'confirmed',
   source_url: i.source_url,
   expected_price_note: i.expected_price_note ?? '',
   image_url: i.image_url ?? '',
@@ -91,6 +94,7 @@ export default function AdminUpcomingPage() {
       brand: form.brand.trim(),
       category: form.category,
       launch_date: form.launch_date,
+      date_status: form.date_status,
       source_url: form.source_url.trim(),
       expected_price_note: form.expected_price_note.trim() || null,
       image_url: form.image_url.trim() || null,
@@ -124,7 +128,8 @@ export default function AdminUpcomingPage() {
     <main className="max-w-3xl mx-auto px-4 py-10 text-[var(--text)]">
       <h1 className="text-xl font-bold text-white mb-1">Upcoming launches</h1>
       <p className="text-xs text-[rgba(255,255,255,0.45)] mb-6">
-        Only add devices whose Indian launch date the brand has confirmed, and link to that announcement.
+        Link every entry to the brand&apos;s own announcement or teaser. If the brand has not given the exact Indian date,
+        set Date status to Expected (shown with a &quot;Date not confirmed&quot; badge; hidden once the date passes).
         Entries show on /upcoming until 14 days after launch. Once the device is on AVSurge, add its slug so the entry links to it.
       </p>
 
@@ -165,6 +170,13 @@ export default function AdminUpcomingPage() {
             <label className={labelClass}>India launch date *</label>
             <input type="date" className={inputClass} style={{ colorScheme: 'dark' }} value={form.launch_date}
               onChange={e => set('launch_date', e.target.value)} />
+          </div>
+          <div className="col-span-2">
+            <label className={labelClass}>Date status *</label>
+            <select className={inputClass} value={form.date_status} onChange={e => set('date_status', e.target.value)}>
+              <option value="confirmed" style={optionStyle}>Confirmed by brand (exact date announced)</option>
+              <option value="expected" style={optionStyle}>Expected (from reports; brand only teased)</option>
+            </select>
           </div>
           <div className="col-span-2">
             <label className={labelClass}>Official source link * (brand teaser, press release or event page)</label>
@@ -212,6 +224,7 @@ export default function AdminUpcomingPage() {
               <div className="text-sm font-semibold text-white truncate">{item.name}</div>
               <div className="text-xs text-[rgba(255,255,255,0.45)]">
                 {CATEGORY_LABELS[item.category]} · {formatLaunchDate(item.launch_date)}
+                {item.date_status === 'expected' ? ' · expected' : ''}
                 {item.launch_date < today ? ' · launched' : ''}
                 {item.device_slug ? ` · linked to ${item.device_slug}` : ''}
               </div>

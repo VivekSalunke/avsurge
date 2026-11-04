@@ -40,3 +40,9 @@ CREATE TRIGGER upcoming_launches_touch_updated_at
   FOR EACH ROW EXECUTE FUNCTION public.touch_phone_variant_updated_at();
 
 NOTIFY pgrst, 'reload schema';
+
+-- Nov 2026: expected (unconfirmed) dates
+ALTER TABLE public.upcoming_launches
+  ADD COLUMN IF NOT EXISTS date_status text NOT NULL DEFAULT 'confirmed'
+  CHECK (date_status IN ('confirmed', 'expected'));
+NOTIFY pgrst, 'reload schema';

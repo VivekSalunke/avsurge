@@ -1,12 +1,16 @@
 export type UpcomingCategory = 'phone' | 'tablet' | 'laptop'
 
+/** confirmed = brand announced the exact Indian date; expected = date from reports, brand only teased */
+export type DateStatus = 'confirmed' | 'expected'
+
 export interface UpcomingLaunch {
   id: number
   name: string
   brand: string
   category: UpcomingCategory
-  /** Brand-confirmed Indian launch date, YYYY-MM-DD */
+  /** Indian launch date, YYYY-MM-DD (see date_status) */
   launch_date: string
+  date_status: DateStatus
   /** Official teaser / press release / event page confirming the date */
   source_url: string
   expected_price_note: string | null
