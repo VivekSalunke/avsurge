@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Merged duplicate phone pages: old URLs point to the kept page (308 permanent)
+  async redirects() {
+    return [
+      { source: '/phones/poco-x6-pro-5g', destination: '/phones/poco-x6-pro', permanent: true },
+      { source: '/phones/poco-f6-5g', destination: '/phones/poco-f6', permanent: true },
+      { source: '/phones/poco-f6-pro-5g', destination: '/phones/poco-f6-pro', permanent: true },
+    ]
+  },
   images: {
     // Allowlist remote host patterns (kept existing)
     dangerouslyAllowLocalIP: true,
