@@ -8,6 +8,7 @@ import AILogo from '@/components/AILogo'
 import { formatPriceINR } from '@/lib/format'
 import UpcomingStrip from '@/components/UpcomingStrip'
 import { todayIST, type UpcomingLaunch } from '@/lib/upcoming'
+import { dailyPick } from '@/lib/dailyPick'
 
 export const revalidate = 60
 
@@ -146,9 +147,9 @@ export default async function HomePage() {
     supabase.from('phones').select('*'),
     supabase.from('phones').select('brand'),
     supabase.from('tablets').select('*').order('created_at', { ascending: false }).limit(6),
-    supabase.from('tablets').select('id'),
+    supabase.from('tablets').select('*'),
     supabase.from('laptops').select('*').order('created_at', { ascending: false }).limit(6),
-    supabase.from('laptops').select('id'),
+    supabase.from('laptops').select('*'),
     supabase.from('upcoming_launches').select('*').gte('launch_date', todayIST())
       .order('launch_date', { ascending: true }).limit(3),
   ])
@@ -180,9 +181,9 @@ export default async function HomePage() {
   ]
 
   const featuredDevices = [
-    ...(latestPhones || []).slice(0, 2).map((p: Device) => ({ ...p, type: 'phones' as const })),
-    ...(latestTablets || []).slice(0, 1).map((t: Device) => ({ ...t, type: 'tablets' as const })),
-    ...(latestLaptops || []).slice(0, 1).map((l: Device) => ({ ...l, type: 'laptops' as const })),
+    ...dailyPick((allPhones || []) as Device[], 2, 'phones').map(p => ({ ...p, type: 'phones' as const })),
+    ...dailyPick((allTablets || []) as Device[], 1, 'tablets').map(t => ({ ...t, type: 'tablets' as const })),
+    ...dailyPick((allLaptops || []) as Device[], 1, 'laptops').map(l => ({ ...l, type: 'laptops' as const })),
   ]
 
   return (
