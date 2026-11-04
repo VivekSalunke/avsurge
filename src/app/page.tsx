@@ -173,12 +173,6 @@ export default async function HomePage() {
 
   const brands = [...new Set((brandsRaw || []).map((b: BrandRow) => b.brand))].sort()
 
-  const stats = [
-    { label: 'Phones', value: (allPhones?.length || 0) + '+', icon: 'M7 18c-1.26 0-2-1-2-2V7M17 6c1.26 0 2 1 2 2v9' },
-    { label: 'Tablets', value: (allTablets?.length || 0) + '+', icon: 'M4 6h16v12H4z' },
-    { label: 'Laptops', value: (allLaptops?.length || 0) + '+', icon: 'M3 7h18v10H3z' },
-    { label: 'Brands', value: brands.length + '+', icon: 'M12 21V7M7 4l5-2 5 2M5 21h14' },
-  ]
 
   const featuredDevices = [
     ...dailyPick((allPhones || []) as Device[], 2, 'phones').map(p => ({ ...p, type: 'phones' as const })),
@@ -230,22 +224,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* ── Stats bar ────────────────────────────────────── */}
-      <div className="mb-14 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {stats.map(stat => (
-          <div key={stat.label}
-            className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[var(--card-bg)] p-5 text-center transition-all duration-200 card-hover hover:border-[rgba(139,92,246,0.3)] hover:glow">
-            <svg className="mx-auto mb-3 h-6 w-6 text-neon-violet" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d={stat.icon} />
-            </svg>
-            <div className="bg-gradient-to-r from-white to-[rgba(255,255,255,0.6)] bg-clip-text text-3xl font-extrabold tracking-tight text-transparent">
-              {stat.value}
-            </div>
-            <div className="mt-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-dim">{stat.label}</div>
-          </div>
-        ))}
-      </div>
 
       {/* ── Upcoming launches ────────────────────────────── */}
       {upcoming.length > 0 && (
