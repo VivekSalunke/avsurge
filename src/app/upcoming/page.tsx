@@ -4,7 +4,8 @@ import { safeJsonLd } from '@/lib/jsonLd'
 import UpcomingList from '@/components/UpcomingList'
 import { addDays, monthLabel, RECENT_DAYS, todayIST, type UpcomingLaunch } from '@/lib/upcoming'
 
-export const revalidate = 3600
+// 5 min: admin edits show up quickly; the query is tiny
+export const revalidate = 300
 
 export async function generateMetadata(): Promise<Metadata> {
   const month = monthLabel(todayIST())
