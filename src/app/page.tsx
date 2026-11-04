@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import RecentlyViewedHome from '@/components/RecentlyViewedHome'
 import FeaturedDeviceStack from '@/components/FeaturedDeviceStack'
+import { noPriceLabel } from '@/lib/markets'
 import AILogo from '@/components/AILogo'
 import { formatPriceINR } from '@/lib/format'
 
@@ -25,6 +26,7 @@ interface Device {
   slug: string
   price_inr: number | null
   image_url: string | null
+  markets?: string[] | null
 }
 
 interface BrandRow {
@@ -62,7 +64,7 @@ function DeviceCard({ device, href, fallback }: { device: Device, href: string, 
               <span className="text-[10px] font-medium text-dim">Starting price</span>
             </div>
           ) : (
-            <p className="text-xs font-medium text-dim">Price on request</p>
+            <p className="text-xs font-medium text-dim">{noPriceLabel(device.markets)}</p>
           )}
           <span className="text-neon-cyan opacity-0 transition-opacity group-hover:opacity-100">→</span>
         </div>

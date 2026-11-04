@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { noPriceLabel } from '@/lib/markets'
 
 function formatPriceINR(price: number | null): string {
   if (!price) return 'Price unavailable'
@@ -15,6 +16,7 @@ export interface DeviceCardProps {
     brand: string
     price_inr: number | null
     image_url: string | null
+    markets?: string[] | null
   }
   type: 'phone' | 'tablet' | 'laptop'
   score?: number | null
@@ -139,7 +141,7 @@ export default function DeviceCard({
             </>
           ) : (
             <p className="text-xs font-medium text-dim">
-              Price on request
+              {noPriceLabel(device.markets)}
             </p>
           )}
         </div>

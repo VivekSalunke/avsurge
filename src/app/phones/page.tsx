@@ -21,6 +21,7 @@ interface Phone {
   price_inr?: number | null
   image_url?: string | null
   spec_score_override?: number | null
+  markets?: string[] | null
 }
 
 interface PhoneSpec extends SpecRow {

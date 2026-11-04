@@ -21,6 +21,11 @@ export function describeMarkets(markets: string[] | null | undefined): string {
   return names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0] ?? 'other markets'
 }
 
+/** Label for a device card that has no Indian price */
+export function noPriceLabel(markets: string[] | null | undefined): string {
+  return isSoldInIndia(markets) ? 'Price on request' : 'Not sold in India'
+}
+
 export interface RegionalPrice {
   region_code: string
   currency_code: string

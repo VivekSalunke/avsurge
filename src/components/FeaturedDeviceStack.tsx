@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { formatPriceINR } from '@/lib/format'
+import { noPriceLabel } from '@/lib/markets'
 
 export interface FeaturedDevice {
   id: number
@@ -12,6 +13,7 @@ export interface FeaturedDevice {
   price_inr: number | null
   image_url: string | null
   type: 'phones' | 'tablets' | 'laptops'
+  markets?: string[] | null
 }
 
 const TYPE_EMOJI: Record<string, string> = {
@@ -76,7 +78,7 @@ export default function FeaturedDeviceStack({ devices }: { devices: FeaturedDevi
                         {device.price_inr ? (
                           <p className="text-sm font-bold text-white">{formatPriceINR(device.price_inr)}</p>
                         ) : (
-                          <p className="text-xs text-dim">Price on request</p>
+                          <p className="text-xs text-dim">{noPriceLabel(device.markets)}</p>
                         )}
                         <Link href={`/${device.type}/${device.slug}`}
                           className="flex-shrink-0 rounded-lg bg-gradient-to-r from-neon-violet to-neon-cyan px-3 py-1.5 text-xs font-semibold text-emerald-400 transition-all duration-200 hover:brightness-110">

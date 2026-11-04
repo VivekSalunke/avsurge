@@ -10,6 +10,7 @@ interface PhoneDevice {
   brand: string | null
   price_inr: number | null
   image_url?: string | null
+  markets?: string[] | null
   created_at?: string | null
   view_count?: number | null
   spec_score_override?: number | null
@@ -511,6 +512,7 @@ export default function PhoneFilters({
                 brand: phone.brand ?? 'Unknown',
                 price_inr: phone.price_inr,
                 image_url: phone.image_url ?? null,
+                markets: phone.markets ?? null,
               }}
               type="phone"
               score={phone.score ?? null}
